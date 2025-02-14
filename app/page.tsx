@@ -1,101 +1,102 @@
-import Image from "next/image";
+"use client";
+import { useEffect, useRef } from "react";
+import gsap from "gsap";
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+  const mapRef = useRef(null);
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+  useEffect(() => {
+    let ctx: any;
+    // 클라이언트 사이드에서만 GSAP와 ScrollTrigger를 임포트
+    const initGSAP = async () => {
+      const gsap = (await import("gsap")).default;
+      const ScrollTrigger = (await import("gsap/ScrollTrigger")).default;
+      gsap.registerPlugin(ScrollTrigger);
+
+      ctx = gsap.context(() => {
+        // 제목 텍스트 애니메이션
+        gsap.to(".title-text-wrapper", {
+          x: "-50%",
+          repeat: -1,
+          duration: 30,
+          ease: "none",
+          yoyo: false,
+        });
+
+        // 초기 지도 스케일 설정
+        gsap.set(mapRef.current, {
+          scale: 0.5,
+          opacity: 0,
+        });
+
+        // 스크롤 트리거 애니메이션
+        gsap.to(mapRef.current, {
+          scrollTrigger: {
+            trigger: mapRef.current,
+            start: "top center",
+            end: "bottom center",
+            scrub: 1,
+          },
+          scale: 1,
+          opacity: 1,
+          duration: 2,
+        });
+
+        // 각 지역별 호버 효과
+        document.querySelectorAll(".region").forEach((region) => {
+          region.addEventListener("mouseenter", () => {
+            gsap.to(region, {
+              fill: "#4CAF50",
+              duration: 0.3,
+            });
+          });
+
+          region.addEventListener("mouseleave", () => {
+            gsap.to(region, {
+              fill: "#e5e5e5",
+              duration: 0.3,
+            });
+          });
+        });
+      });
+
+      return () => ctx.revert();
+    };
+
+    initGSAP();
+  }, []);
+
+  return (
+    <div className="min-h-[200vh]">
+      <div className="flex items-center justify-center overflow-hidden">
+        <div className="title-text-wrapper relative whitespace-nowrap">
+          {[...Array(10)].map((_, i) => (
+            <h1
+              key={i}
+              className="title-text text-[250px] font-black mt-10 inline-block"
+            >
+              CHERRY_CLUB &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            </h1>
+          ))}
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+      </div>
+
+      <div className="flex items-center justify-center -mt-20">
+        <div ref={mapRef} className="w-[80vw] max-w-3xl">
+          <svg viewBox="0 0 800 1200" className="w-full">
+            {/* 여기에 한국 지도 SVG 패스들이 들어갑니다 */}
+            <path
+              className="region cursor-pointer transition-colors"
+              d="M400 300 L450 350 L400 400 L350 350 Z"
+              fill="#e5e5e5"
+              stroke="#333"
+              strokeWidth="2"
+              data-region="서울"
+            />
+            {/* 다른 지역들의 패스도 추가해주세요 */}
+          </svg>
+        </div>
+      </div>
     </div>
   );
 }
