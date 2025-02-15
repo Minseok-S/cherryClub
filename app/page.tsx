@@ -225,38 +225,47 @@ export default function Home() {
       </div>
 
       <header className="fixed top-0 w-full z-50 opacity-0" id="main-header">
-        <div className="container mx-auto px-4 py-4 flex justify-between items-center ">
-          {/* 로고 */}
-          <img
-            src="/logo.png"
-            alt="Cherry Club Logo"
-            className="h-8 md:h-20 w-auto" // 실제 로고 크기에 맞게 조정 필요
-          />
+        <div className="container mx-auto px-4 py-4 flex justify-between items-center">
+          {/* 로고 및 메뉴 그룹 */}
+          <div className="flex items-center space-x-8">
+            <img
+              src="/logo.png"
+              alt="Cherry Club Logo"
+              className="h-8 md:h-20 w-auto"
+            />
+            <nav className="hidden md:flex md:space-x-6">
+              <a
+                href="#campus"
+                className="hover:text-gray-300 md:text-xl font-black"
+              >
+                현황
+              </a>
+              <a href="#" className="hover:text-gray-300 md:text-xl font-black">
+                리더십 훈련
+              </a>
+              <a href="#" className="hover:text-gray-300 md:text-xl font-black">
+                캠퍼스 사역
+              </a>
+              <a href="#" className="hover:text-gray-300 md:text-xl font-black">
+                전체 / 지역모임
+              </a>
+              <a href="#" className="hover:text-gray-300 md:text-xl font-black">
+                대외 사역
+              </a>
+            </nav>
+          </div>
 
-          {/* 네비게이션 메뉴 */}
-          <nav className="hidden md:flex md:space-x-6 ">
-            <a href="#" className="hover:text-gray-300  md:text-xl font-black">
-              소개
-            </a>
+          {/* 오른쪽 영역 */}
+          <div className="flex items-center space-x-6">
             <a
-              href="#campus"
-              className="hover:text-gray-300  md:text-xl font-black"
+              href="https://forms.gle/hMReZhWNUYfeMYe78"
+              target="_blank"
+              className="bg-red-500 text-white px-4 py-2 rounded-full hover:bg-red-600 
+                          transition-colors duration-300 text-sm md:text-base font-black"
             >
-              현황
+              신청하기
             </a>
-            <a href="#" className="hover:text-gray-300  md:text-xl font-black">
-              리더십 훈련
-            </a>
-            <a href="#" className="hover:text-gray-300  md:text-xl font-black">
-              캠퍼스 사역
-            </a>
-            <a href="#" className="hover:text-gray-300  md:text-xl font-black">
-              전체 / 지역모임
-            </a>
-            <a href="#" className="hover:text-gray-300  md:text-xl font-black">
-              대외 사역
-            </a>
-          </nav>
+          </div>
         </div>
       </header>
 
