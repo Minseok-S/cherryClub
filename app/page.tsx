@@ -313,6 +313,7 @@ export default function Home() {
             viewBox="0 0 508 585"
             className="w-full h-auto"
           >
+            {/* 서울/경기 지부에 점 추가 */}
             <polygon
               className={`cls-1 stroke-[2px] ${
                 selectedRegion === "서울경기"
@@ -323,6 +324,16 @@ export default function Home() {
               onClick={handleRegionClick}
               data-region="서울경기"
             />
+            <circle
+              cx="170"
+              cy="130"
+              r="2"
+              fill="red"
+              className="cursor-pointer"
+              onClick={(e) => handleRegionClick(e as any)}
+              data-region="서울경기"
+            />
+
             <polygon
               className={`cls-1 stroke-[2px] ${
                 selectedRegion === "강원"
