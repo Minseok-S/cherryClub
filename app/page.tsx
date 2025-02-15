@@ -109,18 +109,18 @@ export default function Home() {
       });
 
       // // 스크롤 유도 애니메이션 추가
-      // gsap.fromTo(
-      //   ".scroll-indicator",
-      //   { opacity: 1, y: 0 },
-      //   {
-      //     opacity: 0.3,
-      //     y: 20,
-      //     duration: 1.5,
-      //     repeat: -1,
-      //     yoyo: true,
-      //     ease: "power1.inOut",
-      //   }
-      // );
+      gsap.fromTo(
+        ".scroll-indicator",
+        { opacity: 1, y: 0 },
+        {
+          opacity: 0.3,
+          y: 20,
+          duration: 1.5,
+          repeat: -1,
+          yoyo: true,
+          ease: "power1.inOut",
+        }
+      );
     });
 
     return () => ctx.revert();
@@ -150,13 +150,48 @@ export default function Home() {
     }
   }, [selectedRegion]);
 
+  {
+    /* 스크롤시 헤더 생성*/
+  }
+  useEffect(() => {
+    const header = document.getElementById("main-header");
+    const title = document.querySelector(".title-text-wrapper");
+
+    ScrollTrigger.create({
+      trigger: title,
+      start: "top top",
+      end: "bottom top",
+      onLeaveBack: () => {
+        if (!selectedRegion) {
+          gsap.to(header, { opacity: 0, y: -20, duration: 0.3 });
+        }
+      },
+      onEnter: () => {
+        if (!selectedRegion) {
+          gsap.to(header, { opacity: 1, y: 0, duration: 0.3 });
+        }
+      },
+    });
+  }, [selectedRegion]); // selectedRegion을 의존성 배열에 추가
+
+  // 모달 상태 변경시 헤더 가림
+  useEffect(() => {
+    const header = document.getElementById("main-header");
+    if (selectedRegion) {
+      gsap.to(header, { opacity: 0, y: -20, duration: 0.3 });
+    }
+  }, [selectedRegion]);
+
+  {
+    /*스크롤 이동시 모달페이지 닫힘 */
+  }
   useEffect(() => {
     ScrollTrigger.create({
       trigger: mapRef.current,
       start: "top center+=200",
       end: "bottom top",
       onUpdate: (self) => {
-        if (self.direction !== 0) {
+        if (self.direction === 1) {
           setSelectedRegion(null);
         }
       },
@@ -170,34 +205,65 @@ export default function Home() {
 
   return (
     <div className="min-h-[200vh] relative">
-      <header>
-        <div className="container mx-auto px-4 py-4 flex justify-between items-center">
+      {/* 스크롤 유도 */}
+      <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-10">
+        <div className="scroll-indicator animate-bounce">
+          <svg
+            className="h-8 md:h-12 text-red-500"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M19 14l-7 7m0 0l-7-7m7 7V3"
+            />
+          </svg>
+        </div>
+      </div>
+
+      <header className="fixed top-0 w-full z-50 opacity-0" id="main-header">
+        <div className="container mx-auto px-4 py-4 flex justify-between items-center ">
           {/* 로고 */}
-          <div className="text-xl font-bold">CHERRY CLUB</div>
+          <img
+            src="/logo.png"
+            alt="Cherry Club Logo"
+            className="h-8 md:h-20 w-auto" // 실제 로고 크기에 맞게 조정 필요
+          />
 
           {/* 네비게이션 메뉴 */}
-          <nav className="hidden md:flex space-x-6">
-            <a href="#" className="hover:text-gray-300 text-xl font-black">
+          <nav className="hidden md:flex md:space-x-6 ">
+            <a href="#" className="hover:text-gray-300  md:text-xl font-black">
               소개
             </a>
             <a
               href="#campus"
-              className="hover:text-gray-300 text-xl font-black"
+              className="hover:text-gray-300  md:text-xl font-black"
             >
               현황
             </a>
-            <a href="#" className="hover:text-gray-300 text-xl font-black">
-              동아리
+            <a href="#" className="hover:text-gray-300  md:text-xl font-black">
+              리더십 훈련
             </a>
-            <a href="#" className="hover:text-gray-300 text-xl font-black">
-              신청
+            <a href="#" className="hover:text-gray-300  md:text-xl font-black">
+              캠퍼스 사역
+            </a>
+            <a href="#" className="hover:text-gray-300  md:text-xl font-black">
+              전체 / 지역모임
+            </a>
+            <a href="#" className="hover:text-gray-300  md:text-xl font-black">
+              대외 사역
             </a>
           </nav>
         </div>
       </header>
-      <div className="flex items-center justify-center overflow-hidden">
+
+      {/*타이틀 */}
+      <div className="flex items-center justify-center">
         <div className="title-text-wrapper relative whitespace-nowrap">
-          <h1 className="title-text text-[120px] md:text-[250px] font-black inline-block">
+          <h1 className="title-text text-[clamp(50px,10vw,100px)] md:text-[clamp(100px,12vw,250px)] font-black">
             CHERRY CLUB
           </h1>
         </div>
@@ -205,7 +271,7 @@ export default function Home() {
 
       {/* 체리동아리 소개 */}
       <div className="flex justify-center">
-        <p className="w-[90%] lg:w-[60%] relative mb-10 md:text-[20px] font-black text-center">
+        <p className="w-[80%] lg:w-[60%] relative mb-10 text-[15px] md:text-[20px] font-black text-center">
           체리동아리란체리동아리란체리동아리란체리동아리란체리동아리란체리동아리란체리동아리란체리동아리란체리동아리란체리동아리란체리동아리란체리동아리란체리동아리란체리동아리란체리동아리란체리동아리란체리동아리란체리동아리란체리동아리란체리동아리란체리동아리란체리동아리란체리동아리란체리동아리란체리동아리란체리동아리란체리동아리란체리동아리란체리동아리란체리동아리란체리동아리란
         </p>
       </div>
@@ -225,27 +291,8 @@ export default function Home() {
         </a>
       </div>
 
-      {/* 스크롤 유도 */}
-      <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-10">
-        <div className="scroll-indicator animate-bounce">
-          <svg
-            className="w-12 h-12 text-red-500"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M19 14l-7 7m0 0l-7-7m7 7V3"
-            />
-          </svg>
-        </div>
-      </div>
-
       {/* 현황 지도 */}
-      <div id="campus" className="flex justify-center w-full h-44 md:h-16">
+      <div id="campus" className="flex justify-center w-full h-96 md:h-96">
         <div className="w-[90%] md:w-[90%] lg:w-[60%] relative" ref={mapRef}>
           <p className="text-center md:text-[40px] font-black">
             전국 동아리 현황
@@ -338,7 +385,7 @@ export default function Home() {
 
         <div
           ref={modalRef}
-          className="fixed top-0 right-0 w-[40%] h-full bg-black shadow-lg transform opacity-0 p-6"
+          className="fixed top-0 right-0 w-[50%] md:w-[30%] h-full bg-black shadow-lg transform opacity-0 p-6"
         >
           {selectedRegion && (
             <div className="animate-fadeIn">
@@ -365,8 +412,6 @@ export default function Home() {
             </div>
           )}
         </div>
-
-        <div></div>
       </div>
     </div>
   );
