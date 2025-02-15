@@ -91,13 +91,6 @@ export default function Home() {
     const ctx = gsap.context(() => {
       const mediaQuery = window.matchMedia("(min-width: 768px)");
 
-      gsap.to(".title-text-wrapper", {
-        x: "-50%",
-        repeat: -1,
-        duration: 30,
-        ease: "none",
-      });
-
       gsap.set(mapRef.current, {
         scale: mediaQuery.matches ? 0.2 : 0.3,
         opacity: 0,
@@ -114,6 +107,20 @@ export default function Home() {
         opacity: 1,
         duration: 1,
       });
+
+      // // 스크롤 유도 애니메이션 추가
+      // gsap.fromTo(
+      //   ".scroll-indicator",
+      //   { opacity: 1, y: 0 },
+      //   {
+      //     opacity: 0.3,
+      //     y: 20,
+      //     duration: 1.5,
+      //     repeat: -1,
+      //     yoyo: true,
+      //     ease: "power1.inOut",
+      //   }
+      // );
     });
 
     return () => ctx.revert();
@@ -163,28 +170,86 @@ export default function Home() {
 
   return (
     <div className="min-h-[200vh] relative">
-      <header></header>
+      <header>
+        <div className="container mx-auto px-4 py-4 flex justify-between items-center">
+          {/* 로고 */}
+          <div className="text-xl font-bold">CHERRY CLUB</div>
+
+          {/* 네비게이션 메뉴 */}
+          <nav className="hidden md:flex space-x-6">
+            <a href="#" className="hover:text-gray-300 text-xl font-black">
+              소개
+            </a>
+            <a
+              href="#campus"
+              className="hover:text-gray-300 text-xl font-black"
+            >
+              현황
+            </a>
+            <a href="#" className="hover:text-gray-300 text-xl font-black">
+              동아리
+            </a>
+            <a href="#" className="hover:text-gray-300 text-xl font-black">
+              신청
+            </a>
+          </nav>
+        </div>
+      </header>
       <div className="flex items-center justify-center overflow-hidden">
         <div className="title-text-wrapper relative whitespace-nowrap">
-          {[...Array(10)].map((_, i) => (
-            <h1
-              key={i}
-              className="title-text text-[120px] md:text-[250px] font-black mt-10 inline-block"
-            >
-              CHERRY CLUB &nbsp;&nbsp;
-            </h1>
-          ))}
+          <h1 className="title-text text-[120px] md:text-[250px] font-black inline-block">
+            CHERRY CLUB
+          </h1>
         </div>
       </div>
 
+      {/* 체리동아리 소개 */}
       <div className="flex justify-center">
-        <p className="w-[90%] lg:w-[60%] relative mb-6 md:text-[20px] font-black text-center">
-          체리동아리란체리동아리란체리동아리란체리동아리란체리동아리란체리동아리란체리동아리란체리동아리란체리동아리란체리동아리란체리동아리란체리동아리란체리동아리란체리동아리란체리동아리란체리동아리란체리동아리란체리동아리란체리동아리란체리동아리란체리동아리란체리동아리란체리동아리란체리동아리란체리동아리란체리동아리란체리동아리란체리동아리란체리동아리란
+        <p className="w-[90%] lg:w-[60%] relative mb-10 md:text-[20px] font-black text-center">
+          체리동아리란체리동아리란체리동아리란체리동아리란체리동아리란체리동아리란체리동아리란체리동아리란체리동아리란체리동아리란체리동아리란체리동아리란체리동아리란체리동아리란체리동아리란체리동아리란체리동아리란체리동아리란체리동아리란체리동아리란체리동아리란체리동아리란체리동아리란체리동아리란체리동아리란체리동아리란체리동아리란체리동아리란체리동아리란체리동아리란체리동아리란
         </p>
       </div>
 
-      <div className="flex justify-center w-full h-44 md:h-96">
+      {/* 체리동아리 신청 */}
+      <div className="flex justify-center">
+        <a
+          href="https://forms.gle/hMReZhWNUYfeMYe78"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="w-[50%] md:w-[10%]  relative mb-10 md:text-[20px] font-black text-center
+                    bg-red-500 text-white py-4 px-8 rounded-full hover:bg-red-600 
+                    transition-colors duration-300 transform hover:scale-105
+                    shadow-lg"
+        >
+          신청하기
+        </a>
+      </div>
+
+      {/* 스크롤 유도 */}
+      <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-10">
+        <div className="scroll-indicator animate-bounce">
+          <svg
+            className="w-12 h-12 text-red-500"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M19 14l-7 7m0 0l-7-7m7 7V3"
+            />
+          </svg>
+        </div>
+      </div>
+
+      {/* 현황 지도 */}
+      <div id="campus" className="flex justify-center w-full h-44 md:h-16">
         <div className="w-[90%] md:w-[90%] lg:w-[60%] relative" ref={mapRef}>
+          <p className="text-center md:text-[40px] font-black">
+            전국 동아리 현황
+          </p>
           <svg
             id="지도"
             data-name="한국지도"
@@ -300,6 +365,8 @@ export default function Home() {
             </div>
           )}
         </div>
+
+        <div></div>
       </div>
     </div>
   );
