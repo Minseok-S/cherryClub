@@ -261,7 +261,7 @@ export default function Home() {
               href="https://forms.gle/hMReZhWNUYfeMYe78"
               target="_blank"
               className="bg-red-500 text-white px-4 py-2 rounded-full hover:bg-red-600 
-                          transition-colors duration-300 text-sm md:text-base font-black"
+                          transition-colors duration-300 text-xs md:text-base font-black"
             >
               신청하기
             </a>
