@@ -3,6 +3,11 @@ import { useEffect, useRef, useState } from "react";
 import { useAnimation, motion } from "framer-motion";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Autoplay, Pagination, Navigation } from "swiper/modules";
+import "swiper/swiper-bundle.css";
+import "swiper/css/pagination";
+import "swiper/css/navigation";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -304,7 +309,7 @@ export default function Home() {
 
       {/* 체리동아리 소개 */}
       <div className="flex justify-center">
-        <p className="w-[90%] lg:w-[60%] relative mb-10 text-[14px] md:text-[30px] font-black text-center break-keep">
+        <p className="w-[80%] lg:w-[60%] relative mb-10 text-[14px] md:text-[30px] font-black text-center break-keep">
           {lines.map((line, lineIndex) => (
             <motion.span
               key={lineIndex}
@@ -345,7 +350,7 @@ export default function Home() {
       </div>
 
       {/* 현황 지도 */}
-      <div id="campus" className="flex justify-center w-full h-96 md:h-96">
+      <div id="campus" className="flex justify-center w-full h-96 md:h-[70rem]">
         <div className="w-[90%] md:w-[90%] lg:w-[60%] relative" ref={mapRef}>
           <p className="text-center md:text-[40px] font-black">
             전국 동아리 현황
@@ -476,6 +481,77 @@ export default function Home() {
             </div>
           )}
         </div>
+      </div>
+
+      {/*리더십 훈련 */}
+      <div className="py-20 px-4">
+        <h2 className="text-4xl md:text-6xl font-black text-center mb-12">
+          리더십 훈련
+        </h2>
+        <Swiper
+          loop={true}
+          speed={800}
+          spaceBetween={30}
+          centeredSlides={true}
+          autoplay={{
+            delay: 2500,
+            disableOnInteraction: false,
+            waitForTransition: false,
+          }}
+          pagination={{
+            clickable: true,
+          }}
+          navigation={true}
+          modules={[Autoplay, Pagination, Navigation]}
+          className="max-w-4xl mx-auto"
+          breakpoints={{
+            640: {
+              slidesPerView: 1,
+            },
+            768: {
+              slidesPerView: 1,
+            },
+            1024: {
+              slidesPerView: 1,
+            },
+          }}
+        >
+          <SwiperSlide>
+            <img
+              src="/training1.jpeg"
+              alt="리더십 훈련 1"
+              className="rounded-2xl object-cover h-96 w-full"
+            />
+          </SwiperSlide>
+          <SwiperSlide>
+            <img
+              src="/training2.jpeg"
+              alt="리더십 훈련 2"
+              className="rounded-2xl object-cover h-96 w-full"
+            />
+          </SwiperSlide>
+          <SwiperSlide>
+            <img
+              src="/training3.jpeg"
+              alt="리더십 훈련 3"
+              className="rounded-2xl object-cover h-96 w-full"
+            />
+          </SwiperSlide>
+          <SwiperSlide>
+            <img
+              src="/training4.jpeg"
+              alt="리더십 훈련 3"
+              className="rounded-2xl object-cover h-96 w-full"
+            />
+          </SwiperSlide>
+          <SwiperSlide>
+            <img
+              src="/training5.jpeg"
+              alt="리더십 훈련 3"
+              className="rounded-2xl object-cover h-96 w-full"
+            />
+          </SwiperSlide>
+        </Swiper>
       </div>
     </div>
   );
