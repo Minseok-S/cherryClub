@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
+import { useAnimation, motion } from "framer-motion";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
@@ -86,6 +87,29 @@ export default function Home() {
   const mapRef = useRef(null);
   const modalRef = useRef<HTMLDivElement>(null);
   const [selectedRegion, setSelectedRegion] = useState<string | null>(null);
+
+  const text =
+    "체리 동아리는 '체인저 리더십(Changer Leadership) 동아리'의 준말로, 성경적 리더십 훈련을 통해 나를 변화시키고, 내가 속한 사회의 각 영역을 변화시키는 동아리입니다!";
+
+  const lines = text.split("\n"); // 줄 단위로 나누기
+  const lineControls = useAnimation(); // 줄 애니메이션 컨트롤
+  const charControls = lines.map(() => useAnimation()); // 각 줄의 문자 애니메이션 컨트롤
+
+  useEffect(() => {
+    async function sequence() {
+      for (let i = 0; i < lines.length; i++) {
+        await lineControls.start((index) =>
+          index === i ? { opacity: 1, transition: { duration: 0.3 } } : {}
+        ); // 현재 줄을 나타나게 함
+
+        await charControls[i].start((charIndex) => ({
+          opacity: 1,
+          transition: { delay: charIndex * 0.05 },
+        })); // 해당 줄의 문자들이 하나씩 나타남
+      }
+    }
+    sequence();
+  }, [lineControls, charControls]);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -280,8 +304,28 @@ export default function Home() {
 
       {/* 체리동아리 소개 */}
       <div className="flex justify-center">
-        <p className="w-[80%] lg:w-[60%] relative mb-10 text-[15px] md:text-[20px] font-black text-center">
-          체리동아리란체리동아리란체리동아리란체리동아리란체리동아리란체리동아리란체리동아리란체리동아리란체리동아리란체리동아리란체리동아리란체리동아리란체리동아리란체리동아리란체리동아리란체리동아리란체리동아리란체리동아리란체리동아리란체리동아리란체리동아리란체리동아리란체리동아리란체리동아리란체리동아리란체리동아리란체리동아리란체리동아리란체리동아리란체리동아리란체리동아리란
+        <p className="w-[90%] lg:w-[60%] relative mb-10 text-[14px] md:text-[30px] font-black text-center break-keep">
+          {lines.map((line, lineIndex) => (
+            <motion.span
+              key={lineIndex}
+              custom={lineIndex}
+              animate={lineControls}
+              initial={{ opacity: 0 }}
+              className="block"
+            >
+              {line.split("").map((char, charIndex) => (
+                <motion.span
+                  key={charIndex}
+                  custom={charIndex}
+                  animate={charControls[lineIndex]}
+                  initial={{ opacity: 0 }}
+                >
+                  {char}
+                </motion.span>
+              ))}
+              <br />
+            </motion.span>
+          ))}
         </p>
       </div>
 
