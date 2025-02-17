@@ -309,7 +309,7 @@ export default function Home() {
 
       {/* 체리동아리 소개 */}
       <div className="flex justify-center">
-        <p className="w-[80%] lg:w-[60%] relative mb-10 text-[14px] md:text-[30px] font-black text-center break-keep">
+        <p className="w-[80%] lg:w-[70%] relative mb-10 text-[14px] md:text-[30px] font-black text-center break-keep">
           {lines.map((line, lineIndex) => (
             <motion.span
               key={lineIndex}
@@ -340,7 +340,7 @@ export default function Home() {
           href="https://forms.gle/hMReZhWNUYfeMYe78"
           target="_blank"
           rel="noopener noreferrer"
-          className="w-[50%] md:w-[10%]  relative mb-10 md:text-[20px] font-black text-center
+          className="w-[50%] md:w-[30%]  relative mb-10 md:text-[20px] font-black text-center
                     bg-red-500 text-white py-4 px-8 rounded-full hover:bg-red-600 
                     transition-colors duration-300 transform hover:scale-105
                     shadow-lg"
@@ -508,12 +508,12 @@ export default function Home() {
             640: {
               slidesPerView: 1,
             },
-            768: {
-              slidesPerView: 1,
-            },
-            1024: {
-              slidesPerView: 1,
-            },
+            // 768: {
+            //   slidesPerView: 2,
+            // },
+            // 1024: {
+            //   slidesPerView: 1,
+            // },
           }}
         >
           <SwiperSlide>
