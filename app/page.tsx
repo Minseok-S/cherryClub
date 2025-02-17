@@ -151,6 +151,11 @@ export default function Home() {
         return false;
       });
 
+      // 현재 섹션이 'map'이 아니면 모달 닫기
+      if (currentSection && currentSection !== "map") {
+        setSelectedRegion(null);
+      }
+
       setActiveSection(currentSection || "");
     };
 
