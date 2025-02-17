@@ -52,7 +52,7 @@ export default function Home() {
       gsap.to(mapRef.current, {
         scrollTrigger: {
           trigger: mapRef.current,
-          start: mediaQuery.matches ? "top center+=200" : "top center+=150",
+          start: mediaQuery.matches ? "top center+=400" : "top center+=200",
           end: "bottom center",
           scrub: 1,
         },
@@ -61,7 +61,7 @@ export default function Home() {
         duration: 1,
       });
 
-      // // 스크롤 유도 애니메이션 추가
+      // 스크롤 유도 애니메이션 추가
       gsap.fromTo(
         ".scroll-indicator",
         { opacity: 1, y: 0 },
@@ -103,35 +103,14 @@ export default function Home() {
     }
   }, [selectedRegion]);
 
-  {
-    /* 스크롤시 헤더 생성*/
-  }
-  useEffect(() => {
-    const header = document.getElementById("main-header");
-    const title = document.querySelector(".title-text-wrapper");
-
-    ScrollTrigger.create({
-      trigger: title,
-      start: "top top",
-      end: "bottom top",
-      onLeaveBack: () => {
-        if (!selectedRegion) {
-          gsap.to(header, { opacity: 0, y: -20, duration: 0.3 });
-        }
-      },
-      onEnter: () => {
-        if (!selectedRegion) {
-          gsap.to(header, { opacity: 1, y: 0, duration: 0.3 });
-        }
-      },
-    });
-  }, [selectedRegion]); // selectedRegion을 의존성 배열에 추가
-
   // 모달 상태 변경시 헤더 가림
   useEffect(() => {
     const header = document.getElementById("main-header");
     if (selectedRegion) {
       gsap.to(header, { opacity: 0, y: -20, duration: 0.3 });
+    } else {
+      // 모달 닫힐 때 헤더 다시 나타나게 설정
+      gsap.to(header, { opacity: 1, y: 0, duration: 0.3 });
     }
   }, [selectedRegion]);
 
@@ -156,13 +135,26 @@ export default function Home() {
     setSelectedRegion(region === selectedRegion ? null : region);
   };
 
+  const handleScroll = (sectionId: string) => {
+    const section = document.getElementById(sectionId);
+    if (section) {
+      section.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
+    }
+  };
+
   return (
     <div className="min-h-[200vh] relative">
       {/* 스크롤 유도 */}
       <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-10">
-        <div className="scroll-indicator animate-bounce">
+        <div
+          className="scroll-indicator animate-bounce"
+          onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+        >
           <svg
-            className="h-8 md:h-12 text-red-500"
+            className="h-8 md:h-12 text-red-500 cursor-pointer"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -177,26 +169,49 @@ export default function Home() {
         </div>
       </div>
 
-      <header className="fixed top-0 w-full z-50 opacity-0" id="main-header">
+      <header className="fixed top-0 w-full z-50" id="main-header">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
           {/* 로고 및 메뉴 그룹 */}
           <div className="flex items-center space-x-8">
             <img
               src="/logo.png"
               alt="Cherry Club Logo"
-              className="h-8 md:h-20 w-auto"
+              className="h-8 md:h-20 w-auto cursor-pointer"
+              onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
             />
             <nav className="hidden md:flex md:space-x-6">
               <a
                 href="#campus"
+                onClick={(e) => {
+                  e.preventDefault();
+                  document
+                    .getElementById("campus")
+                    ?.scrollIntoView({ behavior: "smooth", block: "center" });
+                }}
                 className="hover:text-gray-300 md:text-xl font-black"
               >
                 현황
               </a>
-              <a href="#" className="hover:text-gray-300 md:text-xl font-black">
+              <a
+                href="#training"
+                onClick={(e) => {
+                  e.preventDefault();
+                  document
+                    .getElementById("training")
+                    ?.scrollIntoView({ behavior: "smooth", block: "center" });
+                }}
+                className="hover:text-gray-300 md:text-xl font-black"
+              >
                 리더십 훈련
               </a>
-              <a href="#" className="hover:text-gray-300 md:text-xl font-black">
+              <a
+                href="#"
+                onClick={(e) => {
+                  e.preventDefault();
+                  window.scrollTo({ top: 0, behavior: "smooth" });
+                }}
+                className="hover:text-gray-300 md:text-xl font-black"
+              >
                 캠퍼스 사역
               </a>
               <a href="#" className="hover:text-gray-300 md:text-xl font-black">
@@ -223,7 +238,7 @@ export default function Home() {
       </header>
 
       {/*타이틀 */}
-      <div className="flex items-center justify-center">
+      <div className="flex items-center justify-center mt-56 md:mt-44">
         <div className="title-text-wrapper relative whitespace-nowrap">
           <h1 className="title-text text-[clamp(50px,10vw,100px)] md:text-[clamp(100px,12vw,250px)] font-black">
             CHERRY CLUB
@@ -264,18 +279,23 @@ export default function Home() {
           href="https://forms.gle/hMReZhWNUYfeMYe78"
           target="_blank"
           rel="noopener noreferrer"
-          className="w-[50%] md:w-[30%]  relative mb-10 md:text-[20px] font-black text-center
+          className="w-[50%] md:w-[30%] relative md:text-[20px] font-black text-center
                     bg-red-500 text-white py-4 px-8 rounded-full hover:bg-red-600 
                     transition-colors duration-300 transform hover:scale-105
                     shadow-lg"
+          style={{ scrollMarginTop: "100px" }}
         >
           신청하기
         </a>
       </div>
 
       {/* 현황 지도 */}
-      <div id="campus" className="flex justify-center w-full h-96 md:h-[70rem]">
-        <div className="w-[90%] md:w-[90%] lg:w-[60%] relative" ref={mapRef}>
+      <div
+        id="campus"
+        className="pb-20 px-4 min-h-screen flex flex-col items-center justify-center"
+        style={{ scrollSnapAlign: "center", scrollMarginTop: "100px" }}
+      >
+        <div className="w-[90%] lg:w-[60%] relative" ref={mapRef}>
           <p className="text-center md:text-[40px] font-black">
             전국 동아리 현황
           </p>
@@ -418,7 +438,11 @@ export default function Home() {
       </div>
 
       {/*리더십 훈련 */}
-      <div className="py-20 px-4">
+      <div
+        id="training"
+        className="pb-20 px-4 min-h-screen flex flex-col items-center justify-center"
+        style={{ scrollSnapAlign: "center", scrollMarginTop: "100px" }}
+      >
         <h2 className="text-4xl md:text-6xl font-black text-center mb-12">
           리더십 훈련
         </h2>
