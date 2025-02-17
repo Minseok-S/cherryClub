@@ -19,6 +19,7 @@ export default function Home() {
   const sections = ["map", "training", "campus", "class", "anthor"]; // 모든 섹션 ID 포함하도록 수정
   const [currentSectionIndex, setCurrentSectionIndex] = useState(-1);
   const [activeSection, setActiveSection] = useState<string>("");
+  const [isLastSection, setIsLastSection] = useState(false);
 
   const text =
     "체리 동아리는 '체인저 리더십(Changer Leadership) 동아리'의 준말로, 성경적 리더십 훈련을 통해 나를 변화시키고, 내가 속한 사회의 각 영역을 변화시키는 동아리입니다!";
@@ -119,22 +120,6 @@ export default function Home() {
     setSelectedRegion(region === selectedRegion ? null : region);
   };
 
-  const scrollToNextSection = () => {
-    const nextIndex = currentSectionIndex + 1;
-    if (nextIndex >= sections.length) {
-      // 마지막 섹션이면 맨 위로 스크롤
-      window.scrollTo({ top: 0, behavior: "smooth" });
-      setCurrentSectionIndex(-1);
-    } else {
-      // 다음 섹션으로 스크롤
-      const nextSection = document.getElementById(sections[nextIndex]);
-      if (nextSection) {
-        nextSection.scrollIntoView({ behavior: "smooth", block: "center" });
-        setCurrentSectionIndex(nextIndex);
-      }
-    }
-  };
-
   useEffect(() => {
     const handleScroll = () => {
       const sections = ["map", "training", "campus", "class", "anthor"];
@@ -154,32 +139,44 @@ export default function Home() {
     };
 
     window.addEventListener("scroll", handleScroll);
+    handleScroll(); // 초기 로드시 실행
+
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  const getSectionName = (section: string) => {
+    const names: { [key: string]: string } = {
+      map: "현황",
+      training: "리더십 훈련",
+      campus: "캠퍼스 사역",
+      class: "전체 / 지역모임",
+      anthor: "대외 사역",
+    };
+    return names[section] || section;
+  };
+
   return (
     <div className="min-h-[200vh] relative">
-      {/* 스크롤 유도 */}
-      <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-10">
-        <div
-          className="scroll-indicator animate-bounce cursor-pointer"
-          onClick={scrollToNextSection}
-        >
-          <svg
-            className="h-8 md:h-12 text-red-500"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M19 14l-7 7m0 0l-7-7m7 7V3"
-            />
-          </svg>
+      {/* 스크롤 유도 - isLastSection이 true일 때 숨김 */}
+      {!isLastSection && (
+        <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-10">
+          <div className="scroll-indicator animate-bounce cursor-pointer">
+            <svg
+              className="h-8 md:h-12 text-red-500"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M19 14l-7 7m0 0l-7-7m7 7V3"
+              />
+            </svg>
+          </div>
         </div>
-      </div>
+      )}
 
       <header className="fixed top-0 w-full z-50" id="main-header">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
@@ -194,56 +191,23 @@ export default function Home() {
               onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
             />
             <nav className="hidden md:flex md:space-x-6">
-              <a
-                href="#map"
-                onClick={(e) => {
-                  e.preventDefault();
-                  document
-                    .getElementById("map")
-                    ?.scrollIntoView({ behavior: "smooth", block: "center" });
-                }}
-                className={`hover:text-gray-300 md:text-xl font-black ${
-                  activeSection === "map" ? "text-red-500" : ""
-                }`}
-              >
-                현황
-              </a>
-              <a
-                href="#training"
-                onClick={(e) => {
-                  e.preventDefault();
-                  document
-                    .getElementById("training")
-                    ?.scrollIntoView({ behavior: "smooth", block: "center" });
-                }}
-                className={`hover:text-gray-300 md:text-xl font-black ${
-                  activeSection === "training" ? "text-red-500" : ""
-                }`}
-              >
-                리더십 훈련
-              </a>
-              <a
-                href="#campus"
-                onClick={(e) => {
-                  e.preventDefault();
-                  window.scrollTo({ top: 0, behavior: "smooth" });
-                }}
-                className="hover:text-gray-300 md:text-xl font-black"
-              >
-                캠퍼스 사역
-              </a>
-              <a
-                href="#class"
-                className="hover:text-gray-300 md:text-xl font-black"
-              >
-                전체 / 지역모임
-              </a>
-              <a
-                href="#anthor"
-                className="hover:text-gray-300 md:text-xl font-black"
-              >
-                대외 사역
-              </a>
+              {sections.map((section) => (
+                <a
+                  key={section}
+                  href={`#${section}`}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    document
+                      .getElementById(section)
+                      ?.scrollIntoView({ behavior: "smooth", block: "center" });
+                  }}
+                  className={`hover:text-gray-300 md:text-xl font-black ${
+                    activeSection === section ? "text-red-500" : ""
+                  }`}
+                >
+                  {getSectionName(section)}
+                </a>
+              ))}
             </nav>
           </div>
 
@@ -789,6 +753,22 @@ export default function Home() {
             />
           </SwiperSlide>
         </Swiper>
+      </div>
+
+      {/* 체리동아리 신청 */}
+      <div id="last" className="flex justify-center pb-20 ">
+        <a
+          href="https://forms.gle/hMReZhWNUYfeMYe78"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="w-[50%] md:w-[30%] relative md:text-[20px] font-black text-center
+                    bg-red-500 text-white py-4 px-8 rounded-full hover:bg-red-600 
+                    transition-colors duration-300 transform hover:scale-105
+                    shadow-lg"
+          style={{ scrollSnapAlign: "center", scrollMarginTop: "100px" }}
+        >
+          신청하기
+        </a>
       </div>
     </div>
   );
