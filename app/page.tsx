@@ -22,17 +22,35 @@ export default function Home() {
   const text =
     "체리 동아리는 '체인저 리더십(Changer Leadership) 동아리'의 준말로, 성경적 리더십 훈련을 통해 나를 변화시키고, 내가 속한 사회의 각 영역을 변화시키는 동아리입니다!";
 
-  const lines = text.split("\n"); // 줄 단위로 나누기
-
   useEffect(() => {
-    const textElements = document.querySelectorAll(".animate-text");
-    textElements.forEach((element, index) => {
-      gsap.to(element, {
+    const chars = text.split("");
+    const container = document.createElement("div");
+    container.className =
+      "w-[80%] lg:w-[70%] relative mb-10 text-[14px] md:text-[30px] font-black text-center break-keep mx-auto";
+
+    chars.forEach((char, index) => {
+      const span = document.createElement("span");
+      span.textContent = char;
+      span.style.opacity = "0";
+      if (char === " ") {
+        span.style.marginRight = "0.25em";
+      }
+      span.style.wordBreak = "keep-all";
+      container.appendChild(span);
+
+      gsap.to(span, {
         opacity: 1,
-        duration: 0.5,
-        delay: index * 0.1,
+        duration: 0.1,
+        delay: index * 0.05,
+        ease: "none",
       });
     });
+
+    const textWrapper = document.querySelector(".text-wrapper");
+    if (textWrapper) {
+      textWrapper.innerHTML = "";
+      textWrapper.appendChild(container);
+    }
   }, []);
 
   useEffect(() => {
@@ -232,18 +250,11 @@ export default function Home() {
 
       {/* 체리동아리 소개 */}
       <div className="flex justify-center">
-        <p className="w-[80%] lg:w-[70%] relative mb-10 text-[14px] md:text-[30px] font-black text-center break-keep">
-          {lines.map((line, lineIndex) => (
-            <span
-              key={lineIndex}
-              className="block animate-text"
-              style={{ opacity: 0 }}
-            >
-              {line}
-              <br />
-            </span>
-          ))}
-        </p>
+        <div className="text-wrapper w-full flex justify-center">
+          <p className="w-[80%] lg:w-[70%] relative mb-10 text-[14px] md:text-[30px] font-black text-center break-keep break-words">
+            {text}
+          </p>
+        </div>
       </div>
 
       {/* 체리동아리 신청 */}
