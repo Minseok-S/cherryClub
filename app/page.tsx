@@ -16,10 +16,8 @@ export default function Home() {
   const mapRef = useRef(null);
   const modalRef = useRef<HTMLDivElement>(null);
   const [selectedRegion, setSelectedRegion] = useState<string | null>(null);
-  const sections = ["map", "training", "campus", "class", "anthor"]; // 모든 섹션 ID 포함하도록 수정
-  const [currentSectionIndex, setCurrentSectionIndex] = useState(-1);
+  const sections = ["map", "training", "campus", "class", "anthor"];
   const [activeSection, setActiveSection] = useState<string>("");
-  const [isLastSection, setIsLastSection] = useState(false);
 
   const text =
     "체리 동아리는 '체인저 리더십(Changer Leadership) 동아리'의 준말로, 성경적 리더십 훈련을 통해 나를 변화시키고, 내가 속한 사회의 각 영역을 변화시키는 동아리입니다!";
@@ -157,26 +155,24 @@ export default function Home() {
 
   return (
     <div className="min-h-[200vh] relative">
-      {/* 스크롤 유도 - isLastSection이 true일 때 숨김 */}
-      {!isLastSection && (
-        <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-10">
-          <div className="scroll-indicator animate-bounce cursor-pointer">
-            <svg
-              className="h-8 md:h-12 text-red-500"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M19 14l-7 7m0 0l-7-7m7 7V3"
-              />
-            </svg>
-          </div>
+      {/* 스크롤 유도 */}
+      <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-10">
+        <div className="scroll-indicator animate-bounce cursor-pointer">
+          <svg
+            className="h-8 md:h-12 text-red-500"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M19 14l-7 7m0 0l-7-7m7 7V3"
+            />
+          </svg>
         </div>
-      )}
+      </div>
 
       <header className="fixed top-0 w-full z-50" id="main-header">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
