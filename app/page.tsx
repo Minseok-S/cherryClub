@@ -9,6 +9,7 @@ import "swiper/swiper-bundle.css";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
 import { regionData } from "@/src/entities/campus";
+import Image from "next/image";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -16,6 +17,8 @@ export default function Home() {
   const mapRef = useRef(null);
   const modalRef = useRef<HTMLDivElement>(null);
   const [selectedRegion, setSelectedRegion] = useState<string | null>(null);
+  const sections = ["campus", "training"]; // 섹션 ID 배열 추가
+  const [currentSectionIndex, setCurrentSectionIndex] = useState(-1); // 현재 섹션 인덱스 상태 추가
 
   const text =
     "체리 동아리는 '체인저 리더십(Changer Leadership) 동아리'의 준말로, 성경적 리더십 훈련을 통해 나를 변화시키고, 내가 속한 사회의 각 영역을 변화시키는 동아리입니다!";
@@ -145,16 +148,32 @@ export default function Home() {
     }
   };
 
+  const scrollToNextSection = () => {
+    const nextIndex = currentSectionIndex + 1;
+    if (nextIndex >= sections.length) {
+      // 마지막 섹션이면 맨 위로 스크롤
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      setCurrentSectionIndex(-1);
+    } else {
+      // 다음 섹션으로 스크롤
+      const nextSection = document.getElementById(sections[nextIndex]);
+      if (nextSection) {
+        nextSection.scrollIntoView({ behavior: "smooth", block: "center" });
+        setCurrentSectionIndex(nextIndex);
+      }
+    }
+  };
+
   return (
     <div className="min-h-[200vh] relative">
       {/* 스크롤 유도 */}
       <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-10">
         <div
-          className="scroll-indicator animate-bounce"
-          onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+          className="scroll-indicator animate-bounce cursor-pointer"
+          onClick={scrollToNextSection}
         >
           <svg
-            className="h-8 md:h-12 text-red-500 cursor-pointer"
+            className="h-8 md:h-12 text-red-500"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -173,9 +192,11 @@ export default function Home() {
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
           {/* 로고 및 메뉴 그룹 */}
           <div className="flex items-center space-x-8">
-            <img
+            <Image
               src="/logo.png"
               alt="Cherry Club Logo"
+              width={80}
+              height={80}
               className="h-8 md:h-20 w-auto cursor-pointer"
               onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
             />
@@ -461,52 +482,56 @@ export default function Home() {
           }}
           navigation={true}
           modules={[Autoplay, Pagination, Navigation]}
-          className="max-w-4xl mx-auto"
+          className="w-[90%] md:w-[800px] mx-auto"
           breakpoints={{
             640: {
               slidesPerView: 1,
             },
-            // 768: {
-            //   slidesPerView: 2,
-            // },
-            // 1024: {
-            //   slidesPerView: 1,
-            // },
           }}
         >
           <SwiperSlide>
-            <img
+            <Image
               src="/training1.jpeg"
               alt="리더십 훈련 1"
-              className="rounded-2xl object-cover h-96 w-full"
+              width={1200}
+              height={600}
+              className="rounded-2xl object-cover h-[200px] md:h-[400px] w-full"
             />
           </SwiperSlide>
           <SwiperSlide>
-            <img
+            <Image
               src="/training2.jpeg"
               alt="리더십 훈련 2"
-              className="rounded-2xl object-cover h-96 w-full"
+              width={1200}
+              height={600}
+              className="rounded-2xl object-cover h-[200px] md:h-[400px] w-full"
             />
           </SwiperSlide>
           <SwiperSlide>
-            <img
+            <Image
               src="/training3.jpeg"
               alt="리더십 훈련 3"
-              className="rounded-2xl object-cover h-96 w-full"
+              width={1200}
+              height={600}
+              className="rounded-2xl object-cover h-[200px] md:h-[400px] w-full"
             />
           </SwiperSlide>
           <SwiperSlide>
-            <img
+            <Image
               src="/training4.jpeg"
               alt="리더십 훈련 3"
-              className="rounded-2xl object-cover h-96 w-full"
+              width={1200}
+              height={600}
+              className="rounded-2xl object-cover h-[200px] md:h-[400px] w-full"
             />
           </SwiperSlide>
           <SwiperSlide>
-            <img
+            <Image
               src="/training5.jpeg"
               alt="리더십 훈련 3"
-              className="rounded-2xl object-cover h-96 w-full"
+              width={1200}
+              height={600}
+              className="rounded-2xl object-cover h-[200px] md:h-[400px] w-full"
             />
           </SwiperSlide>
         </Swiper>
