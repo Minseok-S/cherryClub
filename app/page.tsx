@@ -16,8 +16,9 @@ export default function Home() {
   const mapRef = useRef(null);
   const modalRef = useRef<HTMLDivElement>(null);
   const [selectedRegion, setSelectedRegion] = useState<string | null>(null);
-  const sections = ["campus", "training"]; // 섹션 ID 배열 추가
-  const [currentSectionIndex, setCurrentSectionIndex] = useState(-1); // 현재 섹션 인덱스 상태 추가
+  const sections = ["map", "training", "campus", "class", "anthor"]; // 모든 섹션 ID 포함하도록 수정
+  const [currentSectionIndex, setCurrentSectionIndex] = useState(-1);
+  const [activeSection, setActiveSection] = useState<string>("");
 
   const text =
     "체리 동아리는 '체인저 리더십(Changer Leadership) 동아리'의 준말로, 성경적 리더십 훈련을 통해 나를 변화시키고, 내가 속한 사회의 각 영역을 변화시키는 동아리입니다!";
@@ -109,21 +110,9 @@ export default function Home() {
     }
   }, [selectedRegion]);
 
-  {
-    /*스크롤 이동시 모달페이지 닫힘 */
-  }
-  useEffect(() => {
-    ScrollTrigger.create({
-      trigger: mapRef.current,
-      start: "top center+=200",
-      end: "bottom top",
-      onUpdate: (self) => {
-        if (self.direction === 1) {
-          setSelectedRegion(null);
-        }
-      },
-    });
-  }, []);
+  const handleModalClose = () => {
+    setSelectedRegion(null);
+  };
 
   const handleRegionClick = (e: React.MouseEvent<SVGElement, MouseEvent>) => {
     const region = e.currentTarget.getAttribute("data-region");
@@ -145,6 +134,28 @@ export default function Home() {
       }
     }
   };
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const sections = ["map", "training", "campus", "class", "anthor"];
+      const currentSection = sections.find((section) => {
+        const element = document.getElementById(section);
+        if (element) {
+          const rect = element.getBoundingClientRect();
+          return (
+            rect.top <= window.innerHeight / 2 &&
+            rect.bottom >= window.innerHeight / 2
+          );
+        }
+        return false;
+      });
+
+      setActiveSection(currentSection || "");
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   return (
     <div className="min-h-[200vh] relative">
@@ -184,14 +195,16 @@ export default function Home() {
             />
             <nav className="hidden md:flex md:space-x-6">
               <a
-                href="#campus"
+                href="#map"
                 onClick={(e) => {
                   e.preventDefault();
                   document
-                    .getElementById("campus")
+                    .getElementById("map")
                     ?.scrollIntoView({ behavior: "smooth", block: "center" });
                 }}
-                className="hover:text-gray-300 md:text-xl font-black"
+                className={`hover:text-gray-300 md:text-xl font-black ${
+                  activeSection === "map" ? "text-red-500" : ""
+                }`}
               >
                 현황
               </a>
@@ -203,12 +216,14 @@ export default function Home() {
                     .getElementById("training")
                     ?.scrollIntoView({ behavior: "smooth", block: "center" });
                 }}
-                className="hover:text-gray-300 md:text-xl font-black"
+                className={`hover:text-gray-300 md:text-xl font-black ${
+                  activeSection === "training" ? "text-red-500" : ""
+                }`}
               >
                 리더십 훈련
               </a>
               <a
-                href="#"
+                href="#campus"
                 onClick={(e) => {
                   e.preventDefault();
                   window.scrollTo({ top: 0, behavior: "smooth" });
@@ -217,10 +232,16 @@ export default function Home() {
               >
                 캠퍼스 사역
               </a>
-              <a href="#" className="hover:text-gray-300 md:text-xl font-black">
+              <a
+                href="#class"
+                className="hover:text-gray-300 md:text-xl font-black"
+              >
                 전체 / 지역모임
               </a>
-              <a href="#" className="hover:text-gray-300 md:text-xl font-black">
+              <a
+                href="#anthor"
+                className="hover:text-gray-300 md:text-xl font-black"
+              >
                 대외 사역
               </a>
             </nav>
@@ -283,11 +304,11 @@ export default function Home() {
 
       {/* 현황 지도 */}
       <div
-        id="campus"
+        id="map"
         className="pb-20 px-4 min-h-screen flex flex-col items-center justify-center"
         style={{ scrollSnapAlign: "center", scrollMarginTop: "100px" }}
       >
-        <div className="w-[90%] lg:w-[60%] relative" ref={mapRef}>
+        <div className="w-[100%] md:w-[110%] lg:w-[60%] relative" ref={mapRef}>
           <p className="text-center md:text-[40px] font-black">
             전국 동아리 현황
           </p>
@@ -400,11 +421,36 @@ export default function Home() {
 
         <div
           ref={modalRef}
-          className="fixed top-0 right-0 w-[50%] md:w-[30%] h-full bg-black shadow-lg transform opacity-0 p-6"
+          className="fixed top-0 right-0 w-[50%] md:w-[40%] h-full bg-black shadow-lg transform opacity-0 p-6 overflow-y-auto z-50"
         >
           {selectedRegion && (
-            <div className="animate-fadeIn">
-              <h2 className="text-2xl font-bold mb-4">
+            <div className="animate-fadeIn relative">
+              <button
+                onClick={handleModalClose}
+                className="absolute top-0 right-0 p-2 text-gray-400 hover:text-white z-50"
+              >
+                <svg
+                  className="w-6 h-6"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
+              </button>
+
+              <div
+                className="fixed inset-0 bg-black bg-opacity-50"
+                onClick={handleModalClose}
+                style={{ zIndex: -1 }}
+              />
+
+              <h2 className="text-2xl font-bold mb-4 pr-8">
                 {regionData[selectedRegion].name}
               </h2>
               <p className="text-gray-600 mb-4">
@@ -499,6 +545,243 @@ export default function Home() {
           <SwiperSlide>
             <Image
               src="/training5.jpeg"
+              alt="리더십 훈련 3"
+              width={1200}
+              height={600}
+              className="rounded-2xl object-cover h-[200px] md:h-[400px] w-full"
+            />
+          </SwiperSlide>
+        </Swiper>
+      </div>
+
+      {/*캠퍼스 훈련 */}
+      <div
+        id="campus"
+        className="pb-20 px-4 min-h-screen flex flex-col items-center justify-center"
+        style={{ scrollSnapAlign: "center", scrollMarginTop: "100px" }}
+      >
+        <h2 className="text-4xl md:text-6xl font-black text-center mb-12">
+          캠퍼스 사역
+        </h2>
+        <Swiper
+          loop={true}
+          speed={800}
+          spaceBetween={30}
+          centeredSlides={true}
+          autoplay={{
+            delay: 2500,
+            disableOnInteraction: false,
+            waitForTransition: false,
+          }}
+          pagination={{
+            clickable: true,
+          }}
+          navigation={true}
+          modules={[Autoplay, Pagination, Navigation]}
+          className="w-[90%] md:w-[1000px] mx-auto"
+          breakpoints={{
+            640: {
+              slidesPerView: 2,
+            },
+          }}
+        >
+          <SwiperSlide>
+            <Image
+              src="/campus1.jpg"
+              alt="리더십 훈련 1"
+              width={1200}
+              height={600}
+              className="rounded-2xl object-cover h-[200px] md:h-[400px] w-full"
+            />
+          </SwiperSlide>
+          <SwiperSlide>
+            <Image
+              src="/campus2.jpg"
+              alt="리더십 훈련 2"
+              width={1200}
+              height={600}
+              className="rounded-2xl object-cover h-[200px] md:h-[400px] w-full"
+            />
+          </SwiperSlide>
+          <SwiperSlide>
+            <Image
+              src="/campus3.jpg"
+              alt="리더십 훈련 3"
+              width={1200}
+              height={600}
+              className="rounded-2xl object-cover h-[200px] md:h-[400px] w-full"
+            />
+          </SwiperSlide>
+          <SwiperSlide>
+            <Image
+              src="/campus4.jpg"
+              alt="리더십 훈련 3"
+              width={1200}
+              height={600}
+              className="rounded-2xl object-cover h-[200px] md:h-[400px] w-full"
+            />
+          </SwiperSlide>
+          <SwiperSlide>
+            <Image
+              src="/campus5.jpg"
+              alt="리더십 훈련 3"
+              width={1200}
+              height={600}
+              className="rounded-2xl object-cover h-[200px] md:h-[400px] w-full"
+            />
+          </SwiperSlide>
+        </Swiper>
+      </div>
+
+      {/*전체/지역모임 */}
+      <div
+        id="class"
+        className="pb-20 px-4 min-h-screen flex flex-col items-center justify-center"
+        style={{ scrollSnapAlign: "center", scrollMarginTop: "100px" }}
+      >
+        <h2 className="text-4xl md:text-6xl font-black text-center mb-12">
+          전체/지역모임
+        </h2>
+        <Swiper
+          loop={true}
+          speed={800}
+          spaceBetween={30}
+          centeredSlides={true}
+          autoplay={{
+            delay: 2500,
+            disableOnInteraction: false,
+            waitForTransition: false,
+          }}
+          pagination={{
+            clickable: true,
+          }}
+          navigation={true}
+          modules={[Autoplay, Pagination, Navigation]}
+          className="w-[90%] md:w-[800px] mx-auto"
+          breakpoints={{
+            640: {
+              slidesPerView: 1,
+            },
+          }}
+        >
+          <SwiperSlide>
+            <Image
+              src="/class1.jpg"
+              alt="리더십 훈련 1"
+              width={1200}
+              height={600}
+              className="rounded-2xl object-cover h-[200px] md:h-[400px] w-full"
+            />
+          </SwiperSlide>
+          <SwiperSlide>
+            <Image
+              src="/class2.jpeg"
+              alt="리더십 훈련 2"
+              width={1200}
+              height={600}
+              className="rounded-2xl object-cover h-[200px] md:h-[400px] w-full"
+            />
+          </SwiperSlide>
+          <SwiperSlide>
+            <Image
+              src="/class3.jpg"
+              alt="리더십 훈련 3"
+              width={1200}
+              height={600}
+              className="rounded-2xl object-cover h-[200px] md:h-[400px] w-full"
+            />
+          </SwiperSlide>
+          <SwiperSlide>
+            <Image
+              src="/class4.jpg"
+              alt="리더십 훈련 3"
+              width={1200}
+              height={600}
+              className="rounded-2xl object-cover h-[200px] md:h-[400px] w-full"
+            />
+          </SwiperSlide>
+          <SwiperSlide>
+            <Image
+              src="/class5.jpeg"
+              alt="리더십 훈련 3"
+              width={1200}
+              height={600}
+              className="rounded-2xl object-cover h-[200px] md:h-[400px] w-full"
+            />
+          </SwiperSlide>
+        </Swiper>
+      </div>
+
+      {/*대외사역 */}
+      <div
+        id="anthor"
+        className="pb-20 px-4 min-h-screen flex flex-col items-center justify-center"
+        style={{ scrollSnapAlign: "center", scrollMarginTop: "100px" }}
+      >
+        <h2 className="text-4xl md:text-6xl font-black text-center mb-12">
+          대외사역
+        </h2>
+        <Swiper
+          loop={true}
+          speed={800}
+          spaceBetween={30}
+          centeredSlides={true}
+          autoplay={{
+            delay: 2500,
+            disableOnInteraction: false,
+            waitForTransition: false,
+          }}
+          pagination={{
+            clickable: true,
+          }}
+          navigation={true}
+          modules={[Autoplay, Pagination, Navigation]}
+          className="w-[90%] md:w-[800px] mx-auto"
+          breakpoints={{
+            640: {
+              slidesPerView: 1,
+            },
+          }}
+        >
+          <SwiperSlide>
+            <Image
+              src="/anthor1.jpg"
+              alt="리더십 훈련 1"
+              width={1200}
+              height={600}
+              className="rounded-2xl object-cover h-[200px] md:h-[400px] w-full"
+            />
+          </SwiperSlide>
+          <SwiperSlide>
+            <Image
+              src="/anthor2.jpg"
+              alt="리더십 훈련 2"
+              width={1200}
+              height={600}
+              className="rounded-2xl object-cover h-[200px] md:h-[400px] w-full"
+            />
+          </SwiperSlide>
+          <SwiperSlide>
+            <Image
+              src="/anthor3.jpg"
+              alt="리더십 훈련 3"
+              width={1200}
+              height={600}
+              className="rounded-2xl object-cover h-[200px] md:h-[400px] w-full"
+            />
+          </SwiperSlide>
+          <SwiperSlide>
+            <Image
+              src="/anthor4.jpg"
+              alt="리더십 훈련 3"
+              width={1200}
+              height={600}
+              className="rounded-2xl object-cover h-[200px] md:h-[400px] w-full"
+            />
+          </SwiperSlide>
+          <SwiperSlide>
+            <Image
+              src="/anthor5.jpg"
               alt="리더십 훈련 3"
               width={1200}
               height={600}
