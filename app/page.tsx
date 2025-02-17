@@ -1,6 +1,5 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
-import { useAnimation, motion } from "framer-motion";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -24,24 +23,17 @@ export default function Home() {
     "체리 동아리는 '체인저 리더십(Changer Leadership) 동아리'의 준말로, 성경적 리더십 훈련을 통해 나를 변화시키고, 내가 속한 사회의 각 영역을 변화시키는 동아리입니다!";
 
   const lines = text.split("\n"); // 줄 단위로 나누기
-  const lineControls = useAnimation(); // 줄 애니메이션 컨트롤
-  const charControls = lines.map(() => useAnimation()); // 각 줄의 문자 애니메이션 컨트롤
 
   useEffect(() => {
-    async function sequence() {
-      for (let i = 0; i < lines.length; i++) {
-        await lineControls.start((index) =>
-          index === i ? { opacity: 1, transition: { duration: 0.3 } } : {}
-        ); // 현재 줄을 나타나게 함
-
-        await charControls[i].start((charIndex) => ({
-          opacity: 1,
-          transition: { delay: charIndex * 0.05 },
-        })); // 해당 줄의 문자들이 하나씩 나타남
-      }
-    }
-    sequence();
-  }, [lineControls, charControls]);
+    const textElements = document.querySelectorAll(".animate-text");
+    textElements.forEach((element, index) => {
+      gsap.to(element, {
+        opacity: 1,
+        duration: 0.5,
+        delay: index * 0.1,
+      });
+    });
+  }, []);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -133,19 +125,9 @@ export default function Home() {
     });
   }, []);
 
-  const handleRegionClick = (e: React.MouseEvent<SVGPathElement>) => {
+  const handleRegionClick = (e: React.MouseEvent<SVGElement, MouseEvent>) => {
     const region = e.currentTarget.getAttribute("data-region");
     setSelectedRegion(region === selectedRegion ? null : region);
-  };
-
-  const handleScroll = (sectionId: string) => {
-    const section = document.getElementById(sectionId);
-    if (section) {
-      section.scrollIntoView({
-        behavior: "smooth",
-        block: "center",
-      });
-    }
   };
 
   const scrollToNextSection = () => {
@@ -271,25 +253,14 @@ export default function Home() {
       <div className="flex justify-center">
         <p className="w-[80%] lg:w-[70%] relative mb-10 text-[14px] md:text-[30px] font-black text-center break-keep">
           {lines.map((line, lineIndex) => (
-            <motion.span
+            <span
               key={lineIndex}
-              custom={lineIndex}
-              animate={lineControls}
-              initial={{ opacity: 0 }}
-              className="block"
+              className="block animate-text"
+              style={{ opacity: 0 }}
             >
-              {line.split("").map((char, charIndex) => (
-                <motion.span
-                  key={charIndex}
-                  custom={charIndex}
-                  animate={charControls[lineIndex]}
-                  initial={{ opacity: 0 }}
-                >
-                  {char}
-                </motion.span>
-              ))}
+              {line}
               <br />
-            </motion.span>
+            </span>
           ))}
         </p>
       </div>
@@ -355,7 +326,7 @@ export default function Home() {
               r="2"
               fill="red"
               className="cursor-pointer"
-              onClick={(e) => handleRegionClick(e as any)}
+              onClick={handleRegionClick}
               data-region="서울"
             />
 
