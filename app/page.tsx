@@ -8,85 +8,9 @@ import { Autoplay, Pagination, Navigation } from "swiper/modules";
 import "swiper/swiper-bundle.css";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
+import { regionData } from "@/src/entities/campus";
 
 gsap.registerPlugin(ScrollTrigger);
-
-interface RegionInfo {
-  name: string;
-  description: string;
-  population: string;
-  attractions: string[];
-}
-
-const regionData: { [key: string]: RegionInfo } = {
-  서울경기: {
-    name: "서울/경기도 지부",
-    description: "대한민국의 수도권 지역으로, 정치, 경제, 문화의 중심지입니다.",
-    population: "19개",
-    attractions: [
-      "서울대학교",
-      "연세대학교",
-      "고려대학교",
-      "한양대학교",
-      "성균관대학교",
-    ],
-  },
-  강원: {
-    name: "강원 지부",
-    description: "아름다운 자연 경관과 산악 지형이 특징인 동부 지역입니다.",
-    population: "약 154만명",
-    attractions: [
-      "강원대학교",
-      "한림대학교",
-      "연세대학교 원주캠퍼스",
-      "경동대학교",
-      "강릉원주대학교",
-    ],
-  },
-  충청: {
-    name: "대전&충청",
-    description: "역사와 자연이 어우러진 중부 지역입니다.",
-    population: "약 320만명",
-    attractions: [
-      "충남대학교",
-      "한남대학교",
-      "충북대학교",
-      "KAIST",
-      "건국대학교 글로컬캠퍼스",
-    ],
-  },
-  전라: {
-    name: "전라도",
-    description: "맛있는 음식과 아름다운 자연이 조화를 이루는 지역입니다.",
-    population: "약 350만명",
-    attractions: [
-      "전남대학교",
-      "전북대학교",
-      "조선대학교",
-      "순천대학교",
-      "목포대학교",
-    ],
-  },
-  경상: {
-    name: "경상도",
-    description: "유서 깊은 문화유산과 현대 산업이 공존하는 지역입니다.",
-    population: "약 510만명",
-    attractions: [
-      "경북대학교",
-      "부산대학교",
-      "영남대학교",
-      "동아대학교",
-      "울산대학교",
-    ],
-  },
-  제주: {
-    name: "제주도",
-    description:
-      "대한민국의 대표적인 관광지로, 아름다운 자연과 독특한 문화가 있는 섬입니다.",
-    population: "약 69만명",
-    attractions: ["제주대학교"],
-  },
-};
 
 export default function Home() {
   const mapRef = useRef(null);
@@ -365,22 +289,33 @@ export default function Home() {
             {/* 서울/경기 지부에 점 추가 */}
             <polygon
               className={`cls-1 stroke-[2px] ${
-                selectedRegion === "서울경기"
+                selectedRegion === "경기인천"
                   ? "fill-red-200 stroke-gray-300"
                   : "fill-white hover:fill-red-200 stroke-gray-300"
               } cursor-pointer`}
               points="143.52 67.21 140.95 67.85 135.79 73.65 134.5 75.58 128.71 74.94 124.92 75.58 117.76 82.67 120.98 86.53 129.35 88.47 129.35 93.62 124.36 93.62 124.2 98.13 124.84 105.22 121.42 105.22 115.82 98.13 113.89 111.66 101.01 116.17 102.94 134.2 106.16 139.36 104.87 145.8 110.67 152.24 117.25 152.24 112.6 157.39 113.89 160.62 122.26 163.27 122.26 165.3 116.47 167.06 117.11 175.43 120.33 189.6 131.93 199.27 150.03 199.27 162.2 202.49 182.82 186.38 194.41 178.65 201.5 140.65 181.53 127.12 178.31 114.23 184.75 109.08 183.46 100.06 169.93 93.62 168 85.89 143.52 67.21"
               onClick={handleRegionClick}
-              data-region="서울경기"
+              data-region="경기인천"
+            />
+
+            <path
+              className={`cls-1 stroke-[2px] ${
+                selectedRegion === "서울"
+                  ? "fill-red-200 stroke-gray-300"
+                  : "fill-white hover:fill-red-200 stroke-gray-300"
+              } cursor-pointer`}
+              d="M129.1,133.4l5.6,4,4.13-2,1.47-4.4h5.82l1.38-5.6,4-3.2,7.2.8,1.6,9.6-1.6,5.6,7.2-1.6s0,8.8-.8,8.8-7.2,7.2-7.2,7.2l-6.4-1.6-12,3.2-2.4-5.6-4.8.8-7.2-7.2,4-8.8Z"
+              onClick={handleRegionClick}
+              data-region="서울"
             />
             <circle
-              cx="170"
+              cx="150"
               cy="130"
               r="2"
               fill="red"
               className="cursor-pointer"
               onClick={(e) => handleRegionClick(e as any)}
-              data-region="서울경기"
+              data-region="서울"
             />
 
             <polygon
@@ -395,13 +330,13 @@ export default function Home() {
             />
             <polygon
               className={`cls-1 stroke-[2px] ${
-                selectedRegion === "충청"
+                selectedRegion === "대전충청"
                   ? "fill-red-200 stroke-gray-300"
                   : "fill-white hover:fill-red-200 stroke-gray-300"
               } cursor-pointer`}
               points="216.96 270.13 211.16 272.7 208.59 281.08 207.3 285.59 190.55 288.81 182.82 277.21 182.82 268.16 175.25 268.16 175.25 291.3 162.84 279.73 146.25 279.73 133.22 272.7 126.13 282.37 113.89 285.59 95.21 272.7 102.3 256.6 98.43 249.51 95.21 228.66 86.19 228.9 75.24 216.02 68.05 216.02 68.15 208.93 78.46 199.27 86.19 204.42 90.7 201.2 87.34 192.18 91.34 186.38 117.81 192.18 120.98 199.27 131.93 199.27 150.03 199.27 162.2 202.49 182.82 186.38 194.41 178.65 204.72 179.3 211.81 168.99 219.54 173.5 225.98 169.63 236.28 171.57 235 181.87 262.58 189.45 253.03 197.33 245.3 199.27 249.17 210.86 237.57 215.37 224.69 208.93 214.38 212.15 217.6 219.88 201.5 233.52 216.96 270.13"
               onClick={handleRegionClick}
-              data-region="충청"
+              data-region="대전충청"
             />
             <path
               className={`cls-1 stroke-[2px] ${
@@ -413,15 +348,16 @@ export default function Home() {
               onClick={handleRegionClick}
               data-region="경상"
             />
+
             <polygon
               className={`cls-1 stroke-[2px] ${
-                selectedRegion === "전라"
+                selectedRegion === "호남"
                   ? "fill-red-200 stroke-gray-300"
                   : "fill-white hover:fill-red-200 stroke-gray-300"
               } cursor-pointer`}
               points="113.89 285.59 102.3 289.45 106.16 296.54 121.82 296.54 116.47 302.34 115.82 306.2 108.95 306.2 106.16 313.93 93.92 323.59 111.96 325.53 91.99 339.7 82.33 359.02 93.28 374.48 82.33 386.65 94.56 404.12 102.07 440.82 101.01 445.99 106.8 444.7 120.33 418.93 129.35 436.97 155.12 405.4 160.27 410.56 149.32 424.09 158.34 430.53 174.44 420.87 182.31 392.86 204.72 384.79 188.62 371.26 185.39 355.8 190.55 344.21 185.39 328.87 194.41 307.49 207.3 295.89 207.3 285.59 190.55 288.81 182.82 277.21 182.82 268.16 175.25 268.16 175.25 291.3 162.84 279.73 146.25 279.73 133.22 272.7 126.13 282.37 113.89 285.59"
               onClick={handleRegionClick}
-              data-region="전라"
+              data-region="호남"
             />
             <polygon
               className={`cls-1 stroke-[2px] ${
@@ -433,21 +369,19 @@ export default function Home() {
               onClick={handleRegionClick}
               data-region="제주"
             />
+
             <path
-              className={`cls-1 stroke-[2px] ${
-                selectedRegion === "경상"
-                  ? "fill-red-200 stroke-gray-300"
-                  : "fill-white hover:fill-red-200 stroke-gray-300"
-              } cursor-pointer`}
+              className={`cls-1 stroke-[2px] ${"fill-white hover:fill-red-200 stroke-gray-300"} cursor-pointer`}
               d="M422.45,145.16l-7.09,6.44s6.44,2.71,7.09,2.64,6.44-3.29,6.44-3.29l-5.15-5.15-1.29-.64Z"
             />
             <polygon
-              className={`cls-1 stroke-[2px] ${
-                selectedRegion === "경상"
-                  ? "fill-red-200 stroke-gray-300"
-                  : "fill-white hover:fill-red-200 stroke-gray-300"
-              } cursor-pointer`}
+              className={`cls-1 stroke-[2px] ${"fill-white hover:fill-red-200 stroke-gray-300"} cursor-pointer`}
               points="436.63 150.95 434.69 156.11 442.42 158.04 436.63 150.95"
+            />
+            <polygon
+              className={`cls-1 stroke-[2px] ${"fill-white hover:fill-red-200 stroke-gray-300"} cursor-pointer`}
+              points="440.74 151.66 445 153.53 442.87 150.95 440.74 151.66"
+              onClick={handleRegionClick}
             />
           </svg>
         </div>
@@ -466,12 +400,12 @@ export default function Home() {
               </p>
               <div className="mb-4">
                 <h3 className="font-semibold mb-2">총 캠퍼스</h3>
-                <p>{regionData[selectedRegion].population}</p>
+                <p>{regionData[selectedRegion].total}</p>
               </div>
               <div>
                 <h3 className="font-semibold mb-2">캠퍼스 목록</h3>
                 <ul className="list-disc pl-5">
-                  {regionData[selectedRegion].attractions.map(
+                  {regionData[selectedRegion].campus.map(
                     (attraction, index) => (
                       <li key={index}>{attraction}</li>
                     )
