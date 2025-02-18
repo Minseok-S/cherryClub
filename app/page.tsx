@@ -36,7 +36,7 @@ export default function Home() {
   const [showScrollIndicator, setShowScrollIndicator] = useState(true);
 
   const text =
-    "체리 동아리는 '체인저 리더십(Changer Leadership) 동아리'의 준말로, 성경적 리더십 훈련을 통해 나를 변화시키고, 내가 속한 사회의 각 영역을 변화시키는 동아리입니다!";
+    "체리 동아리는 &lsquo;체인저 리더십(Changer Leadership) 동아리&rsquo;의 준말로, 성경적 리더십 훈련을 통해 나를 변화시키고, 내가 속한 사회의 각 영역을 변화시키는 동아리입니다!";
 
   useEffect(() => {
     const chars = text.split("");
@@ -735,9 +735,9 @@ export default function Home() {
               <div className="bg-white/5 backdrop-blur-sm p-4 rounded-lg">
                 <h4 className="font-bold mb-2">체리배가운동</h4>
                 <p className="text-sm text-gray-600">
-                  체인저 리더십 운동은 "성경적 리더십 훈련을 통해 나를
-                  변화시키고 내가 속한 사회의 각 영역을 변화시키는 리더(NCer)
-                  배가운동"이다.
+                  {
+                    "체인저 리더십 운동은 '성경적 리더십 훈련을 통해 나를변화시키고 내가 속한 사회의 각 영역을 변화시키는 리더(NCer) 배가운동'이다."
+                  }
                 </p>
               </div>
               <div className="bg-white/5 backdrop-blur-sm p-4 rounded-lg">
@@ -752,10 +752,9 @@ export default function Home() {
               <div className="bg-white/5 backdrop-blur-sm p-4 rounded-lg">
                 <h4 className="font-bold mb-2">주인바꾸기운동</h4>
                 <p className="text-sm text-gray-600">
-                  주인바꾸기 운동'은 '온전한 십일조의 회복'과 믿음, 청지기,
-                  단순한 삶을 통해서 오직 하나님이 유일한 주인이시며 공급자
-                  되심을 믿습니다. '빚갚기'를 통해 채주의 종에서 벗어나는
-                  운동입니다.
+                  {
+                    "주인바꾸기 운동'은 '온전한 십일조의 회복'과 믿음, 청지기,단순한 삶을 통해서 오직 하나님이 유일한 주인이시며 공급자되심을 믿습니다. '빚갚기'를 통해 채주의 종에서 벗어나는 운동입니다."
+                  }
                 </p>
               </div>
             </div>
@@ -789,7 +788,7 @@ export default function Home() {
                   {
                     title: "체리배가운동",
                     content:
-                      '체인저 리더십 운동은 "성경적 리더십 훈련을 통해 나를 변화시키고 내가 속한 사회의 각 영역을 변화시키는 리더(NCer) 배가운동"이다.',
+                      "체인저 리더십 운동은 &ldquo;성경적 리더십 훈련을 통해 나를 변화시키고 내가 속한 사회의 각 영역을 변화시키는 리더(NCer) 배가운동&rdquo;이다.",
                   },
                   {
                     title: "10만중보기도운동",
@@ -799,7 +798,7 @@ export default function Home() {
                   {
                     title: "주인바꾸기운동",
                     content:
-                      "주인바꾸기 운동'은 '온전한 십일조의 회복'과 믿음, 청지기, 단순한 삶을 통해서 오직 하나님이 유일한 주인이시며 공급자 되심을 믿습니다. '빚갚기'를 통해 채주의 종에서 벗어나는 운동입니다.",
+                      "&lsquo;주인바꾸기 운동&rsquo;은 &lsquo;온전한 십일조의 회복&rsquo;과 믿음, 청지기, 단순한 삶을 통해서 오직 하나님이 유일한 주인이시며 공급자 되심을 믿습니다. &lsquo;빚갚기&rsquo;를 통해 채주의 종에서 벗어나는 운동입니다.",
                   },
                 ].map((slide, index) => (
                   <SwiperSlide key={index}>
