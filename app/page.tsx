@@ -36,7 +36,7 @@ export default function Home() {
   const [showScrollIndicator, setShowScrollIndicator] = useState(true);
 
   const text =
-    "체리 동아리는 &lsquo;체인저 리더십(Changer Leadership) 동아리&rsquo;의 준말로, 성경적 리더십 훈련을 통해 나를 변화시키고, 내가 속한 사회의 각 영역을 변화시키는 동아리입니다!";
+    "체리 동아리는 '체인저 리더십(Changer Leadership) 동아리'의 준말로, 성경적 리더십 훈련을 통해 나를 변화시키고, 내가 속한 사회의 각 영역을 변화시키는 동아리입니다!";
 
   useEffect(() => {
     const chars = text.split("");
