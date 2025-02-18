@@ -49,18 +49,6 @@ export const regionData: { [key: string]: RegionInfo } = {
       "건국대학교 글로컬캠퍼스",
     ],
   },
-  호남: {
-    name: "호남 캠퍼스",
-    description: "맛있는 음식과 아름다운 자연이 조화를 이루는 지역입니다.",
-    total: "약 350만명",
-    campus: [
-      "전남대학교",
-      "전북대학교",
-      "조선대학교",
-      "순천대학교",
-      "목포대학교",
-    ],
-  },
   경상: {
     name: "경상 캠퍼스",
     description: "유서 깊은 문화유산과 현대 산업이 공존하는 지역입니다.",
@@ -73,8 +61,8 @@ export const regionData: { [key: string]: RegionInfo } = {
       "울산대학교",
     ],
   },
-  제주: {
-    name: "제주 캠퍼스",
+  호남제주: {
+    name: "호남/제주 캠퍼스",
     description:
       "대한민국의 대표적인 관광지로, 아름다운 자연과 독특한 문화가 있는 섬입니다.",
     total: "약 69만명",

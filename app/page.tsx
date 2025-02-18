@@ -12,12 +12,27 @@ import Image from "next/image";
 
 gsap.registerPlugin(ScrollTrigger);
 
+// 지역별 폼 링크 상수 추가
+const REGION_FORM_LINKS = {
+  서울: "https://forms.gle/iL9r7QT3jQieUdjWA",
+  경기인천: "",
+  강원: "",
+  대전충청: "",
+  경상: "",
+  호남제주: "",
+};
+
+// 전체모임 링크 상수 추가
+const GENERAL_FORM_LINK = "";
+
 export default function Home() {
   const mapRef = useRef(null);
   const modalRef = useRef<HTMLDivElement>(null);
   const [selectedRegion, setSelectedRegion] = useState<string | null>(null);
   const sections = ["map", "training", "campus", "class", "anthor"];
   const [activeSection, setActiveSection] = useState<string>("");
+  const [showMovements, setShowMovements] = useState(false);
+  const [showRegionModal, setShowRegionModal] = useState(false);
 
   const text =
     "체리 동아리는 '체인저 리더십(Changer Leadership) 동아리'의 준말로, 성경적 리더십 훈련을 통해 나를 변화시키고, 내가 속한 사회의 각 영역을 변화시키는 동아리입니다!";
@@ -174,6 +189,27 @@ export default function Home() {
       anthor: "대외 사역",
     };
     return names[section] || section;
+  };
+
+  // 지역 선택 핸들러 수정
+  const handleRegionSelect = (region: string) => {
+    const formLink =
+      REGION_FORM_LINKS[region as keyof typeof REGION_FORM_LINKS];
+    if (!formLink) {
+      alert(`${regionData[region].name}은(는) 추후 공지 예정입니다.`);
+    } else {
+      window.open(formLink, "_blank");
+    }
+    setShowRegionModal(false);
+  };
+
+  // 전체모임 핸들러 추가
+  const handleGeneralMeeting = () => {
+    if (!GENERAL_FORM_LINK) {
+      alert("전체모임은 추후 공지 예정입니다.");
+      return;
+    }
+    window.open(GENERAL_FORM_LINK, "_blank");
   };
 
   return (
@@ -360,23 +396,23 @@ export default function Home() {
 
             <polygon
               className={`cls-1 stroke-[2px] ${
-                selectedRegion === "호남"
+                selectedRegion === "호남제주"
                   ? "fill-red-200 stroke-gray-300"
                   : "fill-white hover:fill-red-200 stroke-gray-300"
               } cursor-pointer`}
               points="113.89 285.59 102.3 289.45 106.16 296.54 121.82 296.54 116.47 302.34 115.82 306.2 108.95 306.2 106.16 313.93 93.92 323.59 111.96 325.53 91.99 339.7 82.33 359.02 93.28 374.48 82.33 386.65 94.56 404.12 102.07 440.82 101.01 445.99 106.8 444.7 120.33 418.93 129.35 436.97 155.12 405.4 160.27 410.56 149.32 424.09 158.34 430.53 174.44 420.87 182.31 392.86 204.72 384.79 188.62 371.26 185.39 355.8 190.55 344.21 185.39 328.87 194.41 307.49 207.3 295.89 207.3 285.59 190.55 288.81 182.82 277.21 182.82 268.16 175.25 268.16 175.25 291.3 162.84 279.73 146.25 279.73 133.22 272.7 126.13 282.37 113.89 285.59"
               onClick={handleRegionClick}
-              data-region="호남"
+              data-region="호남제주"
             />
             <polygon
               className={`cls-1 stroke-[2px] ${
-                selectedRegion === "제주"
+                selectedRegion === "호남제주"
                   ? "fill-red-200 stroke-gray-300"
                   : "fill-white hover:fill-red-200 stroke-gray-300"
               } cursor-pointer`}
               points="82.33 524.27 124.2 514.27 134.5 522.65 128.71 540.68 77.82 549.7 63 539.39 82.33 524.27"
               onClick={handleRegionClick}
-              data-region="제주"
+              data-region="호남제주"
             />
 
             <path
@@ -525,10 +561,12 @@ export default function Home() {
           }}
           pagination={{
             clickable: true,
+            bulletActiveClass:
+              "swiper-pagination-bullet-active custom-bullet-active",
           }}
           navigation={true}
           modules={[Autoplay, Pagination, Navigation]}
-          className="w-[90%] md:w-[800px] mx-auto"
+          className="w-[90%] md:w-[800px] mx-auto [&_.swiper-pagination-bullet-active]:!bg-red-500 [&_.swiper-pagination-bullet]:!bg-white"
           breakpoints={{
             640: {
               slidesPerView: 1,
@@ -589,9 +627,155 @@ export default function Home() {
         className="pb-20 px-4 min-h-screen flex flex-col items-center justify-center"
         style={{ scrollSnapAlign: "center", scrollMarginTop: "100px" }}
       >
-        <h2 className="text-4xl md:text-6xl font-black text-center mb-12">
+        <h2 className="text-4xl md:text-6xl font-black text-center mb-6">
           캠퍼스 사역
         </h2>
+
+        {/* 기본 설명 텍스트 */}
+        <p className="text-center text-gray-600 max-w-3xl mx-auto mb-8 text-sm md:text-base font-medium break-keep whitespace-pre-wrap">
+          NCMN 대학캠퍼스사역은 다음 세대의 부흥을 이끄는 사역입니다.
+          {"\n"}대학캠퍼스 안에서부터 5K운동을 중심으로 NCMN
+          5대운동(말씀배가운동, 체리배가운동, 10만중보기도운동, 주인바꾸기운동,
+          5K운동)을 펼쳐서 기독교문명개혁운동을 주도하는 사역을 하고 있습니다.
+        </p>
+
+        {/* 5대운동 설명 */}
+        <div className="w-full max-w-3xl mx-auto mb-4 md:mb-10">
+          <button
+            onClick={() => setShowMovements(!showMovements)}
+            className="w-full flex items-center justify-center space-x-2 bg-white/5 hover:bg-white/10 backdrop-blur-sm p-4 rounded-lg transition-all duration-300"
+          >
+            <h3 className="text-xl md:text-2xl font-bold text-center">
+              5대운동이란?
+            </h3>
+            <svg
+              className={`w-6 h-6 transform transition-transform duration-300 ${
+                showMovements ? "rotate-180" : ""
+              }`}
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M19 9l-7 7-7-7"
+              />
+            </svg>
+          </button>
+
+          <div
+            className={`transition-all duration-500 overflow-hidden ${
+              showMovements
+                ? "max-h-[1000px] mt-4 opacity-100"
+                : "max-h-0 opacity-0"
+            }`}
+          >
+            {/* PC 버전 */}
+            <div className="hidden md:grid md:grid-cols-2 gap-4">
+              <div className="bg-white/5 backdrop-blur-sm p-4 rounded-lg md:col-span-2">
+                <h4 className="font-bold mb-2">5K운동</h4>
+                <p className="text-sm text-gray-600">
+                  5K운동은 나의 캠퍼스 반경 5㎞ 안의 절대 필요가 있는 이웃들에게
+                  예수님의 4대 사역(구제 사역, 교육 사역, 보건ㆍ의료 사역,
+                  복음전파 사역)을 펼치는 것으로, 한국 교회의 부흥과 통일 한국을
+                  이루어 열방을 섬기는 코리아가 되게 하는 하나님의 약속이 있는
+                  사역이다.
+                </p>
+              </div>
+              <div className="bg-white/5 backdrop-blur-sm p-4 rounded-lg">
+                <h4 className="font-bold mb-2">말씀배가운동</h4>
+                <p className="text-sm text-gray-600">
+                  말씀배가운동은 자신이 속한 가정 교회, 직장 등 각 영역에서
+                  소그룹을 형성하여 100일 동안 성경 통독을 하고, 통독이 끝나면
+                  구성원들이 새로운 소그룹을 만들어 배가시키는 운동이다.
+                </p>
+              </div>
+              <div className="bg-white/5 backdrop-blur-sm p-4 rounded-lg">
+                <h4 className="font-bold mb-2">체리배가운동</h4>
+                <p className="text-sm text-gray-600">
+                  체인저 리더십 운동은 "성경적 리더십 훈련을 통해 나를
+                  변화시키고 내가 속한 사회의 각 영역을 변화시키는 리더(NCer)
+                  배가운동"이다.
+                </p>
+              </div>
+              <div className="bg-white/5 backdrop-blur-sm p-4 rounded-lg">
+                <h4 className="font-bold mb-2">10만중보기도운동</h4>
+                <p className="text-sm text-gray-600">
+                  느헤미야처럼 무너진 성벽을 재건하기위해 영적 대각성과
+                  부흥운동을 일으켜 나라와 민족을 살리고 세계 열방을 향한
+                  하나님의 뜻을 이루시도록 지역교회와 함께 중보기도자를일으키는
+                  운동입니다.
+                </p>
+              </div>
+              <div className="bg-white/5 backdrop-blur-sm p-4 rounded-lg">
+                <h4 className="font-bold mb-2">주인바꾸기운동</h4>
+                <p className="text-sm text-gray-600">
+                  주인바꾸기 운동'은 '온전한 십일조의 회복'과 믿음, 청지기,
+                  단순한 삶을 통해서 오직 하나님이 유일한 주인이시며 공급자
+                  되심을 믿습니다. '빚갚기'를 통해 채주의 종에서 벗어나는
+                  운동입니다.
+                </p>
+              </div>
+            </div>
+
+            {/* 모바일 버전 - Swiper */}
+            <div className="md:hidden">
+              <Swiper
+                loop={true}
+                speed={800}
+                spaceBetween={20}
+                centeredSlides={true}
+                pagination={{
+                  clickable: true,
+                  bulletActiveClass:
+                    "swiper-pagination-bullet-active custom-bullet-active",
+                }}
+                modules={[Pagination, Navigation]}
+                className="w-full [&_.swiper-pagination-bullet-active]:!bg-red-500 [&_.swiper-pagination-bullet]:!bg-white"
+              >
+                {[
+                  {
+                    title: "5K운동",
+                    content:
+                      "5K운동은 나의 캠퍼스 반경 5㎞ 안의 절대 필요가 있는 이웃들에게 예수님의 4대 사역(구제 사역, 교육 사역, 보건ㆍ의료 사역, 복음전파 사역)을 펼치는 것으로, 한국 교회의 부흥과 통일 한국을 이루어 열방을 섬기는 코리아가 되게 하는 하나님의 약속이 있는 사역이다.",
+                  },
+                  {
+                    title: "말씀배가운동",
+                    content:
+                      "말씀배가운동은 자신이 속한 가정 교회, 직장 등 각 영역에서 소그룹을 형성하여 100일 동안 성경 통독을 하고, 통독이 끝나면 구성원들이 새로운 소그룹을 만들어 배가시키는 운동이다.",
+                  },
+                  {
+                    title: "체리배가운동",
+                    content:
+                      '체인저 리더십 운동은 "성경적 리더십 훈련을 통해 나를 변화시키고 내가 속한 사회의 각 영역을 변화시키는 리더(NCer) 배가운동"이다.',
+                  },
+                  {
+                    title: "10만중보기도운동",
+                    content:
+                      "느헤미야처럼 무너진 성벽을 재건하기위해 영적 대각성과 부흥운동을 일으켜 나라와 민족을 살리고 세계 열방을 향한 하나님의 뜻을 이루시도록 지역교회와 함께 중보기도자를일으키는 운동입니다.",
+                  },
+                  {
+                    title: "주인바꾸기운동",
+                    content:
+                      "주인바꾸기 운동'은 '온전한 십일조의 회복'과 믿음, 청지기, 단순한 삶을 통해서 오직 하나님이 유일한 주인이시며 공급자 되심을 믿습니다. '빚갚기'를 통해 채주의 종에서 벗어나는 운동입니다.",
+                  },
+                ].map((slide, index) => (
+                  <SwiperSlide key={index}>
+                    <div className="bg-white/5 backdrop-blur-sm p-4 rounded-lg min-h-[180px] flex flex-col">
+                      <h4 className="font-bold mb-2">{slide.title}</h4>
+                      <p className="text-sm text-gray-600 flex-1">
+                        {slide.content}
+                      </p>
+                    </div>
+                  </SwiperSlide>
+                ))}
+              </Swiper>
+            </div>
+          </div>
+        </div>
+
         <Swiper
           loop={true}
           speed={800}
@@ -604,13 +788,15 @@ export default function Home() {
           }}
           pagination={{
             clickable: true,
+            bulletActiveClass:
+              "swiper-pagination-bullet-active custom-bullet-active",
           }}
           navigation={true}
           modules={[Autoplay, Pagination, Navigation]}
-          className="w-[90%] md:w-[1000px] mx-auto"
+          className="w-[90%] md:w-[800px] mx-auto [&_.swiper-pagination-bullet-active]:!bg-red-500 [&_.swiper-pagination-bullet]:!bg-white"
           breakpoints={{
             640: {
-              slidesPerView: 2,
+              slidesPerView: 1,
             },
           }}
         >
@@ -668,9 +854,40 @@ export default function Home() {
         className="pb-20 px-4 min-h-screen flex flex-col items-center justify-center"
         style={{ scrollSnapAlign: "center", scrollMarginTop: "100px" }}
       >
-        <h2 className="text-4xl md:text-6xl font-black text-center mb-12">
+        <h2 className="text-4xl md:text-6xl font-black text-center mb-3 md:mb-8">
           전체/지역모임
         </h2>
+
+        {/* 설명 추가 */}
+        <div className="max-w-4xl mx-auto mb-6 md:mb-12 text-center">
+          <p className="text-gray-600 text-sm md:text-base font-medium">
+            매월 1회 전체모임과 지역별 모임을 통해 <br />
+            체리 동아리원들과 함께 교제하며 성장합니다
+          </p>
+        </div>
+
+        {/* 전체모임/지역모임 신청 버튼 */}
+        <div className="flex flex-col md:flex-row gap-4 mb-8 w-full max-w-2xl px-4">
+          <button
+            onClick={handleGeneralMeeting}
+            className="flex-1 bg-red-500 text-white py-3 px-6 rounded-full 
+                      hover:bg-red-600 transition-colors duration-300 
+                      transform hover:scale-105 shadow-lg text-center 
+                      text-sm md:text-base font-bold"
+          >
+            전체모임 참가 신청하기
+          </button>
+          <button
+            onClick={() => setShowRegionModal(true)}
+            className="flex-1 bg-white/10 backdrop-blur-sm text-white py-3 px-6 
+                      rounded-full hover:bg-white/20 transition-colors duration-300 
+                      transform hover:scale-105 shadow-lg text-center 
+                      text-sm md:text-base font-bold"
+          >
+            지역모임 참가 신청하기
+          </button>
+        </div>
+
         <Swiper
           loop={true}
           speed={800}
@@ -683,10 +900,12 @@ export default function Home() {
           }}
           pagination={{
             clickable: true,
+            bulletActiveClass:
+              "swiper-pagination-bullet-active custom-bullet-active",
           }}
           navigation={true}
           modules={[Autoplay, Pagination, Navigation]}
-          className="w-[90%] md:w-[800px] mx-auto"
+          className="w-[90%] md:w-[800px] mx-auto [&_.swiper-pagination-bullet-active]:!bg-red-500 [&_.swiper-pagination-bullet]:!bg-white"
           breakpoints={{
             640: {
               slidesPerView: 1,
@@ -762,10 +981,12 @@ export default function Home() {
           }}
           pagination={{
             clickable: true,
+            bulletActiveClass:
+              "swiper-pagination-bullet-active custom-bullet-active",
           }}
           navigation={true}
           modules={[Autoplay, Pagination, Navigation]}
-          className="w-[90%] md:w-[800px] mx-auto"
+          className="w-[90%] md:w-[800px] mx-auto [&_.swiper-pagination-bullet-active]:!bg-red-500 [&_.swiper-pagination-bullet]:!bg-white"
           breakpoints={{
             640: {
               slidesPerView: 1,
@@ -835,6 +1056,50 @@ export default function Home() {
           신청하기
         </a>
       </div>
+
+      {/* 지역 선택 모달 추가 */}
+      {showRegionModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
+          <div
+            className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+            onClick={() => setShowRegionModal(false)}
+          />
+          <div className="relative bg-black border border-gray-800 rounded-2xl p-6 w-full max-w-md">
+            <h3 className="text-xl font-bold mb-4 text-center">지역 선택</h3>
+            <div className="grid grid-cols-2 gap-3">
+              {Object.keys(regionData).map((region) => (
+                <button
+                  key={region}
+                  onClick={() => handleRegionSelect(region)}
+                  className="bg-white/5 hover:bg-white/10 backdrop-blur-sm 
+                            py-3 px-4 rounded-xl transition-colors duration-200
+                            text-sm md:text-base font-bold"
+                >
+                  {regionData[region].name}
+                </button>
+              ))}
+            </div>
+            <button
+              onClick={() => setShowRegionModal(false)}
+              className="absolute top-4 right-4 text-gray-400 hover:text-white"
+            >
+              <svg
+                className="w-6 h-6"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
