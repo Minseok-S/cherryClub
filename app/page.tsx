@@ -13,6 +13,7 @@ import { Header } from "@/src/widgets/Header";
 import { ScrollIndicator } from "@/src/features/scroll";
 import { Title } from "@/src/widgets/Title";
 import { MapSection } from "@/src/widgets/MapSection";
+import { TrainingSection } from "@/src/widgets/TrainingSection";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -73,137 +74,7 @@ export default function Home() {
       />
 
       {/*리더십 훈련 */}
-      <div
-        id="training"
-        className=" pb-10 md:pb-20 px-4 min-h-screen flex flex-col items-center justify-center"
-        style={{ scrollSnapAlign: "center", scrollMarginTop: "50px" }}
-      >
-        <h2 className="text-4xl md:text-6xl font-black text-center mb-5 md:mb-7">
-          리더십 훈련
-        </h2>
-
-        {/* 리더십 훈련 설명 추가 */}
-        <div className="max-w-4xl mx-auto mb-5 md:mb-7 text-center w-full px-4">
-          <div className="grid grid-cols-2 gap-3 md:gap-4">
-            {[
-              {
-                title: "신분과 사명",
-                front: "예수 그리스도의 지도력의 기반!",
-                back: "신분과 사명에 관한 설명",
-              },
-              {
-                title: "셀프 리더십",
-                front: "자신을 이끄는 리더십!",
-                back: "셀프 리더십에 대한 설명",
-              },
-              {
-                title: "사자의 리더십",
-                front: "일(사역)을 향한 예수님의 리더십!",
-                back: "사자의 리더십에 대한 설명",
-              },
-              {
-                title: "양의 리더십",
-                front: "사람(관계)을 향한 예수님의 리더십!",
-                back: "양의 리더십에 대한 설명",
-              },
-            ].map((card, index) => (
-              <div
-                key={index}
-                className="group [perspective:1000px] h-[150px] md:h-[150px]"
-              >
-                <div className="relative h-full w-full transition-all duration-500 [transform-style:preserve-3d] group-hover:[transform:rotateY(180deg)]">
-                  {/* 앞면 */}
-                  <div className="absolute inset-0 bg-white/5 backdrop-blur-sm p-6 rounded-xl [backface-visibility:hidden] flex flex-col justify-center">
-                    <h3 className="text-xl md:text-2xl font-black mb-3">
-                      {card.title}
-                    </h3>
-                    <p className="text-gray-600 font-bold whitespace-normal break-keep">
-                      {card.front}
-                    </p>
-                  </div>
-
-                  {/* 뒷면 */}
-                  <div className="absolute inset-0 bg-red-500/90 backdrop-blur-sm p-6 rounded-xl [backface-visibility:hidden] [transform:rotateY(180deg)] flex items-center justify-center">
-                    <p className="text-white font-bold whitespace-normal break-keep text-center">
-                      {card.back}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <Swiper
-          loop={true}
-          speed={800}
-          spaceBetween={30}
-          centeredSlides={true}
-          autoplay={{
-            delay: 2500,
-            disableOnInteraction: false,
-            waitForTransition: false,
-          }}
-          pagination={{
-            clickable: true,
-            bulletActiveClass:
-              "swiper-pagination-bullet-active custom-bullet-active",
-          }}
-          modules={[Autoplay, Pagination, Navigation]}
-          className="w-[90%] md:w-[800px] mx-auto [&_.swiper-pagination-bullet-active]:!bg-red-500 [&_.swiper-pagination-bullet]:!bg-white"
-          breakpoints={{
-            640: {
-              slidesPerView: 1,
-            },
-          }}
-        >
-          <SwiperSlide>
-            <Image
-              src="/training1.jpeg"
-              alt="리더십 훈련 1"
-              width={1200}
-              height={600}
-              className="rounded-2xl object-cover h-[200px] md:h-[400px] w-full"
-            />
-          </SwiperSlide>
-          <SwiperSlide>
-            <Image
-              src="/training2.jpeg"
-              alt="리더십 훈련 2"
-              width={1200}
-              height={600}
-              className="rounded-2xl object-cover h-[200px] md:h-[400px] w-full"
-            />
-          </SwiperSlide>
-          <SwiperSlide>
-            <Image
-              src="/training3.jpeg"
-              alt="리더십 훈련 3"
-              width={1200}
-              height={600}
-              className="rounded-2xl object-cover h-[200px] md:h-[400px] w-full"
-            />
-          </SwiperSlide>
-          <SwiperSlide>
-            <Image
-              src="/training4.jpeg"
-              alt="리더십 훈련 3"
-              width={1200}
-              height={600}
-              className="rounded-2xl object-cover h-[200px] md:h-[400px] w-full"
-            />
-          </SwiperSlide>
-          <SwiperSlide>
-            <Image
-              src="/training5.jpeg"
-              alt="리더십 훈련 3"
-              width={1200}
-              height={600}
-              className="rounded-2xl object-cover h-[200px] md:h-[400px] w-full"
-            />
-          </SwiperSlide>
-        </Swiper>
-      </div>
+      <TrainingSection />
 
       {/*캠퍼스 훈련 */}
       <div
