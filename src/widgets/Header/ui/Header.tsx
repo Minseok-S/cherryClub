@@ -2,7 +2,7 @@ import { clubJoinLink } from "@/src/entities/link";
 import Image from "next/image";
 import { getSectionName } from "../lib/getSectionName";
 import { Sections } from "@/src/shared/constants";
-import { useScrollSpyHeader } from "@/src/features/scroll";
+import { useScrollSpyHeader } from "../model/useScrollSpyHeader";
 
 export const Header = ({
   setSelectedRegion,
