@@ -2,14 +2,14 @@ import { clubJoinLink } from "@/src/entities/link";
 import Image from "next/image";
 import { getSectionName } from "../lib/getSectionName";
 import { Sections } from "@/src/shared/constants";
-import { useScrollSpy } from "@/src/features/scroll";
+import { useScrollSpyHeader } from "@/src/features/scroll";
 
 export const Header = ({
   setSelectedRegion,
 }: {
   setSelectedRegion: (region: string | null) => void;
 }) => {
-  const { activeSection } = useScrollSpy({
+  const { activeSection } = useScrollSpyHeader({
     onSectionChange: (section: string) => {
       if (section && section !== "map") {
         setSelectedRegion(null);

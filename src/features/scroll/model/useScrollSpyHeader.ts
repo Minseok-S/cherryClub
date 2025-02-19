@@ -1,11 +1,12 @@
-import { Sections } from "@/src/shared/constants";
+"use client";
 import { useState, useEffect } from "react";
+import { Sections } from "@/src/shared/constants";
 
 interface UseScrollSpyProps {
   onSectionChange?: (section: string) => void;
 }
 
-export const useScrollSpy = ({ onSectionChange }: UseScrollSpyProps) => {
+export const useScrollSpyHeader = ({ onSectionChange }: UseScrollSpyProps) => {
   const [activeSection, setActiveSection] = useState<string>("");
 
   useEffect(() => {
