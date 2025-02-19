@@ -1,4 +1,4 @@
-import { joinLink } from "@/src/entities/link";
+import { clubJoinLink } from "@/src/entities/link";
 import Image from "next/image";
 import { getSectionName } from "../lib/getSectionName";
 import { Sections } from "@/src/shared/constants";
@@ -55,7 +55,7 @@ export const Header = ({
         {/* 오른쪽 영역 */}
         <div className="flex items-center space-x-6">
           <a
-            href={joinLink}
+            href={clubJoinLink}
             target="_blank"
             className="bg-red-500 text-white px-4 py-2 rounded-full hover:bg-red-600 
                       transition-colors duration-300 text-xs md:text-base font-black"

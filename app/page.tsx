@@ -11,6 +11,8 @@ import { regionData } from "@/src/entities/campus";
 import Image from "next/image";
 import { Header } from "@/src/widgets/Header";
 import { ScrollIndicator } from "@/src/features/scroll";
+import { ClubJoinButton } from "@/src/features/join";
+import { Title } from "@/src/widgets/Title";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -34,40 +36,6 @@ export default function Home() {
   const [showMovements, setShowMovements] = useState(false);
   const [showRegionModal, setShowRegionModal] = useState(false);
 
-  const text =
-    "체리 동아리는 '체인저 리더십(Changer Leadership) 동아리'의 준말로, 성경적 리더십 훈련을 통해 나를 변화시키고, 내가 속한 사회의 각 영역을 변화시키는 동아리입니다!";
-
-  useEffect(() => {
-    const chars = text.split("");
-    const container = document.createElement("div");
-    container.className =
-      "w-[80%] lg:w-[70%] relative mb-10 text-[14px] md:text-[30px] font-black text-center break-keep mx-auto";
-
-    chars.forEach((char, index) => {
-      const span = document.createElement("span");
-      span.textContent = char;
-      span.style.opacity = "0";
-      if (char === " ") {
-        span.style.marginRight = "0.25em";
-      }
-      span.style.wordBreak = "keep-all";
-      container.appendChild(span);
-
-      gsap.to(span, {
-        opacity: 1,
-        duration: 0.1,
-        delay: index * 0.05,
-        ease: "none",
-      });
-    });
-
-    const textWrapper = document.querySelector(".text-wrapper");
-    if (textWrapper) {
-      textWrapper.innerHTML = "";
-      textWrapper.appendChild(container);
-    }
-  }, []);
-
   useEffect(() => {
     const ctx = gsap.context(() => {
       const mediaQuery = window.matchMedia("(min-width: 768px)");
@@ -75,7 +43,7 @@ export default function Home() {
       gsap.set(mapRef.current, {
         scale: mediaQuery.matches ? 0.2 : 0.3,
         opacity: 0,
-        x: "-20%",
+        x: "0%",
       });
       gsap.to(mapRef.current, {
         scrollTrigger: {
@@ -88,20 +56,6 @@ export default function Home() {
         opacity: 1,
         duration: 1,
       });
-
-      // 스크롤 유도 애니메이션 추가
-      gsap.fromTo(
-        ".scroll-indicator",
-        { opacity: 1, y: 0 },
-        {
-          opacity: 0.3,
-          y: 20,
-          duration: 1.5,
-          repeat: -1,
-          yoyo: true,
-          ease: "power1.inOut",
-        }
-      );
     });
 
     return () => ctx.revert();
@@ -177,58 +131,10 @@ export default function Home() {
       {/* 스크롤 유도 - 조건부 렌더링 추가 */}
       <ScrollIndicator />
 
+      {/* 헤더*/}
       <Header setSelectedRegion={setSelectedRegion} />
 
-      <div className="relative">
-        <div className="absolute inset-0 w-full h-[350px] md:h-[680px] overflow-hidden">
-          <video
-            autoPlay
-            loop
-            muted
-            playsInline
-            className="w-full h-full object-cover"
-          >
-            <source src="/title.mp4" type="video/mp4" />
-          </video>
-          {/* 비디오 위에 오버레이 추가 */}
-          <div className="absolute inset-0 bg-black/80"></div>
-        </div>
-
-        {/* 기존 콘텐츠를 relative로 설정하여 비디오 위에 표시 */}
-        <div className="relative">
-          <div className="flex items-center justify-center pt-10 mt-40 md:mt-44">
-            <div className="title-text-wrapper relative whitespace-nowrap">
-              <h1 className="title-text text-[clamp(50px,10vw,100px)] md:text-[clamp(100px,12vw,250px)] font-black">
-                CHERRY CLUB
-              </h1>
-            </div>
-          </div>
-
-          {/* 체리동아리 소개 */}
-          <div className="flex justify-center">
-            <div className="text-wrapper w-full flex justify-center">
-              <p className="w-[80%] lg:w-[70%] relative mb-10 text-[14px] md:text-[30px] font-black text-center break-keep break-words">
-                {text}
-              </p>
-            </div>
-          </div>
-        </div>
-
-        {/* 체리동아리 신청 */}
-        <div className="flex justify-center mb-32">
-          <a
-            href="https://forms.gle/hMReZhWNUYfeMYe78"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="w-[50%] md:w-[30%] relative md:text-[20px] font-black text-center
-                    bg-red-500 text-white py-4 px-8 rounded-full hover:bg-red-600 
-                    transition-colors duration-300 transform hover:scale-105
-                    shadow-lg"
-          >
-            신청하기
-          </a>
-        </div>
-      </div>
+      <Title />
 
       {/* 현황 지도 */}
       <div
@@ -274,7 +180,6 @@ export default function Home() {
               r="2"
               fill="red"
               className="cursor-pointer"
-              onClick={handleRegionClick}
               data-region="서울"
             />
 
@@ -319,6 +224,7 @@ export default function Home() {
               onClick={handleRegionClick}
               data-region="호남제주"
             />
+
             <polygon
               className={`cls-1 stroke-[2px] ${
                 selectedRegion === "호남제주"

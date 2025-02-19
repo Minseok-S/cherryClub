@@ -1,1 +1,1 @@
-export { joinLink } from "./model/joinLink";
+export { clubJoinLink } from "./model/clubJoinLink";
