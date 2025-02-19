@@ -32,7 +32,7 @@ export const useScrollSpyHeader = ({ onSectionChange }: UseScrollSpyProps) => {
     handleScroll(); // 초기 실행
 
     return () => window.removeEventListener("scroll", handleScroll);
-  }, [Sections, onSectionChange]);
+  }, [onSectionChange]);
 
   return { activeSection };
 };

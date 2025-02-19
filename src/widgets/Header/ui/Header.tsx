@@ -1,7 +1,9 @@
-import { clubJoinLink } from "@/src/entities/link";
+"use client";
+
 import Image from "next/image";
-import { getSectionName } from "../lib/getSectionName";
+import { clubJoinLink } from "@/src/entities/link";
 import { Sections } from "@/src/shared/constants";
+import { getSectionName } from "../lib/getSectionName";
 import { useScrollSpyHeader } from "../model/useScrollSpyHeader";
 
 export const Header = ({
