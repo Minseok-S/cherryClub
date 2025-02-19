@@ -10,7 +10,7 @@ import "swiper/css/navigation";
 import { regionData } from "@/src/entities/campus";
 import Image from "next/image";
 import { Header } from "@/src/widgets/Header";
-import { useScrollSpy } from "@/src/features/scroll";
+import { ScrollIndicator } from "@/src/features/scroll";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -33,18 +33,9 @@ export default function Home() {
   const [selectedRegion, setSelectedRegion] = useState<string | null>(null);
   const [showMovements, setShowMovements] = useState(false);
   const [showRegionModal, setShowRegionModal] = useState(false);
-  const [showScrollIndicator, setShowScrollIndicator] = useState(true);
 
   const text =
     "체리 동아리는 '체인저 리더십(Changer Leadership) 동아리'의 준말로, 성경적 리더십 훈련을 통해 나를 변화시키고, 내가 속한 사회의 각 영역을 변화시키는 동아리입니다!";
-
-  const { activeSection } = useScrollSpy({
-    onSectionChange: (section: string) => {
-      if (section && section !== "map") {
-        setSelectedRegion(null);
-      }
-    },
-  });
 
   useEffect(() => {
     const chars = text.split("");
@@ -160,25 +151,6 @@ export default function Home() {
     setSelectedRegion(region === selectedRegion ? null : region);
   };
 
-  useEffect(() => {
-    const handleScroll = () => {
-      // 문서의 전체 높이
-      const documentHeight = document.documentElement.scrollHeight;
-      // 현재 보이는 영역의 높이
-      const windowHeight = window.innerHeight;
-      // 현재 스크롤 위치
-      const scrollTop = window.scrollY;
-
-      // 푸터에서 약간 위쪽에 도달하면 인디케이터를 숨김
-      // 전체 높이에서 현재 보이는 영역의 높이를 뺀 값의 90%에 도달하면 숨김
-      const threshold = (documentHeight - windowHeight) * 0.9;
-      setShowScrollIndicator(scrollTop < threshold);
-    };
-
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
   // 지역 선택 핸들러 수정
   const handleRegionSelect = (region: string) => {
     const formLink =
@@ -203,27 +175,9 @@ export default function Home() {
   return (
     <div className="min-h-[200vh] relative">
       {/* 스크롤 유도 - 조건부 렌더링 추가 */}
-      {showScrollIndicator && (
-        <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-10">
-          <div className="scroll-indicator animate-bounce cursor-pointer">
-            <svg
-              className="h-8 md:h-12 text-red-500"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M19 14l-7 7m0 0l-7-7m7 7V3"
-              />
-            </svg>
-          </div>
-        </div>
-      )}
+      <ScrollIndicator />
 
-      <Header activeSection={activeSection} />
+      <Header setSelectedRegion={setSelectedRegion} />
 
       <div className="relative">
         <div className="absolute inset-0 w-full h-[350px] md:h-[680px] overflow-hidden">

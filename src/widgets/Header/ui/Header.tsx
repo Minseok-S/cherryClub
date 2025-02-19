@@ -1,12 +1,22 @@
-"use client";
-
 import { joinLink } from "@/src/entities/link";
 import Image from "next/image";
-import { HeaderProps } from "../model/type";
 import { getSectionName } from "../lib/getSectionName";
 import { Sections } from "@/src/shared/constants";
+import { useScrollSpy } from "@/src/features/scroll";
 
-export const Header = ({ activeSection }: HeaderProps) => {
+export const Header = ({
+  setSelectedRegion,
+}: {
+  setSelectedRegion: (region: string | null) => void;
+}) => {
+  const { activeSection } = useScrollSpy({
+    onSectionChange: (section: string) => {
+      if (section && section !== "map") {
+        setSelectedRegion(null);
+      }
+    },
+  });
+
   return (
     <header className="fixed top-0 w-full z-50" id="main-header">
       <div className="container mx-auto px-4 py-4 flex justify-between items-center">
