@@ -9,6 +9,8 @@ import "swiper/css/pagination";
 import "swiper/css/navigation";
 import { regionData } from "@/src/entities/campus";
 import Image from "next/image";
+import { Header } from "@/src/widgets/Header";
+import { useScrollSpy } from "@/src/features/scroll";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -29,14 +31,20 @@ export default function Home() {
   const mapRef = useRef(null);
   const modalRef = useRef<HTMLDivElement>(null);
   const [selectedRegion, setSelectedRegion] = useState<string | null>(null);
-  const sections = ["map", "training", "campus", "class", "anthor"];
-  const [activeSection, setActiveSection] = useState<string>("");
   const [showMovements, setShowMovements] = useState(false);
   const [showRegionModal, setShowRegionModal] = useState(false);
   const [showScrollIndicator, setShowScrollIndicator] = useState(true);
 
   const text =
     "체리 동아리는 '체인저 리더십(Changer Leadership) 동아리'의 준말로, 성경적 리더십 훈련을 통해 나를 변화시키고, 내가 속한 사회의 각 영역을 변화시키는 동아리입니다!";
+
+  const { activeSection } = useScrollSpy({
+    onSectionChange: (section: string) => {
+      if (section && section !== "map") {
+        setSelectedRegion(null);
+      }
+    },
+  });
 
   useEffect(() => {
     const chars = text.split("");
@@ -154,35 +162,6 @@ export default function Home() {
 
   useEffect(() => {
     const handleScroll = () => {
-      const sections = ["map", "training", "campus", "class", "anthor"];
-      const currentSection = sections.find((section) => {
-        const element = document.getElementById(section);
-        if (element) {
-          const rect = element.getBoundingClientRect();
-          return (
-            rect.top <= window.innerHeight / 2 &&
-            rect.bottom >= window.innerHeight / 2
-          );
-        }
-        return false;
-      });
-
-      // 현재 섹션이 'map'이 아니면 모달 닫기
-      if (currentSection && currentSection !== "map") {
-        setSelectedRegion(null);
-      }
-
-      setActiveSection(currentSection || "");
-    };
-
-    window.addEventListener("scroll", handleScroll);
-    handleScroll(); // 초기 로드시 실행
-
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
-  useEffect(() => {
-    const handleScroll = () => {
       // 문서의 전체 높이
       const documentHeight = document.documentElement.scrollHeight;
       // 현재 보이는 영역의 높이
@@ -199,17 +178,6 @@ export default function Home() {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
-
-  const getSectionName = (section: string) => {
-    const names: { [key: string]: string } = {
-      map: "현황",
-      training: "리더십 훈련",
-      campus: "캠퍼스 사역",
-      class: "전체 / 지역모임",
-      anthor: "대외 사역",
-    };
-    return names[section] || section;
-  };
 
   // 지역 선택 핸들러 수정
   const handleRegionSelect = (region: string) => {
@@ -255,53 +223,7 @@ export default function Home() {
         </div>
       )}
 
-      <header className="fixed top-0 w-full z-50" id="main-header">
-        <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-          {/* 로고 및 메뉴 그룹 */}
-          <div className="flex items-center space-x-8">
-            <Image
-              src="/logo.png"
-              alt="Cherry Club Logo"
-              width={80}
-              height={80}
-              className="h-8 md:h-20 w-auto cursor-pointer"
-              onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-            />
-            <nav className="hidden md:flex md:space-x-6">
-              {sections.map((section) => (
-                <a
-                  key={section}
-                  href={`#${section}`}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    document.getElementById(section)?.scrollIntoView({
-                      behavior: "smooth",
-                      block: "center",
-                    });
-                  }}
-                  className={`hover:text-gray-300 md:text-xl font-black ${
-                    activeSection === section ? "text-red-500" : ""
-                  }`}
-                >
-                  {getSectionName(section)}
-                </a>
-              ))}
-            </nav>
-          </div>
-
-          {/* 오른쪽 영역 */}
-          <div className="flex items-center space-x-6">
-            <a
-              href="https://forms.gle/hMReZhWNUYfeMYe78"
-              target="_blank"
-              className="bg-red-500 text-white px-4 py-2 rounded-full hover:bg-red-600 
-                          transition-colors duration-300 text-xs md:text-base font-black"
-            >
-              신청하기
-            </a>
-          </div>
-        </div>
-      </header>
+      <Header activeSection={activeSection} />
 
       <div className="relative">
         <div className="absolute inset-0 w-full h-[350px] md:h-[680px] overflow-hidden">
@@ -348,7 +270,6 @@ export default function Home() {
                     bg-red-500 text-white py-4 px-8 rounded-full hover:bg-red-600 
                     transition-colors duration-300 transform hover:scale-105
                     shadow-lg"
-            style={{ scrollMarginTop: "100px" }}
           >
             신청하기
           </a>
@@ -359,7 +280,6 @@ export default function Home() {
       <div
         id="map"
         className="pb-10 md:pb-20 px-4 min-h-screen flex flex-col items-center justify-center"
-        style={{ scrollSnapAlign: "center", scrollMarginTop: "100px" }}
       >
         <div className="w-[100%] md:w-[110%] lg:w-[60%] relative" ref={mapRef}>
           <p className="text-center md:text-[40px] font-black">
@@ -665,7 +585,6 @@ export default function Home() {
       <div
         id="campus"
         className="pb-20 px-4 min-h-screen flex flex-col items-center justify-center"
-        style={{ scrollSnapAlign: "center", scrollMarginTop: "100px" }}
       >
         <h2 className="text-4xl md:text-6xl font-black text-center mb-6">
           캠퍼스 사역
@@ -890,7 +809,6 @@ export default function Home() {
       <div
         id="class"
         className=" md:pb-20 px-4 min-h-screen flex flex-col items-center justify-center"
-        style={{ scrollSnapAlign: "center", scrollMarginTop: "100px" }}
       >
         <h2 className="text-4xl md:text-6xl font-black text-center mb-3 md:mb-8">
           전체/지역모임
@@ -1001,7 +919,6 @@ export default function Home() {
       <div
         id="anthor"
         className="pb-20 px-4 min-h-screen flex flex-col items-center justify-center"
-        style={{ scrollSnapAlign: "center", scrollMarginTop: "100px" }}
       >
         <h2 className="text-4xl md:text-6xl font-black text-center mb-5 md:mb-7">
           대외사역
