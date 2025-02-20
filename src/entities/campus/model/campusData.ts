@@ -84,8 +84,8 @@ export const regionData: { [key: string]: RegionInfo } = {
       "홍익대학교 세종캠퍼스",
     ],
   },
-  경상: {
-    name: "경상 캠퍼스",
+  창원부산: {
+    name: "창원/부산 캠퍼스",
     description: "유서 깊은 문화유산과 현대 산업이 공존하는 지역입니다.",
     get total() {
       return String(this.campus.length);
@@ -96,9 +96,23 @@ export const regionData: { [key: string]: RegionInfo } = {
       "부산대학교",
       "영산대학교",
       "창원대학교",
-      "계명대학교",
-      "한동대학교",
     ],
+  },
+  대구포항: {
+    name: "대구/포항 캠퍼스",
+    description: "유서 깊은 문화유산과 현대 산업이 공존하는 지역입니다.",
+    get total() {
+      return String(this.campus.length);
+    },
+    campus: ["계명대학교", "한동대학교"],
+  },
+  경상: {
+    name: "경상 캠퍼스",
+    description: "유서 깊은 문화유산과 현대 산업이 공존하는 지역입니다.",
+    get total() {
+      return String(this.campus.length);
+    },
+    campus: [],
   },
   호남제주: {
     name: "호남/제주 캠퍼스",

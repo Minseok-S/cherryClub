@@ -16,9 +16,7 @@ export const TrainingSection = () => {
       className="pb-10 md:pb-20 px-4 min-h-screen flex flex-col items-center justify-center"
       style={{ scrollSnapAlign: "center", scrollMarginTop: "50px" }}
     >
-      <h2 className="text-4xl md:text-6xl font-black text-center mb-5 md:mb-7">
-        리더십 훈련
-      </h2>
+      <h1 className="font-black text-center mb-5 md:mb-7">리더십 훈련</h1>
 
       <div className="max-w-4xl mx-auto mb-5 md:mb-7 text-center w-full px-4">
         <div className="grid grid-cols-2 gap-3 md:gap-4">

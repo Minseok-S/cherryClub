@@ -27,7 +27,7 @@ export function Title() {
       <div className="relative">
         <div className="flex items-center justify-center pt-10 mt-40 md:mt-44">
           <div className="title-text-wrapper relative whitespace-nowrap">
-            <h1 className="title-text text-[clamp(50px,10vw,100px)] md:text-[clamp(100px,12vw,250px)] font-black">
+            <h1 className="text-[clamp(50px,10vw,100px)] md:text-[clamp(100px,12vw,250px)] font-black">
               CHERRY CLUB
             </h1>
           </div>
@@ -36,9 +36,9 @@ export function Title() {
         {/* 체리동아리 소개 */}
         <div className="flex justify-center">
           <div className="text-wrapper w-full flex justify-center">
-            <p className="w-[80%] lg:w-[70%] relative mb-10 text-[14px] md:text-[30px] font-black text-center break-keep break-words">
+            <h1 className="w-[80%] lg:w-[70%] relative mb-10 font-black text-center break-keep break-words">
               {text}
-            </p>
+            </h1>
           </div>
         </div>
       </div>
