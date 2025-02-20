@@ -26,7 +26,7 @@ export const useMapAnimation = (
           end: "bottom center",
           scrub: 1,
         },
-        scale: mediaQuery.matches ? 0.7 : 0.9,
+        scale: mediaQuery.matches ? 0.5 : 0.9,
         opacity: 1,
         duration: 1,
       });
@@ -42,6 +42,37 @@ export const useMapAnimation = (
       duration: 0.5,
       ease: "power2.out",
     });
+
+    const map = mapRef.current;
+    if (!map) return;
+
+    // 선택되지 않은 지역들 흐리게 처리
+    const allPaths = map.querySelectorAll("[data-region]");
+    const selectedPath = map.querySelector(`[data-region="${selectedRegion}"]`);
+
+    // 모든 지역을 원래 상태로 되돌리기
+    allPaths.forEach((path) => {
+      gsap.to(path, {
+        opacity: selectedRegion ? 0.03 : 1,
+        scale: 1,
+        filter: "none",
+        duration: 0.3,
+      });
+    });
+
+    console.log("selectedRegion", selectedRegion);
+
+    // 선택된 지역이 있을 경우에만 강조 효과 적용
+    if (selectedPath && selectedRegion) {
+      gsap.to(selectedPath, {
+        opacity: 1,
+        scale: selectedRegion === "서울" ? 4 : 1.1,
+        transformOrigin: "center center",
+        filter: "drop-shadow(3px 3px 5px rgba(0, 0, 0, 0.3))",
+        duration: 0.5,
+        ease: "power2.out",
+      });
+    }
 
     gsap.to(modalRef.current, {
       x: selectedRegion ? 0 : "100%",

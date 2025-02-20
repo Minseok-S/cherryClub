@@ -114,7 +114,16 @@ export const regionData: { [key: string]: RegionInfo } = {
     },
     campus: [],
   },
-  호남제주: {
+  호남: {
+    name: "호남/제주 캠퍼스",
+    description:
+      "대한민국의 대표적인 관광지로, 아름다운 자연과 독특한 문화가 있는 섬입니다.",
+    get total() {
+      return String(this.campus.length);
+    },
+    campus: ["순천대학교", "전북과학대학교", "제주대학교", "호원대학교"],
+  },
+  제주: {
     name: "호남/제주 캠퍼스",
     description:
       "대한민국의 대표적인 관광지로, 아름다운 자연과 독특한 문화가 있는 섬입니다.",
