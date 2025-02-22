@@ -74,7 +74,7 @@ export const Header = ({
               className="bg-red-500 text-white px-4 py-2 rounded-full hover:bg-red-600 
                         transition-colors duration-300 text-xs md:text-base font-black"
             >
-              신청하기
+              동아리 가입 신청
             </a>
           </div>
         </div>

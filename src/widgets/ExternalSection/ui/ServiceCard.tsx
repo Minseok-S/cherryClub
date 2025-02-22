@@ -17,7 +17,12 @@ export const ServiceCard = ({
         <span className="text-2xl">{icon}</span>
         <h4 className="font-bold">{title}</h4>
       </div>
-      <p className="text-sm text-gray-600 mb-4">{description}</p>
+      <p
+        className="text-sm text-gray-600 mb-4 text-center"
+        style={{ whiteSpace: "pre-line" }}
+      >
+        {description}
+      </p>
       <div className="mt-auto flex justify-center w-full">
         <button
           onClick={() => {

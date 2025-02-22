@@ -17,9 +17,7 @@ export const MovementsAccordion = ({
         onClick={() => setShowMovements(!showMovements)}
         className="w-full flex items-center justify-center space-x-2 bg-white/5 hover:bg-white/10 backdrop-blur-sm p-4 rounded-lg transition-all duration-300"
       >
-        <h3 className="text-xl md:text-2xl font-bold text-center">
-          5대운동이란?
-        </h3>
+        <h3 className="text-xl md:text-2xl font-bold text-center">사역소개</h3>
         <svg
           className={`w-6 h-6 transform transition-transform duration-300 ${
             showMovements ? "rotate-180" : ""
@@ -49,12 +47,15 @@ export const MovementsAccordion = ({
           {movements.map((movement, index) => (
             <div
               key={index}
-              className={`bg-white/5 backdrop-blur-sm p-4 rounded-lg ${
-                index === 0 ? "md:col-span-2" : ""
-              }`}
+              className={`bg-white/5 backdrop-blur-sm p-4 rounded-lg`}
             >
               <h4 className="font-bold mb-2">{movement.title}</h4>
-              <p className="text-sm text-gray-600">{movement.content}</p>
+              <p
+                className="text-sm text-gray-600"
+                style={{ whiteSpace: "pre-line" }}
+              >
+                {movement.content}
+              </p>
             </div>
           ))}
         </div>

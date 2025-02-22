@@ -1,6 +1,4 @@
-import { RegionInfo } from "./types";
-
-export const regionData: { [key: string]: RegionInfo } = {
+export const regionData: { [key: string]: any } = {
   서울: {
     name: "서울 캠퍼스",
     description: "대한민국의 수도권 지역으로, 정치, 경제, 문화의 중심지입니다.",

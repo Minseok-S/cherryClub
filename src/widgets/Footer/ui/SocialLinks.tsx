@@ -23,7 +23,7 @@ export const SocialLinks = () => {
 
 const InstagramIcon = () => (
   <svg
-    className="w-6 h-6"
+    className="w-8 h-8"
     fill="currentColor"
     viewBox="0 0 24 24"
     aria-hidden="true"
@@ -38,7 +38,7 @@ const InstagramIcon = () => (
 
 const YoutubeIcon = () => (
   <svg
-    className="w-6 h-6"
+    className="w-8 h-8"
     fill="currentColor"
     viewBox="0 0 24 24"
     aria-hidden="true"

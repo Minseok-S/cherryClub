@@ -23,10 +23,9 @@ export const CampusSection = () => {
 
       {/* 기본 설명 텍스트 */}
       <p className="text-center text-gray-600 max-w-3xl mx-auto mb-8 text-sm md:text-base font-medium break-keep whitespace-pre-wrap">
-        NCMN 대학캠퍼스사역은 다음 세대의 부흥을 이끄는 사역입니다.
-        {"\n"}대학캠퍼스 안에서부터 5K운동을 중심으로 NCMN 5대운동(말씀배가운동,
-        체리배가운동, 10만중보기도운동, 주인바꾸기운동, 5K운동)을 펼쳐서
-        기독교문명개혁운동을 주도하는 사역을 하고 있습니다.
+        체리동아리의 캠퍼스 사역은 대학캠퍼스에 부흥을 이끄는 사역입니다.
+        {"\n"}
+        대학캠퍼스 안에서 5K 무료나눔, 5K 청년밥차, 캠퍼스 워십, Red Heart Day
       </p>
 
       {/* 5대운동 설명 */}

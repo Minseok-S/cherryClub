@@ -8,6 +8,7 @@ interface Application {
   university: string;
   created_at: string;
   region: string;
+  status: string;
 }
 
 export default function AdminPage() {
@@ -16,6 +17,8 @@ export default function AdminPage() {
   const [authCode, setAuthCode] = useState("");
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [userName, setUserName] = useState("");
+  const [authority, setAuthority] = useState(0);
+  const [region, setRegion] = useState("");
 
   const handleAuthSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -29,15 +32,48 @@ export default function AdminPage() {
         body: JSON.stringify({ code: authCode }),
       });
 
-      const result = await response.json();
-      if (!response.ok) throw new Error("인증 실패");
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(
+          `관리자 인증 실패 (${response.status} ${response.statusText}): ${
+            errorData.message || "Unknown error"
+          }`
+        );
+      }
 
+      const result = await response.json();
       setIsAuthenticated(true);
       setUserName(result.userName || "관리자");
+      setAuthority(result.authority || 0);
+      setRegion(result.region || "");
     } catch (err) {
       console.error(err);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleStatusChange = async (id: number, newStatus: string) => {
+    try {
+      const response = await fetch(`/api/applications/${id}/status`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${authCode}`,
+        },
+        body: JSON.stringify({ status: newStatus }),
+      });
+
+      if (!response.ok) throw new Error("상태 업데이트 실패");
+
+      // Update local data
+      setData(
+        data.map((item) =>
+          item.id === id ? { ...item, status: newStatus } : item
+        )
+      );
+    } catch (err) {
+      console.error(err);
     }
   };
 
@@ -46,11 +82,16 @@ export default function AdminPage() {
 
     const fetchData = async () => {
       try {
-        const response = await fetch("/api/applications", {
-          headers: {
-            Authorization: `Bearer ${authCode}`,
-          },
-        });
+        const response = await fetch(
+          `/api/applications?authority=${authority}&userName=${encodeURIComponent(
+            userName
+          )}&region=${encodeURIComponent(region)}`,
+          {
+            headers: {
+              Authorization: `Bearer ${authCode}`,
+            },
+          }
+        );
 
         if (!response.ok) throw new Error("데이터 조회 실패");
         const result = await response.json();
@@ -105,6 +146,7 @@ export default function AdminPage() {
               <th className="px-6 py-3 text-left text-white">대학교</th>
               <th className="px-6 py-3 text-left text-white">지역</th>
               <th className="px-6 py-3 text-left text-white">신청일시</th>
+              <th className="px-6 py-3 text-left text-white">상태</th>
             </tr>
           </thead>
           <tbody>
@@ -117,6 +159,20 @@ export default function AdminPage() {
                 <td className="px-6 py-4">{item.region}</td>
                 <td className="px-6 py-4">
                   {new Date(item.created_at).toLocaleString()}
+                </td>
+                <td className="px-6 py-4">
+                  <select
+                    value={item.status}
+                    onChange={(e) =>
+                      handleStatusChange(item.id, e.target.value)
+                    }
+                    className="bg-gray-800 border border-gray-600 rounded px-2 py-1 text-white"
+                  >
+                    <option value="신청 완료">신청 완료</option>
+                    <option value="연락 완료">연락 완료</option>
+                    <option value="동아리 개설">동아리 개설</option>
+                    <option value="포기">포기</option>
+                  </select>
                 </td>
               </tr>
             ))}

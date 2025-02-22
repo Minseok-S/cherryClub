@@ -64,17 +64,31 @@ export async function POST(request: Request) {
   }
 }
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
     const connection = await pool.getConnection();
+    const { searchParams } = new URL(request.url);
 
-    // 실제 구현시 더 강력한 인증 방식 권장
+    // URL 파라미터에서 권한 정보 추출
+    const authority = searchParams.get("authority");
+    const userName = searchParams.get("name");
+    const region = searchParams.get("region");
 
-    // 신청 내역 조회
-    const [rows] = await connection.query(`
-      SELECT * FROM applications 
-      ORDER BY created_at DESC
-    `);
+    let query = "SELECT * FROM applications";
+    const params = [];
+
+    // 권한에 따른 필터 조건 추가
+    if (authority === "1") {
+      query += " WHERE region = ?";
+      params.push(region);
+    } else if (authority === "2") {
+      query += " WHERE university = ?";
+      params.push(userName);
+    }
+
+    query += " ORDER BY created_at DESC";
+
+    const [rows] = await connection.query(query, params);
 
     connection.release();
     return NextResponse.json(rows);

@@ -24,7 +24,7 @@ export const Footer = () => {
 
             <div className="space-y-4 text-center">
               <p className="text-gray-400 text-sm">
-                * 신청 확인 후 각 학교 담당자가 연락 드릴 예정입니다 :)
+                * 신청 확인 후 각 학교 담당자가 연락드릴 예정입니다 :)
               </p>
             </div>
           </div>
@@ -34,7 +34,7 @@ export const Footer = () => {
         <div className="border-t border-gray-800 mt-12 pt-8 text-center">
           <SocialLinks />
           <p className="text-gray-400 text-sm">
-            © 2024 Cherry Club. All rights reserved.
+            © 2025 Cherry Club. All rights reserved.
           </p>
         </div>
       </div>

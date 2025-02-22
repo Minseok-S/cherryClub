@@ -17,6 +17,7 @@ interface User {
   name: string;
   authority: number;
   authCode: string;
+  region: string;
 }
 
 export async function POST(request: Request) {
@@ -29,7 +30,7 @@ export async function POST(request: Request) {
 
     // SQL 인젝션 방지를 위한 prepared statement
     const [rows] = await connection.execute<[]>(
-      "SELECT name, authority, authCode FROM user WHERE authCode = ?",
+      "SELECT name, authority, authCode, region FROM user WHERE authCode = ?",
       [code]
     );
 
@@ -43,7 +44,12 @@ export async function POST(request: Request) {
     }
 
     return NextResponse.json(
-      { success: true, userName: users[0].name, authority: users[0].authority },
+      {
+        success: true,
+        userName: users[0].name,
+        authority: users[0].authority,
+        region: users[0].region,
+      },
       { status: 200 }
     );
   } catch (error) {

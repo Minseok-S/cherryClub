@@ -40,7 +40,8 @@ export const MeetingSection = () => {
       <div className="max-w-4xl mx-auto mb-6 md:mb-12 text-center">
         <p className="text-gray-600 text-sm md:text-base font-medium">
           매월 1회 전체모임과 지역별 모임을 통해 <br />
-          체리 동아리원들과 함께 교제하며 성장합니다
+          체리 동아리 회원들은 예배와 교제를 통해 비전을 공유하고 함께
+          성장합니다.
         </p>
       </div>
 

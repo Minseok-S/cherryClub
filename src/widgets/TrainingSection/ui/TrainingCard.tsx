@@ -18,7 +18,10 @@ export const TrainingCard = ({ title, front, back }: TrainingCardProps) => {
 
         {/* 뒷면 */}
         <div className="absolute inset-0 bg-red-500/90 backdrop-blur-sm p-6 rounded-xl [backface-visibility:hidden] [transform:rotateY(180deg)] flex items-center justify-center">
-          <p className="text-white  font-bold whitespace-normal break-keep text-center">
+          <p
+            className="text-white font-bold whitespace-normal break-keep text-center"
+            style={{ whiteSpace: "pre-line" }}
+          >
             {back}
           </p>
         </div>
