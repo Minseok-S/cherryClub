@@ -40,6 +40,7 @@ export default function ApplyPage() {
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm<ApplicationForm>({
     shouldUnregister: true,
@@ -85,9 +86,30 @@ export default function ApplyPage() {
     return () => clearTimeout(debounceTimer);
   }, [universityQuery]);
 
-  const onSubmit = (data: ApplicationForm) => {
-    console.log(data);
-    // 여기에 제출 로직 추가
+  const onSubmit = async (data: ApplicationForm) => {
+    try {
+      const response = await fetch("/api/applications", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          ...data,
+          studentId: data.studentId, // student_id로 매핑
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("서버 응답 오류");
+      }
+
+      const result = await response.json();
+      alert("성공적으로 제출되었습니다!");
+      reset();
+    } catch (error) {
+      console.error("제출 실패:", error);
+      alert("제출에 실패했습니다. 다시 시도해주세요.");
+    }
   };
 
   return (

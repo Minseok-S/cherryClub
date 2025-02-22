@@ -1,1 +1,1 @@
-export const clubJoinLink = "https://forms.gle/hMReZhWNUYfeMYe78";
+export const clubJoinLink = "/apply";
