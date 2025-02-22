@@ -4,10 +4,15 @@ import { useEffect, useState } from "react";
 interface Application {
   id: number;
   name: string;
+  gender: string;
   phone: string;
-  university: string;
-  created_at: string;
+  birthdate: string;
   region: string;
+  university: string;
+  major: string;
+  student_id: string;
+  grade: string;
+  created_at: string;
   status: string;
 }
 
@@ -142,9 +147,14 @@ export default function AdminPage() {
             <tr className="bg-gray-800">
               <th className="px-6 py-3 text-left text-white">ID</th>
               <th className="px-6 py-3 text-left text-white">이름</th>
+              <th className="px-6 py-3 text-left text-white">성별</th>
               <th className="px-6 py-3 text-left text-white">연락처</th>
-              <th className="px-6 py-3 text-left text-white">대학교</th>
+              <th className="px-6 py-3 text-left text-white">생년월일</th>
               <th className="px-6 py-3 text-left text-white">지역</th>
+              <th className="px-6 py-3 text-left text-white">대학교</th>
+              <th className="px-6 py-3 text-left text-white">전공</th>
+              <th className="px-6 py-3 text-left text-white">학번</th>
+              <th className="px-6 py-3 text-left text-white">학년</th>
               <th className="px-6 py-3 text-left text-white">신청일시</th>
               <th className="px-6 py-3 text-left text-white">상태</th>
             </tr>
@@ -154,9 +164,14 @@ export default function AdminPage() {
               <tr key={item.id} className="border-t border-gray-700">
                 <td className="px-6 py-4">{item.id}</td>
                 <td className="px-6 py-4">{item.name}</td>
+                <td className="px-6 py-4">{item.gender}</td>
                 <td className="px-6 py-4">{item.phone}</td>
-                <td className="px-6 py-4">{item.university}</td>
+                <td className="px-6 py-4">{item.birthdate}</td>
                 <td className="px-6 py-4">{item.region}</td>
+                <td className="px-6 py-4">{item.university}</td>
+                <td className="px-6 py-4">{item.major}</td>
+                <td className="px-6 py-4">{item.student_id}</td>
+                <td className="px-6 py-4">{item.grade}</td>
                 <td className="px-6 py-4">
                   {new Date(item.created_at).toLocaleString()}
                 </td>
@@ -168,10 +183,9 @@ export default function AdminPage() {
                     }
                     className="bg-gray-800 border border-gray-600 rounded px-2 py-1 text-white"
                   >
-                    <option value="신청 완료">신청 완료</option>
-                    <option value="연락 완료">연락 완료</option>
-                    <option value="동아리 개설">동아리 개설</option>
-                    <option value="포기">포기</option>
+                    <option value="신청 완료">신청</option>
+                    <option value="연락 완료">진행</option>
+                    <option value="동아리 개설">완료</option>
                   </select>
                 </td>
               </tr>

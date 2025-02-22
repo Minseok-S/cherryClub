@@ -12,7 +12,7 @@ export const ClubJoinButton = () => {
               transition-colors duration-300 transform hover:scale-105
               shadow-lg"
       >
-        신청하기
+        동아리 가입 신청하기
       </a>
     </div>
   );

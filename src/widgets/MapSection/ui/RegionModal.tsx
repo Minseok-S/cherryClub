@@ -77,9 +77,8 @@ export const RegionModal = forwardRef<HTMLDivElement, RegionModalProps>(
             <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
               <div className="bg-white p-6 rounded-lg max-w-md w-full">
                 <div className="flex justify-between items-center mb-4">
-                  <h3 className="text-xl text-black font-bold">간사: 000</h3>
                   <h3 className="text-xl text-black font-bold">
-                    {selectedCampus} 카카오톡 ID
+                    {selectedCampus}
                   </h3>
                   <button
                     onClick={() => {
@@ -91,10 +90,16 @@ export const RegionModal = forwardRef<HTMLDivElement, RegionModalProps>(
                     ✕
                   </button>
                 </div>
-                //TODO : 카카오톡 모달 해줘
+
+                <div className="flex justify-between items-center mb-4">
+                  <span className="text-lg text-black font-bold">
+                    간사:1414{" "}
+                  </span>
+                </div>
+
                 <p className="break-words text-black">
                   {regionData[selectedRegion].campusKakaoId?.[selectedCampus] ||
-                    "임시 카카오톡 ID: 12345"}
+                    "임시 카카오톡 ID: 1414"}
                 </p>
               </div>
             </div>

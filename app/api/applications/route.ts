@@ -18,7 +18,13 @@ export async function POST(request: Request) {
     const data = await request.json();
 
     // 필수 필드 검증
-    if (!data.name || !data.phone || !data.university) {
+    if (
+      !data.name ||
+      !data.phone ||
+      !data.birthdate ||
+      !data.university ||
+      !data.major
+    ) {
       return NextResponse.json(
         { error: "필수 항목이 누락되었습니다" },
         { status: 400 }
@@ -31,10 +37,11 @@ export async function POST(request: Request) {
         name = ?, 
         gender = ?, 
         phone = ?, 
+        birthdate = ?, 
         university = ?, 
+        major = ?, 
         student_id = ?, 
         grade = ?, 
-        semester = ?, 
         region = ?, 
         message = ?, 
         agree = ?,
@@ -43,10 +50,11 @@ export async function POST(request: Request) {
         data.name,
         data.gender,
         data.phone,
+        data.birthdate,
         data.university,
+        data.major,
         data.studentId,
         data.grade,
-        data.semester,
         data.region,
         data.message,
         data.agree,
