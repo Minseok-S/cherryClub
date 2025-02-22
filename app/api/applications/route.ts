@@ -129,6 +129,60 @@ export async function PUT(request: Request) {
       id,
     ]);
 
+    // 상태가 '참여'로 변경된 경우 clubUsers 테이블에 추가
+    if (status === "참여") {
+      // 기존 신청서 데이터 조회 (타입 어설션 추가)
+      const [rows] = await connection.query(
+        "SELECT * FROM applications WHERE id = ?",
+        [id]
+      );
+      const application = (rows as mysql.RowDataPacket[])[0];
+
+      if (application) {
+        await connection.query(
+          `INSERT INTO clubUsers SET 
+            name = ?,
+            gender = ?,
+            phone = ?,
+            birthdate = ?,
+            university = ?,
+            major = ?,
+            student_id = ?,
+            grade = ?,
+            region = ?,
+            message = ?,
+            created_at = ?`,
+          [
+            application.name,
+            application.gender,
+            application.phone,
+            application.birthdate,
+            application.university,
+            application.major,
+            application.student_id,
+            application.grade,
+            application.region,
+            application.message || null,
+            application.created_at,
+          ]
+        );
+      }
+    }
+    // 상태가 '포기'로 변경된 경우 clubUsers 테이블에서 삭제
+    else if (status === "포기") {
+      const [rows] = await connection.query(
+        "SELECT student_id FROM applications WHERE id = ?",
+        [id]
+      );
+      const studentId = (rows as mysql.RowDataPacket[])[0]?.student_id;
+
+      if (studentId) {
+        await connection.query("DELETE FROM clubUsers WHERE student_id = ?", [
+          studentId,
+        ]);
+      }
+    }
+
     connection.release();
     return NextResponse.json({ success: true });
   } catch (error) {
