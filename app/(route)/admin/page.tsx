@@ -13,15 +13,42 @@ interface Application {
 export default function AdminPage() {
   const [data, setData] = useState<Application[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+  const [authCode, setAuthCode] = useState("");
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [userName, setUserName] = useState("");
+
+  const handleAuthSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      const response = await fetch("/api/validate-auth", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ code: authCode }),
+      });
+
+      const result = await response.json();
+      if (!response.ok) throw new Error("인증 실패");
+
+      setIsAuthenticated(true);
+      setUserName(result.userName || "관리자");
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
+    if (!isAuthenticated) return;
+
     const fetchData = async () => {
       try {
         const response = await fetch("/api/applications", {
           headers: {
-            // 실제 구현시 적절한 인증 방식 추가 필요
-            Authorization: `Bearer ${process.env.ADMIN_TOKEN}`,
+            Authorization: `Bearer ${authCode}`,
           },
         });
 
@@ -29,21 +56,45 @@ export default function AdminPage() {
         const result = await response.json();
         setData(result);
       } catch (err) {
-        setError("데이터를 불러오는 중 오류 발생");
+        console.error(err);
       } finally {
         setLoading(false);
       }
     };
 
     fetchData();
-  }, []);
+  }, [isAuthenticated]);
+
+  if (!isAuthenticated) {
+    return (
+      <div className="p-4 max-w-md mx-auto mt-20">
+        <form onSubmit={handleAuthSubmit} className="space-y-4">
+          <input
+            type="password"
+            value={authCode}
+            onChange={(e) => setAuthCode(e.target.value)}
+            className="w-full p-2 rounded text-black"
+            placeholder="관리자 인증 코드 입력"
+          />
+          <button
+            type="submit"
+            className="w-full bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700"
+          >
+            인증
+          </button>
+        </form>
+      </div>
+    );
+  }
 
   if (loading) return <div className="p-4 text-center">로딩 중...</div>;
-  if (error) return <div className="p-4 text-red-500 text-center">{error}</div>;
 
   return (
     <div className="p-4 max-w-6xl mx-auto bg-black text-white">
-      <h1 className="text-2xl font-bold mb-6">신청자 관리</h1>
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-2xl font-bold">신청자 관리</h1>
+        <div className="text-gray-400">{userName}님 안녕하세요 👋</div>
+      </div>
       <div className="overflow-x-auto">
         <table className="min-w-full bg-gray-900 border border-gray-700">
           <thead>

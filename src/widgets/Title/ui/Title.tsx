@@ -20,7 +20,7 @@ export function Title() {
           <source src="/title.mp4" type="video/mp4" />
         </video>
         {/* 비디오 위에 오버레이 추가 */}
-        <div className="absolute inset-0 bg-black/80"></div>
+        <div className="absolute inset-0 bg-black/10"></div>
       </div>
 
       {/* 기존 콘텐츠를 relative로 설정하여 비디오 위에 표시 */}

@@ -103,7 +103,6 @@ export default function ApplyPage() {
         throw new Error("서버 응답 오류");
       }
 
-      const result = await response.json();
       alert("성공적으로 제출되었습니다!");
       reset();
     } catch (error) {

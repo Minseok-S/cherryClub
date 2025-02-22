@@ -68,8 +68,6 @@ export async function GET() {
   try {
     const connection = await pool.getConnection();
 
-    // 관리자 인증 로직 추가 (예시)
-    const adminPassword = process.env.ADMIN_PASSWORD;
     // 실제 구현시 더 강력한 인증 방식 권장
 
     // 신청 내역 조회
