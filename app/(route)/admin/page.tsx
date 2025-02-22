@@ -24,6 +24,7 @@ export default function AdminPage() {
   const [userName, setUserName] = useState("");
   const [authority, setAuthority] = useState(0);
   const [region, setRegion] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
 
   const handleAuthSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -60,7 +61,7 @@ export default function AdminPage() {
 
   const handleStatusChange = async (id: number, newStatus: string) => {
     try {
-      const response = await fetch(`/api/applications/${id}/status`, {
+      const response = await fetch(`/api/applications?id=${id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -111,6 +112,13 @@ export default function AdminPage() {
     fetchData();
   }, [isAuthenticated]);
 
+  // 필터링된 데이터 계산
+  const filteredData = data.filter((item) =>
+    Object.values(item).some((value) =>
+      String(value).toLowerCase().includes(searchTerm.toLowerCase())
+    )
+  );
+
   if (!isAuthenticated) {
     return (
       <div className="p-4 max-w-md mx-auto mt-20">
@@ -136,60 +144,103 @@ export default function AdminPage() {
   if (loading) return <div className="p-4 text-center">로딩 중...</div>;
 
   return (
-    <div className="p-4 max-w-6xl mx-auto bg-black text-white">
+    <div className="p-4 mx-24 bg-black text-white">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">신청자 관리</h1>
-        <div className="text-gray-400">{userName}님 안녕하세요 👋</div>
+        <div className="flex items-center gap-4">
+          <div className="relative">
+            <input
+              type="text"
+              placeholder="검색"
+              className="p-2 pl-10 rounded bg-gray-800 text-white"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+            <svg
+              className="absolute left-3 top-3 h-5 w-5 text-gray-400 pointer-events-none"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+              />
+            </svg>
+          </div>
+          <div className="text-gray-400">{userName}님 안녕하세요 👋</div>
+        </div>
       </div>
       <div className="overflow-x-auto">
         <table className="min-w-full bg-gray-900 border border-gray-700">
           <thead>
             <tr className="bg-gray-800">
-              <th className="px-6 py-3 text-left text-white">ID</th>
-              <th className="px-6 py-3 text-left text-white">이름</th>
-              <th className="px-6 py-3 text-left text-white">성별</th>
-              <th className="px-6 py-3 text-left text-white">연락처</th>
-              <th className="px-6 py-3 text-left text-white">생년월일</th>
-              <th className="px-6 py-3 text-left text-white">지역</th>
-              <th className="px-6 py-3 text-left text-white">대학교</th>
-              <th className="px-6 py-3 text-left text-white">전공</th>
-              <th className="px-6 py-3 text-left text-white">학번</th>
-              <th className="px-6 py-3 text-left text-white">학년</th>
-              <th className="px-6 py-3 text-left text-white">신청일시</th>
-              <th className="px-6 py-3 text-left text-white">상태</th>
+              <th className="px-6 py-3 text-center text-white">이름</th>
+              <th className="px-6 py-3 text-center text-white">성별</th>
+              <th className="px-6 py-3 text-center text-white">연락처</th>
+              <th className="px-6 py-3 text-center text-white">생년월일</th>
+              <th className="px-6 py-3 text-center text-white">지역</th>
+              <th className="px-6 py-3 text-center text-white">대학교</th>
+              <th className="px-6 py-3 text-center text-white">전공</th>
+              <th className="px-6 py-3 text-center text-white">학번</th>
+              <th className="px-6 py-3 text-center text-white">학년</th>
+              <th className="px-6 py-3 text-center text-white">신청일시</th>
+              <th className="px-6 py-3 text-center text-white">상태</th>
             </tr>
           </thead>
           <tbody>
-            {data.map((item) => (
-              <tr key={item.id} className="border-t border-gray-700">
-                <td className="px-6 py-4">{item.id}</td>
-                <td className="px-6 py-4">{item.name}</td>
-                <td className="px-6 py-4">{item.gender}</td>
-                <td className="px-6 py-4">{item.phone}</td>
-                <td className="px-6 py-4">{item.birthdate}</td>
-                <td className="px-6 py-4">{item.region}</td>
-                <td className="px-6 py-4">{item.university}</td>
-                <td className="px-6 py-4">{item.major}</td>
-                <td className="px-6 py-4">{item.student_id}</td>
-                <td className="px-6 py-4">{item.grade}</td>
-                <td className="px-6 py-4">
-                  {new Date(item.created_at).toLocaleString()}
-                </td>
-                <td className="px-6 py-4">
-                  <select
-                    value={item.status}
-                    onChange={(e) =>
-                      handleStatusChange(item.id, e.target.value)
-                    }
-                    className="bg-gray-800 border border-gray-600 rounded px-2 py-1 text-white"
-                  >
-                    <option value="신청 완료">신청</option>
-                    <option value="연락 완료">진행</option>
-                    <option value="동아리 개설">완료</option>
-                  </select>
+            {filteredData.length === 0 ? (
+              <tr>
+                <td colSpan={11} className="text-center py-4">
+                  검색 결과가 없습니다
                 </td>
               </tr>
-            ))}
+            ) : (
+              filteredData.map((item) => (
+                <tr
+                  key={item.id}
+                  className={`border-t border-gray-700 ${
+                    item.status === "신청"
+                      ? "bg-blue-900/50 hover:bg-blue-800/50"
+                      : item.status === "진행"
+                      ? "bg-yellow-900/50 hover:bg-yellow-800/50"
+                      : item.status === "참여"
+                      ? "bg-green-900/50 hover:bg-green-800/50"
+                      : "bg-red-900/50 hover:bg-red-800/50"
+                  }`}
+                >
+                  <td className="px-6 py-4 text-center">{item.name}</td>
+                  <td className="px-6 py-4 text-center">{item.gender}</td>
+                  <td className="px-6 py-4 text-center">{item.phone}</td>
+                  <td className="px-6 py-4 text-center">{item.birthdate}</td>
+                  <td className="px-6 py-4 text-center">{item.region}</td>
+                  <td className="px-6 py-4 text-center">{item.university}</td>
+                  <td className="px-6 py-4 text-center">{item.major}</td>
+                  <td className="px-6 py-4 text-center">{item.student_id}</td>
+                  <td className="px-6 py-4 text-center">{item.grade}</td>
+                  <td className="px-6 py-4 text-center">
+                    {new Date(item.created_at).toLocaleString()}
+                  </td>
+                  <td className="px-6 py-4 text-center">
+                    <select
+                      value={item.status}
+                      onChange={(e) =>
+                        handleStatusChange(item.id, e.target.value)
+                      }
+                      className="bg-gray-800 border border-gray-600 rounded px-2 py-1 text-white"
+                    >
+                      <option value="신청">신청</option>
+                      <option value="진행">진행</option>
+                      <option value="참여">참여</option>
+                      <option value="포기">포기</option>
+                    </select>
+                  </td>
+                </tr>
+              ))
+            )}
           </tbody>
         </table>
       </div>

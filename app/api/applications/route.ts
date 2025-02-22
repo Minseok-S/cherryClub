@@ -108,3 +108,34 @@ export async function GET(request: Request) {
     );
   }
 }
+
+export async function PUT(request: Request) {
+  try {
+    const connection = await pool.getConnection();
+    const { searchParams } = new URL(request.url);
+    const id = searchParams.get("id");
+    const { status } = await request.json();
+
+    if (!id || !status) {
+      return NextResponse.json(
+        { error: "ID와 상태값이 필요합니다" },
+        { status: 400 }
+      );
+    }
+
+    // 상태 업데이트 쿼리
+    await connection.query("UPDATE applications SET status = ? WHERE id = ?", [
+      status,
+      id,
+    ]);
+
+    connection.release();
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error("Database error:", error);
+    return NextResponse.json(
+      { error: "서버 내부 오류가 발생했습니다" },
+      { status: 500 }
+    );
+  }
+}
