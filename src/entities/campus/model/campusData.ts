@@ -1,8 +1,18 @@
-export const regionData: { [key: string]: any } = {
+// src/entities/campus/model/campusData.ts
+type RegionData = {
+  name: string;
+  description: string;
+  total: () => string;
+  campus: string[];
+};
+
+// ... existing code ...
+
+export const regionData: { [key: string]: RegionData } = {
   서울: {
     name: "서울 캠퍼스",
     description: "대한민국의 수도권 지역으로, 정치, 경제, 문화의 중심지입니다.",
-    get total() {
+    total: function () {
       return String(this.campus.length);
     },
     campus: [
@@ -33,7 +43,8 @@ export const regionData: { [key: string]: any } = {
   경기인천: {
     name: "경기/인천 캠퍼스",
     description: "대한민국의 수도권 지역으로, 정치, 경제, 문화의 중심지입니다.",
-    get total() {
+    total: function () {
+      // 수정된 부분
       return String(this.campus.length);
     },
     campus: [
@@ -51,7 +62,8 @@ export const regionData: { [key: string]: any } = {
   강원: {
     name: "강원 캠퍼스",
     description: "아름다운 자연 경관과 산악 지형이 특징인 동부 지역입니다.",
-    get total() {
+    total: function () {
+      // 수정된 부분
       return String(this.campus.length);
     },
     campus: ["한림대학교"],
@@ -59,7 +71,8 @@ export const regionData: { [key: string]: any } = {
   대전충청: {
     name: "대전/충청 캠퍼스",
     description: "역사와 자연이 어우러진 중부 지역입니다.",
-    get total() {
+    total: function () {
+      // 수정된 부분
       return String(this.campus.length);
     },
     campus: [
@@ -85,7 +98,8 @@ export const regionData: { [key: string]: any } = {
   창원부산: {
     name: "창원/부산 캠퍼스",
     description: "유서 깊은 문화유산과 현대 산업이 공존하는 지역입니다.",
-    get total() {
+    total: function () {
+      // 수정된 부분
       return String(this.campus.length);
     },
     campus: [
@@ -99,7 +113,8 @@ export const regionData: { [key: string]: any } = {
   대구포항: {
     name: "대구/포항 캠퍼스",
     description: "유서 깊은 문화유산과 현대 산업이 공존하는 지역입니다.",
-    get total() {
+    total: function () {
+      // 수정된 부분
       return String(this.campus.length);
     },
     campus: ["계명대학교", "한동대학교"],
@@ -107,7 +122,8 @@ export const regionData: { [key: string]: any } = {
   경상: {
     name: "경상 캠퍼스",
     description: "유서 깊은 문화유산과 현대 산업이 공존하는 지역입니다.",
-    get total() {
+    total: function () {
+      // 수정된 부분
       return String(this.campus.length);
     },
     campus: [],
@@ -116,7 +132,8 @@ export const regionData: { [key: string]: any } = {
     name: "호남/제주 캠퍼스",
     description:
       "대한민국의 대표적인 관광지로, 아름다운 자연과 독특한 문화가 있는 섬입니다.",
-    get total() {
+    total: function () {
+      // 수정된 부분
       return String(this.campus.length);
     },
     campus: ["순천대학교", "전북과학대학교", "제주대학교", "호원대학교"],
@@ -125,7 +142,8 @@ export const regionData: { [key: string]: any } = {
     name: "호남/제주 캠퍼스",
     description:
       "대한민국의 대표적인 관광지로, 아름다운 자연과 독특한 문화가 있는 섬입니다.",
-    get total() {
+    total: function () {
+      // 수정된 부분
       return String(this.campus.length);
     },
     campus: ["순천대학교", "전북과학대학교", "제주대학교", "호원대학교"],

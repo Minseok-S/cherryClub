@@ -50,14 +50,14 @@ export const RegionModal = forwardRef<HTMLDivElement, RegionModalProps>(
 
           <div className="mb-4">
             <h2 className="text-xl font-bold mb-2">
-              총 캠퍼스: {regionData[selectedRegion].total}개
+              총 캠퍼스: {regionData[selectedRegion].total()}개
             </h2>
           </div>
           <div>
             <h2 className="text-xl font-bold mb-2">캠퍼스 목록</h2>
             <ul className="list-disc pl-5">
               {regionData[selectedRegion].campus.map(
-                (campus: any, index: any) => (
+                (campus: string, index: number) => (
                   <li
                     key={index}
                     className="cursor-pointer hover:text-blue-400 transition-colors"
@@ -97,10 +97,7 @@ export const RegionModal = forwardRef<HTMLDivElement, RegionModalProps>(
                   </span>
                 </div>
 
-                <p className="break-words text-black">
-                  {regionData[selectedRegion].campusKakaoId?.[selectedCampus] ||
-                    "임시 카카오톡 ID: 1414"}
-                </p>
+                <p className="break-words text-black">임시 카카오톡 ID: 1414</p>
               </div>
             </div>
           )}

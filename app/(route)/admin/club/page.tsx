@@ -110,7 +110,7 @@ export default function AdminClubPage() {
     };
 
     fetchData();
-  }, [isAuthenticated]);
+  }, [isAuthenticated, authCode, authority, region, userName]);
 
   // 필터링된 데이터 계산
   const filteredData = data.filter((item) =>

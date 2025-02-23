@@ -16,11 +16,6 @@ interface ApplicationForm {
   agree: boolean;
 }
 
-interface University {
-  name: string;
-  country: string;
-}
-
 export default function ApplyPage() {
   const {
     register,
