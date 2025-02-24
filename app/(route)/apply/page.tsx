@@ -4,13 +4,13 @@ import { useState, useEffect, useRef } from "react";
 
 interface ApplicationForm {
   name: string;
-  gender: "남" | "녀";
+  gender: "M" | "F";
   phone: string;
   birthdate: string;
   region: string;
   university: string;
   major: string;
-  studentId: string;
+  student_id: string;
   grade: string;
   message: string;
   agree: boolean;
@@ -80,6 +80,8 @@ export default function ApplyPage() {
   }, []);
 
   const onSubmit = async (data: ApplicationForm) => {
+    console.log("data", data);
+
     try {
       const response = await fetch("/api/applications", {
         method: "POST",
@@ -88,7 +90,7 @@ export default function ApplyPage() {
         },
         body: JSON.stringify({
           ...data,
-          studentId: data.studentId, // student_id로 매핑
+          student_id: data.student_id, // student_id로 매핑
           birthdate: data.birthdate, // birth_date로 매핑
         }),
       });
@@ -142,8 +144,8 @@ export default function ApplyPage() {
             className="w-full px-4 py-2 border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-gray-900 text-white"
           >
             <option value="">선택하세요</option>
-            <option value="남">남자</option>
-            <option value="녀">여자</option>
+            <option value="M">남자</option>
+            <option value="F">여자</option>
           </select>
         </div>
 
@@ -292,14 +294,14 @@ export default function ApplyPage() {
             학번 <span className="text-white">*</span>
           </label>
           <input
-            {...register("studentId", {
+            {...register("student_id", {
               required: true,
               pattern: /^\d{8,10}$/,
             })}
             className="w-full px-4 py-2 border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-black text-white placeholder-gray-400"
             placeholder="학번을 입력해주세요 (숫자만)"
           />
-          {errors.studentId && (
+          {errors.student_id && (
             <span className="text-red-500">8~10자리 숫자로 입력해주세요</span>
           )}
         </div>

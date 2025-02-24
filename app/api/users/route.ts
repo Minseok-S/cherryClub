@@ -5,7 +5,8 @@ import { pool } from "../db";
 interface User {
   name: string;
   authority: number;
-  authCode: string;
+  birthdate: string;
+  university: string;
   region: string;
 }
 
@@ -17,7 +18,7 @@ export async function POST(request: Request) {
     connection = await pool.getConnection();
     // SQL 인젝션 방지를 위한 prepared statement
     const [rows] = await connection.execute<[]>(
-      "SELECT name, authority, authCode, region FROM user WHERE authCode = ?",
+      "SELECT name, authority, birthdate, region, university FROM Users WHERE birthdate = ?",
       [code]
     );
 
@@ -35,6 +36,8 @@ export async function POST(request: Request) {
         success: true,
         userName: users[0].name,
         authority: users[0].authority,
+        birthdate: users[0].birthdate,
+        university: users[0].university,
         region: users[0].region,
       },
       { status: 200 }

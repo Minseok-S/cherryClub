@@ -13,13 +13,14 @@ interface Application {
   student_id: string;
   grade: string;
   created_at: string;
+  message: string;
   status: string;
 }
 
 export default function AdminPage() {
   const [data, setData] = useState<Application[]>([]);
   const [loading, setLoading] = useState(true);
-  const [authCode, setAuthCode] = useState("");
+  const [birthdate, setbirthdate] = useState("");
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [userName, setUserName] = useState("");
   const [authority, setAuthority] = useState(0);
@@ -30,12 +31,12 @@ export default function AdminPage() {
     e.preventDefault();
     setLoading(true);
     try {
-      const response = await fetch("/api/validate-auth", {
+      const response = await fetch("/api/users", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ code: authCode }),
+        body: JSON.stringify({ code: birthdate }),
       });
 
       if (!response.ok) {
@@ -65,7 +66,7 @@ export default function AdminPage() {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${authCode}`,
+          Authorization: `Bearer ${birthdate}`,
         },
         body: JSON.stringify({ status: newStatus }),
       });
@@ -94,7 +95,7 @@ export default function AdminPage() {
           )}&region=${encodeURIComponent(region)}`,
           {
             headers: {
-              Authorization: `Bearer ${authCode}`,
+              Authorization: `Bearer ${birthdate}`,
             },
           }
         );
@@ -110,7 +111,7 @@ export default function AdminPage() {
     };
 
     fetchData();
-  }, [isAuthenticated, authCode, authority, region, userName]);
+  }, [isAuthenticated, birthdate, authority, region, userName]);
 
   // 필터링된 데이터 계산
   const filteredData = data.filter((item) =>
@@ -125,8 +126,8 @@ export default function AdminPage() {
         <form onSubmit={handleAuthSubmit} className="space-y-4">
           <input
             type="password"
-            value={authCode}
-            onChange={(e) => setAuthCode(e.target.value)}
+            value={birthdate}
+            onChange={(e) => setbirthdate(e.target.value)}
             className="w-full p-2 rounded text-black"
             placeholder="관리자 인증 코드 입력"
           />
@@ -187,6 +188,7 @@ export default function AdminPage() {
               <th className="px-6 py-3 text-center text-white">전공</th>
               <th className="px-6 py-3 text-center text-white">학번</th>
               <th className="px-6 py-3 text-center text-white">학년</th>
+              <th className="px-6 py-3 text-center text-white">신청서</th>
               <th className="px-6 py-3 text-center text-white">신청일시</th>
               <th className="px-6 py-3 text-center text-white">상태</th>
             </tr>
@@ -203,17 +205,19 @@ export default function AdminPage() {
                 <tr
                   key={item.id}
                   className={`border-t border-gray-700 ${
-                    item.status === "신청"
+                    item.status === "PENDING"
                       ? "bg-blue-900/50 hover:bg-blue-800/50"
-                      : item.status === "진행"
+                      : item.status === "PROCESSING"
                       ? "bg-yellow-900/50 hover:bg-yellow-800/50"
-                      : item.status === "참여"
+                      : item.status === "APPROVED"
                       ? "bg-green-900/50 hover:bg-green-800/50"
                       : "bg-red-900/50 hover:bg-red-800/50"
                   }`}
                 >
                   <td className="px-6 py-4 text-center">{item.name}</td>
-                  <td className="px-6 py-4 text-center">{item.gender}</td>
+                  <td className="px-6 py-4 text-center">
+                    {item.gender === "M" ? "남" : "여"}
+                  </td>
                   <td className="px-6 py-4 text-center">{item.phone}</td>
                   <td className="px-6 py-4 text-center">{item.birthdate}</td>
                   <td className="px-6 py-4 text-center">{item.region}</td>
@@ -221,6 +225,7 @@ export default function AdminPage() {
                   <td className="px-6 py-4 text-center">{item.major}</td>
                   <td className="px-6 py-4 text-center">{item.student_id}</td>
                   <td className="px-6 py-4 text-center">{item.grade}</td>
+                  <td className="px-6 py-4 text-center">{item.message}</td>
                   <td className="px-6 py-4 text-center">
                     {new Date(item.created_at).toLocaleString()}
                   </td>
@@ -232,10 +237,10 @@ export default function AdminPage() {
                       }
                       className="bg-gray-800 border border-gray-600 rounded px-2 py-1 text-white"
                     >
-                      <option value="신청">신청</option>
-                      <option value="진행">진행</option>
-                      <option value="참여">참여</option>
-                      <option value="포기">포기</option>
+                      <option value="PENDING">신청</option>
+                      <option value="PROCESSING">진행</option>
+                      <option value="APPROVED">참여</option>
+                      <option value="REJECTED">포기</option>
                     </select>
                   </td>
                 </tr>

@@ -6,14 +6,11 @@ interface Application {
   name: string;
   gender: string;
   phone: string;
-  birthdate: string;
-  region: string;
   university: string;
   major: string;
-  student_id: string;
-  grade: string;
+  is_campus_participant: string;
   created_at: string;
-  status: string;
+  status: number;
 }
 
 export default function AdminClubPage() {
@@ -22,15 +19,13 @@ export default function AdminClubPage() {
   const [authCode, setAuthCode] = useState("");
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [userName, setUserName] = useState("");
-  const [authority, setAuthority] = useState(0);
-  const [region, setRegion] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
 
   const handleAuthSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     try {
-      const response = await fetch("/api/validate-auth", {
+      const response = await fetch("/api/users", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -50,36 +45,10 @@ export default function AdminClubPage() {
       const result = await response.json();
       setIsAuthenticated(true);
       setUserName(result.userName || "관리자");
-      setAuthority(result.authority || 0);
-      setRegion(result.region || "");
     } catch (err) {
       console.error(err);
     } finally {
       setLoading(false);
-    }
-  };
-
-  const handleStatusChange = async (id: number, newStatus: string) => {
-    try {
-      const response = await fetch(`/api/applications?id=${id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${authCode}`,
-        },
-        body: JSON.stringify({ status: newStatus }),
-      });
-
-      if (!response.ok) throw new Error("상태 업데이트 실패");
-
-      // Update local data
-      setData(
-        data.map((item) =>
-          item.id === id ? { ...item, status: newStatus } : item
-        )
-      );
-    } catch (err) {
-      console.error(err);
     }
   };
 
@@ -88,19 +57,15 @@ export default function AdminClubPage() {
 
     const fetchData = async () => {
       try {
-        const response = await fetch(
-          `/api/applications?authority=${authority}&userName=${encodeURIComponent(
-            userName
-          )}&region=${encodeURIComponent(region)}`,
-          {
-            headers: {
-              Authorization: `Bearer ${authCode}`,
-            },
-          }
-        );
+        const response = await fetch(`/api/club-users`, {
+          headers: {
+            Authorization: `Bearer ${authCode}`,
+          },
+        });
 
         if (!response.ok) throw new Error("데이터 조회 실패");
         const result = await response.json();
+
         setData(result);
       } catch (err) {
         console.error(err);
@@ -110,7 +75,7 @@ export default function AdminClubPage() {
     };
 
     fetchData();
-  }, [isAuthenticated, authCode, authority, region, userName]);
+  }, [isAuthenticated, authCode]);
 
   // 필터링된 데이터 계산
   const filteredData = data.filter((item) =>
@@ -146,7 +111,7 @@ export default function AdminClubPage() {
   return (
     <div className="p-4 mx-24 bg-black text-white">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">신청자 관리</h1>
+        <h1 className="text-2xl font-bold">체리동아리 멤버 관리</h1>
         <div className="flex items-center gap-4">
           <div className="relative">
             <input
@@ -181,12 +146,11 @@ export default function AdminClubPage() {
               <th className="px-6 py-3 text-center text-white">이름</th>
               <th className="px-6 py-3 text-center text-white">성별</th>
               <th className="px-6 py-3 text-center text-white">연락처</th>
-              <th className="px-6 py-3 text-center text-white">생년월일</th>
-              <th className="px-6 py-3 text-center text-white">지역</th>
               <th className="px-6 py-3 text-center text-white">대학교</th>
               <th className="px-6 py-3 text-center text-white">전공</th>
-              <th className="px-6 py-3 text-center text-white">학번</th>
-              <th className="px-6 py-3 text-center text-white">학년</th>
+              <th className="px-6 py-3 text-center text-white">
+                비전캠프 기수
+              </th>
               <th className="px-6 py-3 text-center text-white">신청일시</th>
               <th className="px-6 py-3 text-center text-white">상태</th>
             </tr>
@@ -203,38 +167,31 @@ export default function AdminClubPage() {
                 <tr
                   key={item.id}
                   className={`border-t border-gray-700 ${
-                    item.status === "신청"
+                    item.status == 1
                       ? "bg-blue-900/50 hover:bg-blue-800/50"
-                      : item.status === "진행"
-                      ? "bg-yellow-900/50 hover:bg-yellow-800/50"
-                      : item.status === "참여"
-                      ? "bg-green-900/50 hover:bg-green-800/50"
                       : "bg-red-900/50 hover:bg-red-800/50"
                   }`}
                 >
                   <td className="px-6 py-4 text-center">{item.name}</td>
-                  <td className="px-6 py-4 text-center">{item.gender}</td>
+                  <td className="px-6 py-4 text-center">
+                    {" "}
+                    {item.gender === "M" ? "남" : "여"}
+                  </td>
                   <td className="px-6 py-4 text-center">{item.phone}</td>
-                  <td className="px-6 py-4 text-center">{item.birthdate}</td>
-                  <td className="px-6 py-4 text-center">{item.region}</td>
                   <td className="px-6 py-4 text-center">{item.university}</td>
                   <td className="px-6 py-4 text-center">{item.major}</td>
-                  <td className="px-6 py-4 text-center">{item.student_id}</td>
-                  <td className="px-6 py-4 text-center">{item.grade}</td>
+                  <td className="px-6 py-4 text-center">
+                    {item.is_campus_participant}
+                  </td>
                   <td className="px-6 py-4 text-center">
                     {new Date(item.created_at).toLocaleString()}
                   </td>
                   <td className="px-6 py-4 text-center">
                     <select
                       value={item.status}
-                      onChange={(e) =>
-                        handleStatusChange(item.id, e.target.value)
-                      }
                       className="bg-gray-800 border border-gray-600 rounded px-2 py-1 text-white"
                     >
-                      <option value="신청">신청</option>
                       <option value="진행">진행</option>
-                      <option value="참여">참여</option>
                       <option value="포기">포기</option>
                     </select>
                   </td>

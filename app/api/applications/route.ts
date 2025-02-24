@@ -7,13 +7,16 @@ export async function POST(request: Request) {
     const connection = await pool.getConnection();
     const data = await request.json();
 
-    // 필수 필드 검증
+    // 필수 필드 검증 (새로운 스키마에 맞게 수정)
     if (
       !data.name ||
-      !data.phone ||
+      !data.phone || // phone -> phone로 변경
       !data.birthdate ||
+      !data.region || // university 대신 region 추가
       !data.university ||
-      !data.major
+      !data.major ||
+      !data.student_id || // studentId -> student_id로 변경
+      !data.grade // grade -> year로 변경
     ) {
       return NextResponse.json(
         { error: "필수 항목이 누락되었습니다" },
@@ -21,33 +24,35 @@ export async function POST(request: Request) {
       );
     }
 
-    // 데이터 삽입
+    // 데이터 삽입 쿼리 수정
     const [result] = await connection.query(
-      `INSERT INTO applications SET 
+      `INSERT INTO Applications SET 
         name = ?, 
         gender = ?, 
-        phone = ?, 
+        phone = ?,
         birthdate = ?, 
+        region = ?,   
         university = ?, 
         major = ?, 
-        student_id = ?, 
-        grade = ?, 
-        region = ?, 
-        message = ?, 
-        agree = ?,
+        student_id = ?,
+        grade = ?,       
+        is_campus_participant = ?,
+        status = ?,  
+        message =?,
         created_at = NOW()`,
       [
         data.name,
         data.gender,
         data.phone,
         data.birthdate,
+        data.region,
         data.university,
         data.major,
-        data.studentId,
+        data.student_id,
         data.grade,
-        data.region,
+        data.isCampusParticipant || false,
+        data.status || "PENDING", // 기본값 설정
         data.message,
-        data.agree,
       ]
     );
 
@@ -72,7 +77,7 @@ export async function GET(request: Request) {
     const userName = searchParams.get("name");
     const region = searchParams.get("region");
 
-    let query = "SELECT * FROM applications";
+    let query = "SELECT * FROM Applications";
     const params = [];
 
     // 권한에 따른 필터 조건 추가
@@ -106,70 +111,90 @@ export async function PUT(request: Request) {
     const id = searchParams.get("id");
     const { status } = await request.json();
 
-    if (!id || !status) {
+    // 상태 값 검증 수정 (PROCESSING 상태 추가)
+    if (
+      !id ||
+      !["PENDING", "PROCESSING", "APPROVED", "REJECTED"].includes(status)
+    ) {
       return NextResponse.json(
-        { error: "ID와 상태값이 필요합니다" },
+        { error: "유효하지 않은 요청입니다" },
         { status: 400 }
       );
     }
 
     // 상태 업데이트 쿼리
-    await connection.query("UPDATE applications SET status = ? WHERE id = ?", [
+    await connection.query("UPDATE Applications SET status = ? WHERE id = ?", [
       status,
       id,
     ]);
 
-    // 상태가 '참여'로 변경된 경우 clubUsers 테이블에 추가
-    if (status === "참여") {
-      // 기존 신청서 데이터 조회 (타입 어설션 추가)
+    // APPROVED 상태일 때 User 및 ClubUser 테이블에 추가
+    if (status === "APPROVED") {
       const [rows] = await connection.query(
-        "SELECT * FROM applications WHERE id = ?",
+        "SELECT * FROM Applications WHERE id = ?",
         [id]
       );
       const application = (rows as mysql.RowDataPacket[])[0];
 
       if (application) {
-        await connection.query(
-          `INSERT INTO clubUsers SET 
+        // User 테이블에 삽입
+        const [userResult] = await connection.query(
+          `INSERT INTO Users SET 
             name = ?,
             gender = ?,
             phone = ?,
             birthdate = ?,
+            region = ?,
             university = ?,
             major = ?,
             student_id = ?,
             grade = ?,
-            region = ?,
-            message = ?,
-            created_at = ?`,
+            is_campus_participant = ?`,
           [
             application.name,
             application.gender,
             application.phone,
             application.birthdate,
+            application.region,
             application.university,
             application.major,
             application.student_id,
             application.grade,
-            application.region,
-            application.message || null,
-            application.created_at,
+            application.is_campus_participant,
           ]
         );
+
+        // ClubUser 테이블에 user_id 삽입
+        const userId = (userResult as mysql.ResultSetHeader).insertId;
+        await connection.query("INSERT INTO ClubUser (user_id) VALUES (?)", [
+          userId,
+        ]);
       }
     }
-    // 상태가 '포기'로 변경된 경우 clubUsers 테이블에서 삭제
-    else if (status === "포기") {
+    // REJECTED 상태일 때 User 및 ClubUser에서 삭제
+    else if (status === "REJECTED") {
       const [rows] = await connection.query(
-        "SELECT student_id FROM applications WHERE id = ?",
+        "SELECT * FROM Applications WHERE id = ?",
         [id]
       );
-      const studentId = (rows as mysql.RowDataPacket[])[0]?.student_id;
+      const application = (rows as mysql.RowDataPacket[])[0];
 
-      if (studentId) {
-        await connection.query("DELETE FROM clubUsers WHERE student_id = ?", [
-          studentId,
-        ]);
+      if (application) {
+        // Users 테이블에서 student_id로 사용자 조회
+        const [userRows] = await connection.query(
+          "SELECT id FROM Users WHERE student_id = ?",
+          [application.student_id]
+        );
+        const user = (userRows as mysql.RowDataPacket[])[0];
+
+        if (user) {
+          // ClubUser 테이블에서 삭제
+          await connection.query("DELETE FROM ClubUser WHERE user_id = ?", [
+            user.id,
+          ]);
+          // Users 테이블에서 삭제
+          await connection.query("DELETE FROM Users WHERE id = ?", [user.id]);
+        }
       }
     }
 

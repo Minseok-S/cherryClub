@@ -11,7 +11,7 @@ export async function GET(request: Request) {
     // SQL 인젝션 방지를 위해 파라미터화된 쿼리 사용
     const [rows] = await connection.query(
       `SELECT name, location AS country, latitude, longitude 
-       FROM universities 
+       FROM Universities 
        WHERE name LIKE ? 
        ORDER BY name ASC 
        LIMIT 20`,
