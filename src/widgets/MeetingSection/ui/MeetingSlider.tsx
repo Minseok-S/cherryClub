@@ -16,7 +16,8 @@ export const MeetingSlider = () => {
       }}
       pagination={{
         clickable: true,
-        bulletActiveClass: "swiper-pagination-bullet-active custom-bullet-active",
+        bulletActiveClass:
+          "swiper-pagination-bullet-active custom-bullet-active",
       }}
       modules={[Autoplay, Pagination, Navigation]}
       className="w-[90%] md:w-[800px] mx-auto [&_.swiper-pagination-bullet-active]:!bg-red-500 [&_.swiper-pagination-bullet]:!bg-white"
@@ -29,7 +30,9 @@ export const MeetingSlider = () => {
       {[1, 2, 3, 4, 5].map((num) => (
         <SwiperSlide key={num}>
           <Image
-            src={`/class${num}.${num === 2 || num === 5 ? 'jpeg' : 'jpg'}`}
+            src={`/images/class/class${num}.${
+              num === 2 || num === 5 ? "jpeg" : "jpg"
+            }`}
             alt={`리더십 훈련 ${num}`}
             width={1200}
             height={600}
@@ -39,4 +42,4 @@ export const MeetingSlider = () => {
       ))}
     </Swiper>
   );
-}; 
+};

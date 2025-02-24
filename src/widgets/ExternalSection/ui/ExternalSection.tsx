@@ -9,7 +9,7 @@ export const ExternalSection = () => {
   return (
     <div
       id="anthor"
-      className="pb-20 px-4 min-h-screen flex flex-col items-center justify-center"
+      className="my-10 md:pb-20 px-4 min-h-screen flex flex-col items-center justify-center"
     >
       <h2 className="text-4xl md:text-6xl font-black text-center mb-5 md:mb-7">
         대외사역

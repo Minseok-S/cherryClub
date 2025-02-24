@@ -30,7 +30,7 @@ export const MeetingSection = () => {
   return (
     <div
       id="class"
-      className="md:pb-20 px-4 min-h-screen flex flex-col items-center justify-center"
+      className="mt-24 md:pb-20 px-4 md:min-h-screen flex flex-col items-center justify-center"
     >
       <h2 className="text-4xl md:text-6xl font-black text-center mb-3 md:mb-8">
         전체/지역모임
@@ -38,7 +38,7 @@ export const MeetingSection = () => {
 
       {/* 설명 추가 */}
       <div className="max-w-4xl mx-auto mb-6 md:mb-12 text-center">
-        <p className="text-gray-600 text-sm md:text-base font-medium">
+        <p className="text-gray-600 text-sm md:text-base font-medium break-keep whitespace-pre-wrap">
           매월 1회 전체모임과 지역별 모임을 통해 <br />
           체리 동아리 회원들은 예배와 교제를 통해 비전을 공유하고 함께
           성장합니다.

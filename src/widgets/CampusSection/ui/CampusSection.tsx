@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, Pagination, Navigation } from "swiper/modules";
 import Image from "next/image";
@@ -11,11 +11,16 @@ import "swiper/css/navigation";
 
 export const CampusSection = () => {
   const [showMovements, setShowMovements] = useState(false);
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   return (
     <div
       id="campus"
-      className="pb-20 px-4 min-h-screen flex flex-col items-center justify-center"
+      className="mt-10 md:mt-0 px-4 md:min-h-screen flex flex-col items-center justify-center"
     >
       <h2 className="text-4xl md:text-6xl font-black text-center mb-6">
         캠퍼스 사역
@@ -23,9 +28,15 @@ export const CampusSection = () => {
 
       {/* 기본 설명 텍스트 */}
       <p className="text-center text-gray-600 max-w-3xl mx-auto mb-8 text-sm md:text-base font-medium break-keep whitespace-pre-wrap">
-        체리동아리의 캠퍼스 사역은 대학캠퍼스에 부흥을 이끄는 사역입니다.
-        {"\n"}
-        대학캠퍼스 안에서 5K 무료나눔, 5K 청년밥차, 캠퍼스 워십, Red Heart Day
+        체리동아리의 캠퍼스 사역은 대학캠퍼스에
+        {isClient && window.innerWidth > 640 && (
+          <span className="block md:inline">부흥을 이끄는 사역입니다.</span>
+        )}
+        {isClient && window.innerWidth > 640 && "\n"}
+        대학캠퍼스 안에서 5K 무료나눔, 5K 청년밥차,
+        <span className="block md:inline">
+          캠퍼스 워십, Red HeartDay를 주도합니다!
+        </span>
       </p>
 
       {/* 5대운동 설명 */}
@@ -60,7 +71,7 @@ export const CampusSection = () => {
         {[1, 2, 3, 4, 5].map((num) => (
           <SwiperSlide key={num}>
             <Image
-              src={`/campus${num}.jpg`}
+              src={`/images/campus/campus${num}.jpg`}
               alt={`캠퍼스 사역 ${num}`}
               width={1200}
               height={600}

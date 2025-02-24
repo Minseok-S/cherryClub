@@ -13,8 +13,7 @@ export const TrainingSection = () => {
   return (
     <div
       id="training"
-      className="pb-10 md:pb-20 px-4 min-h-screen flex flex-col items-center justify-center"
-      style={{ scrollSnapAlign: "center", scrollMarginTop: "50px" }}
+      className="md:pb-20 px-4 min-h-screen flex flex-col items-center justify-center"
     >
       <h1 className="font-black text-center mb-5 md:mb-7">리더십 훈련</h1>
 
@@ -52,7 +51,7 @@ export const TrainingSection = () => {
         {[1, 2, 3, 4, 5].map((num) => (
           <SwiperSlide key={num}>
             <Image
-              src={`/training${num}.jpeg`}
+              src={`/images/training/training${num}.jpeg`}
               alt={`리더십 훈련 ${num}`}
               width={1200}
               height={600}

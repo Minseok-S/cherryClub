@@ -5,17 +5,19 @@ export const SocialLinks = () => {
         href="https://www.instagram.com/kings_hero0214?igsh=MWxoZWU5NGZhd3g0bQ=="
         target="_blank"
         rel="noopener noreferrer"
-        className="text-gray-400 hover:text-white transition-colors duration-300"
+        className="flex items-center text-gray-400 hover:text-white hover:bg-gray-700 transition-colors duration-300 p-2 rounded"
       >
-        <InstagramIcon />
+        <InstagramIcon />{" "}
+        <span className="hidden md:inline">체리동아리 Instagram</span>
       </a>
       <a
         href="https://www.youtube.com/@kingsheroncmn"
         target="_blank"
         rel="noopener noreferrer"
-        className="text-gray-400 hover:text-white transition-colors duration-300"
+        className="flex items-center text-gray-400 hover:text-white hover:bg-gray-700 transition-colors duration-300 p-2 rounded"
       >
         <YoutubeIcon />
+        <span className="hidden md:inline">체리동아리 Youtube</span>
       </a>
     </div>
   );
@@ -23,7 +25,7 @@ export const SocialLinks = () => {
 
 const InstagramIcon = () => (
   <svg
-    className="w-8 h-8"
+    className="w-8 h-8 mr-2"
     fill="currentColor"
     viewBox="0 0 24 24"
     aria-hidden="true"
@@ -38,7 +40,7 @@ const InstagramIcon = () => (
 
 const YoutubeIcon = () => (
   <svg
-    className="w-8 h-8"
+    className="w-8 h-8 mr-2"
     fill="currentColor"
     viewBox="0 0 24 24"
     aria-hidden="true"

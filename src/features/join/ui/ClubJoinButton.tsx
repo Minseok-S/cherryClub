@@ -7,7 +7,7 @@ export const ClubJoinButton = () => {
         href={clubJoinLink}
         target="_blank"
         rel="noopener noreferrer"
-        className="w-[50%] md:w-[30%] relative md:text-[20px] font-black text-center
+        className="w-[60%] md:w-[30%] relative md:text-[20px] font-black text-center
               bg-red-500 text-white py-4 px-8 rounded-full hover:bg-red-600 
               transition-colors duration-300 transform hover:scale-105
               shadow-lg"

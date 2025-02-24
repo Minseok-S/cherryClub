@@ -30,10 +30,10 @@ export const MapSection = ({
   return (
     <div
       id="map"
-      className="pb-10 md:pb-20 px-4 min-h-screen flex flex-col items-center justify-center"
+      className="md:pb-20 px-4 min-h-screen flex flex-col items-center justify-center"
     >
       <div className="w-[100%] md:w-[110%] lg:w-[60%] relative" ref={mapRef}>
-        <p className="text-center md:text-[40px] font-black">
+        <p className="text-center text-[30px] md:text-[40px] font-black">
           전국 동아리 현황
         </p>
         <KoreaMap

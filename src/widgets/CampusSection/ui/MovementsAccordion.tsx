@@ -77,9 +77,9 @@ export const MovementsAccordion = ({
           >
             {movements.map((movement, index) => (
               <SwiperSlide key={index}>
-                <div className="bg-white/5 backdrop-blur-sm p-4 rounded-lg min-h-[180px] flex flex-col">
+                <div className="bg-white/5 backdrop-blur-sm p-4 rounded-lg min-h-[140px] flex flex-col">
                   <h4 className="font-bold mb-2">{movement.title}</h4>
-                  <p className="text-sm text-gray-600 flex-1">
+                  <p className="text-sm text-gray-600 flex-1 whitespace-normal break-keep">
                     {movement.content}
                   </p>
                 </div>
