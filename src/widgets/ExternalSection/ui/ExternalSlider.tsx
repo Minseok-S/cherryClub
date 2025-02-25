@@ -27,7 +27,7 @@ export const ExternalSlider = () => {
         },
       }}
     >
-      {[1, 2, 3, 4, 5].map((num) => (
+      {[1, 2].map((num) => (
         <SwiperSlide key={num}>
           <Image
             src={`/images/anthor/anthor${num}.jpg`}

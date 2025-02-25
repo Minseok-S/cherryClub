@@ -30,9 +30,7 @@ export const MeetingSlider = () => {
       {[1, 2, 3, 4, 5].map((num) => (
         <SwiperSlide key={num}>
           <Image
-            src={`/images/class/class${num}.${
-              num === 2 || num === 5 ? "jpeg" : "jpg"
-            }`}
+            src={`/images/class/class${num}.${"jpg"}`}
             alt={`리더십 훈련 ${num}`}
             width={1200}
             height={600}
