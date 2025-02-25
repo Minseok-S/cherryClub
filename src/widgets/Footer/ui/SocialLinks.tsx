@@ -8,7 +8,16 @@ export const SocialLinks = () => {
         className="flex items-center text-gray-400 hover:text-white hover:bg-gray-700 transition-colors duration-300 p-2 rounded"
       >
         <InstagramIcon />{" "}
-        <span className="hidden md:inline">체리동아리 Instagram</span>
+        <span className="hidden md:inline">체리동아리 공식 Instagram</span>
+      </a>
+      <a
+        href="https://www.instagram.com/noriter_0214?igsh=NjVjNXZrdnpsbmY3"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="flex items-center text-gray-400 hover:text-white hover:bg-gray-700 transition-colors duration-300 p-2 rounded"
+      >
+        <InstagramIcon />{" "}
+        <span className="hidden md:inline">체리동아리 놀이터 Instagram</span>
       </a>
       <a
         href="https://www.youtube.com/@kingsheroncmn"
