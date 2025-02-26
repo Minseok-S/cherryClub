@@ -58,3 +58,50 @@ export async function GET(request: Request) {
     if (connection) connection.release();
   }
 }
+
+export async function POST(request: Request) {
+  let connection;
+  try {
+    const { id, status } = await request.json();
+
+    // 인증 헤더 확인
+    const authHeader = request.headers.get("Authorization");
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      return new NextResponse(JSON.stringify({ message: "Unauthorized" }), {
+        status: 401,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
+    connection = await pool.getConnection();
+
+    // 상태 업데이트 쿼리
+    await connection.query(
+      `
+      UPDATE ClubUser 
+      SET status = ? 
+      WHERE user_id = ?
+    `,
+      [status, id]
+    );
+
+    return new NextResponse(
+      JSON.stringify({ message: "상태가 업데이트되었습니다." }),
+      {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      }
+    );
+  } catch (error) {
+    console.error("Error updating club user status:", error);
+    return new NextResponse(
+      JSON.stringify({ message: "Internal server error" }),
+      {
+        status: 500,
+        headers: { "Content-Type": "application/json" },
+      }
+    );
+  } finally {
+    if (connection) connection.release();
+  }
+}

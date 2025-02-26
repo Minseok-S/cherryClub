@@ -190,9 +190,38 @@ export default function AdminClubPage() {
                     <select
                       value={item.status}
                       className="bg-gray-800 border border-gray-600 rounded px-2 py-1 text-white"
+                      onChange={async (e) => {
+                        const newStatus = Number(e.target.value);
+                        try {
+                          const response = await fetch(`/api/club-users`, {
+                            method: "POST",
+                            headers: {
+                              "Content-Type": "application/json",
+                              Authorization: `Bearer ${authCode}`,
+                            },
+                            body: JSON.stringify({
+                              id: item.id,
+                              status: newStatus,
+                            }),
+                          });
+
+                          if (response.ok) {
+                            // 상태 업데이트
+                            setData((prevData) =>
+                              prevData.map((prevItem) =>
+                                prevItem.id === item.id
+                                  ? { ...prevItem, status: newStatus }
+                                  : prevItem
+                              )
+                            );
+                          }
+                        } catch (error) {
+                          console.error(error);
+                        }
+                      }}
                     >
-                      <option value="진행">진행</option>
-                      <option value="포기">포기</option>
+                      <option value={1}>진행</option>
+                      <option value={0}>포기</option>
                     </select>
                   </td>
                 </tr>
