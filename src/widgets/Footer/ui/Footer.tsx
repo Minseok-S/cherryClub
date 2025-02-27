@@ -24,7 +24,7 @@ export const Footer = () => {
 
             <div className="space-y-4 text-center">
               <p className="text-gray-400 text-sm break-keep">
-                * 신청 확인 후 각 학교 담당자가 연락드릴 예정입니다 :)
+                문의 : 신용선 간사 (010-5022-8934)
               </p>
             </div>
           </div>

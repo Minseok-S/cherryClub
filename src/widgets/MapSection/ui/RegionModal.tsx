@@ -1,4 +1,4 @@
-import { forwardRef, useState } from "react";
+import { forwardRef } from "react";
 import { regionData } from "@/src/entities/campus";
 
 interface RegionModalProps {
@@ -8,9 +8,6 @@ interface RegionModalProps {
 
 export const RegionModal = forwardRef<HTMLDivElement, RegionModalProps>(
   ({ selectedRegion, onClose }, ref) => {
-    const [showKakaoModal, setShowKakaoModal] = useState(false);
-    const [selectedCampus, setSelectedCampus] = useState<string | null>(null);
-
     if (!selectedRegion) return null;
 
     return (
@@ -61,10 +58,6 @@ export const RegionModal = forwardRef<HTMLDivElement, RegionModalProps>(
                   <li
                     key={index}
                     className="cursor-pointer hover:text-blue-400 transition-colors"
-                    onClick={() => {
-                      setSelectedCampus(campus);
-                      setShowKakaoModal(true);
-                    }}
                   >
                     {campus}
                   </li>
@@ -72,36 +65,10 @@ export const RegionModal = forwardRef<HTMLDivElement, RegionModalProps>(
               )}
             </ul>
           </div>
-
-          {showKakaoModal && selectedCampus && (
-            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-              <div className="bg-white p-6 rounded-lg max-w-md w-full">
-                <div className="flex justify-between items-center mb-4">
-                  <h3 className="text-xl text-black font-bold">
-                    {selectedCampus}
-                  </h3>
-                  <button
-                    onClick={() => {
-                      setShowKakaoModal(false);
-                      setSelectedCampus(null);
-                    }}
-                    className="text-gray-500 hover:text-gray-700"
-                  >
-                    ✕
-                  </button>
-                </div>
-
-                <div className="flex justify-between items-center mb-4">
-                  <span className="text-lg text-black font-bold">
-                    간사:1414{" "}
-                  </span>
-                </div>
-
-                <p className="break-words text-black">임시 카카오톡 ID: 1414</p>
-              </div>
-            </div>
-          )}
         </div>
+        <p className="text-gray-400 text-sm break-keep">
+          문의 : 신용선 간사 (010-5022-8934)
+        </p>
       </div>
     );
   }

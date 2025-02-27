@@ -1,6 +1,7 @@
 "use client";
 import { useForm } from "react-hook-form";
 import { useState, useEffect, useRef } from "react";
+import { useRouter } from "next/navigation";
 
 interface ApplicationForm {
   name: string;
@@ -27,6 +28,8 @@ export default function ApplyPage() {
     shouldUnregister: true,
   });
 
+  const router = useRouter();
+
   const [universityQuery, setUniversityQuery] = useState("");
   const [universities, setUniversities] = useState<
     { name: string; country?: string }[]
@@ -34,6 +37,8 @@ export default function ApplyPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedUniversity, setSelectedUniversity] = useState("");
   const modalRef = useRef<HTMLDivElement>(null);
+  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+  const [formData, setFormData] = useState<ApplicationForm | null>(null);
 
   useEffect(() => {
     const fetchUniversities = async () => {
@@ -80,7 +85,12 @@ export default function ApplyPage() {
   }, []);
 
   const onSubmit = async (data: ApplicationForm) => {
-    console.log("data", data);
+    setFormData(data);
+    setIsConfirmModalOpen(true);
+  };
+
+  const handleConfirmSubmit = async () => {
+    if (!formData) return;
 
     try {
       const response = await fetch("/api/applications", {
@@ -89,9 +99,9 @@ export default function ApplyPage() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          ...data,
-          student_id: data.student_id, // student_id로 매핑
-          birthdate: data.birthdate, // birth_date로 매핑
+          ...formData,
+          student_id: formData.student_id,
+          birthdate: formData.birthdate,
         }),
       });
 
@@ -101,6 +111,8 @@ export default function ApplyPage() {
 
       alert("성공적으로 제출되었습니다!");
       reset();
+      setIsConfirmModalOpen(false);
+      router.push("/");
     } catch (error) {
       console.error("제출 실패:", error);
       alert("제출에 실패했습니다. 다시 시도해주세요.");
@@ -115,10 +127,26 @@ export default function ApplyPage() {
   };
 
   return (
-    <div className="max-w-2xl mx-auto p-6 bg-black rounded-xl shadow-md">
+    <div className="max-w-2xl mx-auto p-6 bg-black rounded-xl shadow-md ">
       <h1 className="text-3xl font-bold mb-8 text-center text-white">
         동아리 가입 신청
       </h1>
+      <p className="text-gray-300 text-sm  text-left leading-relaxed break-keep">
+        체리 동아리는 &apos;체인저 리더십(Changer Leadership) 동아리&apos;의
+        준말로, 성경적 리더십 훈련을 통해 나를 변화시키고, 내가 속한 캠퍼스와
+        사회의 각 영역을 변화시키는 동아리입니다!
+      </p>
+
+      <p className="text-gray-300 text-sm  mb-8 text-left leading-relaxed break-keep">
+        가장 탁월한 지도력의 롤모델, 예수 그리스도의 모습을 통해 신분과 사명을
+        알고, 자신의 장막터를 넓히기 원하시는 분들은 모두 신청해 주세요!!❤️‍🔥
+        <span className="block mt-2 text-xs text-center text-gray-400">
+          * 신청 확인 후 각 학교 담당자가 연락 드릴 예정입니다 :)
+        </span>
+        <span className="block text-xs text-center text-gray-400">
+          문의 : 신용선 간사 (010-5022-8934)
+        </span>
+      </p>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         {/* 이름 입력 */}
         <div>
@@ -288,7 +316,7 @@ export default function ApplyPage() {
           )}
         </div>
 
-        {/* 학번 입력 추가 */}
+        {/* 학번 입력 수정 (연도 형식) */}
         <div>
           <label className="block text-sm font-medium text-white mb-2">
             학번 <span className="text-white">*</span>
@@ -296,13 +324,22 @@ export default function ApplyPage() {
           <input
             {...register("student_id", {
               required: true,
-              pattern: /^\d{8,10}$/,
+              pattern: /^\d{2}학번$/,
+              onChange: (e) => {
+                const value = e.target.value.replace(/[^0-9]/g, "");
+                if (value.length > 2) {
+                  e.target.value = `${value.slice(0, 2)}학번`;
+                }
+              },
             })}
             className="w-full px-4 py-2 border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-black text-white placeholder-gray-400"
-            placeholder="학번을 입력해주세요 (숫자만)"
+            placeholder="예) 19학번"
+            maxLength={4}
           />
           {errors.student_id && (
-            <span className="text-red-500">8~10자리 숫자로 입력해주세요</span>
+            <span className="text-red-500">
+              올바른 학번 형식으로 입력해주세요 (예: 19학번)
+            </span>
           )}
         </div>
 
@@ -327,7 +364,7 @@ export default function ApplyPage() {
         {/* 지역 선택 옵션 수정 */}
         <div>
           <label className="block text-sm font-medium text-white mb-2">
-            지역 <span className="text-white">*</span>
+            지역(대학교 기준) <span className="text-white">*</span>
           </label>
           <select
             {...register("region", { required: true })}
@@ -384,6 +421,69 @@ export default function ApplyPage() {
           제출하기
         </button>
       </form>
+
+      {/* 확인 모달 추가 */}
+      {isConfirmModalOpen && formData && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
+          <div className="bg-gray-800 rounded-lg p-6 max-w-md w-full">
+            <h2 className="text-xl font-bold mb-4 text-white">
+              입력 정보 확인
+            </h2>
+            <div className="space-y-3 text-sm text-gray-300">
+              <p>
+                <span className="font-medium">이름:</span> {formData.name}
+              </p>
+              <p>
+                <span className="font-medium">성별:</span>{" "}
+                {formData.gender === "M" ? "남자" : "여자"}
+              </p>
+              <p>
+                <span className="font-medium">전화번호:</span> {formData.phone}
+              </p>
+              <p>
+                <span className="font-medium">생년월일:</span>{" "}
+                {formData.birthdate}
+              </p>
+              <p>
+                <span className="font-medium">대학교:</span>{" "}
+                {formData.university}
+              </p>
+              <p>
+                <span className="font-medium">전공:</span> {formData.major}
+              </p>
+              <p>
+                <span className="font-medium">학번:</span> {formData.student_id}
+              </p>
+              <p>
+                <span className="font-medium">학년:</span> {formData.grade}
+              </p>
+              <p>
+                <span className="font-medium">지역:</span> {formData.region}
+              </p>
+              {formData.message && (
+                <p>
+                  <span className="font-medium">하고싶은말:</span>{" "}
+                  {formData.message}
+                </p>
+              )}
+            </div>
+            <div className="mt-6 flex justify-end space-x-3">
+              <button
+                onClick={() => setIsConfirmModalOpen(false)}
+                className="px-4 py-2 text-sm font-medium text-white bg-gray-600 rounded-lg hover:bg-gray-500"
+              >
+                수정하기
+              </button>
+              <button
+                onClick={handleConfirmSubmit}
+                className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-500"
+              >
+                제출하기
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
