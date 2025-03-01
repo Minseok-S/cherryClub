@@ -60,13 +60,11 @@ export const useMapAnimation = (
       });
     });
 
-    console.log("selectedRegion", selectedRegion);
-
     // 선택된 지역이 있을 경우에만 강조 효과 적용
     if (selectedPath && selectedRegion) {
       gsap.to(selectedPath, {
         opacity: 1,
-        scale: selectedRegion === "서울" ? 4 : 1.1,
+        scale: 1.2,
         transformOrigin: "center center",
         filter: "drop-shadow(3px 3px 5px rgba(0, 0, 0, 0.3))",
         duration: 0.5,
