@@ -62,7 +62,7 @@ export default function AdminPage() {
 
   const handleStatusChange = async (id: number, newStatus: string) => {
     try {
-      const response = await fetch(`/api/applications/cherry_club?id=${id}`, {
+      const response = await fetch(`/api/application/cherry_club?id=${id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -90,7 +90,7 @@ export default function AdminPage() {
     const fetchData = async () => {
       try {
         const response = await fetch(
-          `/api/applications/cherry_club?authority=${authority}&userName=${encodeURIComponent(
+          `/api/application/cherry_club?authority=${authority}&userName=${encodeURIComponent(
             userName
           )}&region=${encodeURIComponent(region)}`,
           {

@@ -129,7 +129,7 @@ export async function PUT(request: Request) {
       id,
     ]);
 
-    // APPROVED 상태일 때 User 및 ClubUser 테이블에 추가
+    // APPROVED 상태일 때 User 테이블에 추가
     if (status === "APPROVED") {
       const [rows] = await connection.query(
         "SELECT * FROM Applications WHERE id = ?",
@@ -138,7 +138,33 @@ export async function PUT(request: Request) {
       const application = (rows as mysql.RowDataPacket[])[0];
 
       if (application) {
-        // User 테이블에 삽입
+        await connection.query(
+          `INSERT INTO users SET 
+            name = ?,
+            gender = ?,
+            phone = ?,
+            birthday = ?,
+            region = ?,
+            university = ?,
+            major = ?,
+            student_id = ?,
+            grade = ?,
+            vision_camp_batch = ?,
+            is_cherry_club_member =?`,
+          [
+            application.name,
+            application.gender,
+            application.phone,
+            application.birthday,
+            application.region,
+            application.university,
+            application.major,
+            application.student_id,
+            application.grade,
+            application.vision_camp_batch,
+            1,
+          ]
+        );
       }
     }
     // REJECTED 상태일 때 User 및 ClubUser에서 삭제
