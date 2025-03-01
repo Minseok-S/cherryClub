@@ -5,9 +5,9 @@ import { useRouter } from "next/navigation";
 
 interface ApplicationForm {
   name: string;
-  gender: "M" | "F";
+  gender: string;
   phone: string;
-  birthdate: string;
+  birthday: string;
   region: string;
   university: string;
   major: string;
@@ -93,7 +93,7 @@ export default function ApplyPage() {
     if (!formData) return;
 
     try {
-      const response = await fetch("/api/applications", {
+      const response = await fetch("/api/application/cherry_club", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -101,7 +101,7 @@ export default function ApplyPage() {
         body: JSON.stringify({
           ...formData,
           student_id: formData.student_id,
-          birthdate: formData.birthdate,
+          birthday: formData.birthday,
         }),
       });
 
@@ -172,8 +172,8 @@ export default function ApplyPage() {
             className="w-full px-4 py-2 border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-gray-900 text-white"
           >
             <option value="">선택하세요</option>
-            <option value="M">남자</option>
-            <option value="F">여자</option>
+            <option value="남">남자</option>
+            <option value="여">여자</option>
           </select>
         </div>
 
@@ -218,7 +218,7 @@ export default function ApplyPage() {
           </label>
           <input
             type="text"
-            {...register("birthdate", {
+            {...register("birthday", {
               required: true,
               pattern: /^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$/,
               onChange: (e) => {
@@ -239,7 +239,7 @@ export default function ApplyPage() {
             placeholder="YYYY-MM-DD"
             maxLength={10}
           />
-          {errors.birthdate && (
+          {errors.birthday && (
             <span className="text-red-500">
               유효한 생년월일을 입력해주세요 (YYYY-MM-DD)
             </span>
@@ -434,15 +434,14 @@ export default function ApplyPage() {
                 <span className="font-medium">이름:</span> {formData.name}
               </p>
               <p>
-                <span className="font-medium">성별:</span>{" "}
-                {formData.gender === "M" ? "남자" : "여자"}
+                <span className="font-medium">성별:</span> {formData.gender}
               </p>
               <p>
                 <span className="font-medium">전화번호:</span> {formData.phone}
               </p>
               <p>
                 <span className="font-medium">생년월일:</span>{" "}
-                {formData.birthdate}
+                {formData.birthday}
               </p>
               <p>
                 <span className="font-medium">대학교:</span>{" "}

@@ -18,7 +18,7 @@ export async function POST(request: Request) {
     connection = await pool.getConnection();
     // SQL 인젝션 방지를 위한 prepared statement
     const [rows] = await connection.execute<[]>(
-      "SELECT name, authority, birthdate, region, university FROM Users WHERE birthdate = ?",
+      "SELECT * FROM Users WHERE password = ?",
       [code]
     );
 

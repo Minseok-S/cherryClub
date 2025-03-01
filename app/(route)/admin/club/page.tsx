@@ -173,10 +173,7 @@ export default function AdminClubPage() {
                   }`}
                 >
                   <td className="px-6 py-4 text-center">{item.name}</td>
-                  <td className="px-6 py-4 text-center">
-                    {" "}
-                    {item.gender === "M" ? "남" : "여"}
-                  </td>
+                  <td className="px-6 py-4 text-center"> {item.gender}</td>
                   <td className="px-6 py-4 text-center">{item.phone}</td>
                   <td className="px-6 py-4 text-center">{item.university}</td>
                   <td className="px-6 py-4 text-center">{item.major}</td>

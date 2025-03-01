@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import mysql from "mysql2/promise";
-import { pool } from "../db";
+import { pool } from "../../db";
 
 export async function POST(request: Request) {
   try {
@@ -10,13 +10,13 @@ export async function POST(request: Request) {
     // 필수 필드 검증 (새로운 스키마에 맞게 수정)
     if (
       !data.name ||
-      !data.phone || // phone -> phone로 변경
-      !data.birthdate ||
-      !data.region || // university 대신 region 추가
+      !data.phone ||
+      !data.birthday ||
+      !data.region ||
       !data.university ||
       !data.major ||
-      !data.student_id || // studentId -> student_id로 변경
-      !data.grade // grade -> year로 변경
+      !data.student_id ||
+      !data.grade
     ) {
       return NextResponse.json(
         { error: "필수 항목이 누락되었습니다" },
@@ -30,13 +30,13 @@ export async function POST(request: Request) {
         name = ?, 
         gender = ?, 
         phone = ?,
-        birthdate = ?, 
+        birthday = ?, 
         region = ?,   
         university = ?, 
         major = ?, 
         student_id = ?,
         grade = ?,       
-        is_campus_participant = ?,
+        vision_camp_batch = ?,
         status = ?,  
         message =?,
         created_at = NOW()`,
@@ -44,13 +44,13 @@ export async function POST(request: Request) {
         data.name,
         data.gender,
         data.phone,
-        data.birthdate,
+        data.birthday,
         data.region,
         data.university,
         data.major,
         data.student_id,
         data.grade,
-        data.isCampusParticipant || false,
+        data.vision_camp_batch || "미수료",
         data.status || "PENDING", // 기본값 설정
         data.message,
       ]
@@ -67,6 +67,7 @@ export async function POST(request: Request) {
   }
 }
 
+//TODO: 권한별로 정보 보여주는거
 export async function GET(request: Request) {
   try {
     const connection = await pool.getConnection();
@@ -138,37 +139,6 @@ export async function PUT(request: Request) {
 
       if (application) {
         // User 테이블에 삽입
-        const [userResult] = await connection.query(
-          `INSERT INTO Users SET 
-            name = ?,
-            gender = ?,
-            phone = ?,
-            birthdate = ?,
-            region = ?,
-            university = ?,
-            major = ?,
-            student_id = ?,
-            grade = ?,
-            is_campus_participant = ?`,
-          [
-            application.name,
-            application.gender,
-            application.phone,
-            application.birthdate,
-            application.region,
-            application.university,
-            application.major,
-            application.student_id,
-            application.grade,
-            application.is_campus_participant,
-          ]
-        );
-
-        // ClubUser 테이블에 user_id 삽입
-        const userId = (userResult as mysql.ResultSetHeader).insertId;
-        await connection.query("INSERT INTO ClubUser (user_id) VALUES (?)", [
-          userId,
-        ]);
       }
     }
     // REJECTED 상태일 때 User 및 ClubUser에서 삭제
@@ -180,20 +150,16 @@ export async function PUT(request: Request) {
       const application = (rows as mysql.RowDataPacket[])[0];
 
       if (application) {
-        // Users 테이블에서 student_id로 사용자 조회
+        // Users 테이블에서 phone로 사용자 조회
         const [userRows] = await connection.query(
-          "SELECT id FROM Users WHERE student_id = ?",
-          [application.student_id]
+          "SELECT id FROM users WHERE phone = ?",
+          [application.phone]
         );
         const user = (userRows as mysql.RowDataPacket[])[0];
 
         if (user) {
-          // ClubUser 테이블에서 삭제
-          await connection.query("DELETE FROM ClubUser WHERE user_id = ?", [
-            user.id,
-          ]);
           // Users 테이블에서 삭제
-          await connection.query("DELETE FROM Users WHERE id = ?", [user.id]);
+          await connection.query("DELETE FROM users WHERE id = ?", [user.id]);
         }
       }
     }

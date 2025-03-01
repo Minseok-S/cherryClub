@@ -6,7 +6,7 @@ interface Application {
   name: string;
   gender: string;
   phone: string;
-  birthdate: string;
+  birthday: string;
   region: string;
   university: string;
   major: string;
@@ -20,7 +20,7 @@ interface Application {
 export default function AdminPage() {
   const [data, setData] = useState<Application[]>([]);
   const [loading, setLoading] = useState(true);
-  const [birthdate, setbirthdate] = useState("");
+  const [password, setPassword] = useState("");
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [userName, setUserName] = useState("");
   const [authority, setAuthority] = useState(0);
@@ -36,7 +36,7 @@ export default function AdminPage() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ code: birthdate }),
+        body: JSON.stringify({ code: password }),
       });
 
       if (!response.ok) {
@@ -62,11 +62,11 @@ export default function AdminPage() {
 
   const handleStatusChange = async (id: number, newStatus: string) => {
     try {
-      const response = await fetch(`/api/applications?id=${id}`, {
+      const response = await fetch(`/api/applications/cherry_club?id=${id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${birthdate}`,
+          Authorization: `Bearer ${password}`,
         },
         body: JSON.stringify({ status: newStatus }),
       });
@@ -90,12 +90,12 @@ export default function AdminPage() {
     const fetchData = async () => {
       try {
         const response = await fetch(
-          `/api/applications?authority=${authority}&userName=${encodeURIComponent(
+          `/api/applications/cherry_club?authority=${authority}&userName=${encodeURIComponent(
             userName
           )}&region=${encodeURIComponent(region)}`,
           {
             headers: {
-              Authorization: `Bearer ${birthdate}`,
+              Authorization: `Bearer ${password}`,
             },
           }
         );
@@ -111,7 +111,7 @@ export default function AdminPage() {
     };
 
     fetchData();
-  }, [isAuthenticated, birthdate, authority, region, userName]);
+  }, [isAuthenticated, password, authority, region, userName]);
 
   // 필터링된 데이터 계산
   const filteredData = data.filter((item) =>
@@ -120,14 +120,15 @@ export default function AdminPage() {
     )
   );
 
+  //TODO: 보여줄 값 확인
   if (!isAuthenticated) {
     return (
       <div className="p-4 max-w-md mx-auto mt-20">
         <form onSubmit={handleAuthSubmit} className="space-y-4">
           <input
             type="password"
-            value={birthdate}
-            onChange={(e) => setbirthdate(e.target.value)}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
             className="w-full p-2 rounded text-black"
             placeholder="관리자 인증 코드 입력"
           />
@@ -215,11 +216,9 @@ export default function AdminPage() {
                   }`}
                 >
                   <td className="px-6 py-4 text-center">{item.name}</td>
-                  <td className="px-6 py-4 text-center">
-                    {item.gender === "M" ? "남" : "여"}
-                  </td>
+                  <td className="px-6 py-4 text-center">{item.gender}</td>
                   <td className="px-6 py-4 text-center">{item.phone}</td>
-                  <td className="px-6 py-4 text-center">{item.birthdate}</td>
+                  <td className="px-6 py-4 text-center">{item.birthday}</td>
                   <td className="px-6 py-4 text-center">{item.region}</td>
                   <td className="px-6 py-4 text-center">{item.university}</td>
                   <td className="px-6 py-4 text-center">{item.major}</td>

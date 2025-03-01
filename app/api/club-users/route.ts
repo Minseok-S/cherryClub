@@ -8,10 +8,14 @@ interface ClubUser extends RowDataPacket {
   gender: string;
   phone: string;
   university: string;
+  student_id: string;
+  grade: string;
   major: string;
-  is_campus_participant: boolean;
+  birthday: string;
+  vision_camp_batch: string;
+  is_cherry_club_member: boolean;
+  authority: string;
   created_at: string;
-  status: string;
 }
 
 export async function GET(request: Request) {
@@ -19,6 +23,7 @@ export async function GET(request: Request) {
   try {
     // 인증 헤더 확인
     const authHeader = request.headers.get("Authorization");
+
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
       return new NextResponse(JSON.stringify({ message: "Unauthorized" }), {
         status: 401,
@@ -30,13 +35,8 @@ export async function GET(request: Request) {
 
     // 클럽 유저 데이터 조회
     const [clubUsers] = await connection.query<ClubUser[]>(`
-      SELECT 
-        U.id, U.name, U.gender, U.phone, 
-        U.university, U.major, U.is_campus_participant,
-        U.created_at, C.status
-      FROM Users U
-      JOIN ClubUser C ON U.id = C.user_id
-      ORDER BY U.created_at DESC
+      SELECT * FROM users
+      ORDER BY users.created_at DESC
     `);
 
     return NextResponse.json(clubUsers, {
@@ -66,6 +66,7 @@ export async function POST(request: Request) {
 
     // 인증 헤더 확인
     const authHeader = request.headers.get("Authorization");
+
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
       return new NextResponse(JSON.stringify({ message: "Unauthorized" }), {
         status: 401,
