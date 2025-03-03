@@ -7,24 +7,40 @@ export async function POST(request: Request) {
     const connection = await pool.getConnection();
     const data = await request.json();
 
-    // 필수 필드 검증 (새로운 스키마에 맞게 수정)
-    if (
-      !data.name ||
-      !data.phone ||
-      !data.birthday ||
-      !data.region ||
-      !data.university ||
-      !data.major ||
-      !data.student_id ||
-      !data.grade
-    ) {
+    // 필수 필드 검증 (배열로 간소화)
+    const requiredFields = [
+      "name",
+      "phone",
+      "birthday",
+      "region",
+      "university",
+      "major",
+      "student_id",
+      "grade",
+    ];
+    if (requiredFields.some((field) => !data[field])) {
       return NextResponse.json(
         { error: "필수 항목이 누락되었습니다" },
         { status: 400 }
       );
     }
 
-    // 데이터 삽입 쿼리 수정
+    // 쿼리 파라미터 배열 생성
+    const queryParams = [
+      data.name,
+      data.gender,
+      data.phone,
+      data.birthday,
+      data.region,
+      data.university,
+      data.major,
+      data.student_id,
+      data.grade,
+      data.vision_camp_batch || "미수료",
+      data.status || "PENDING",
+      data.message,
+    ];
+
     const [result] = await connection.query(
       `INSERT INTO Applications SET 
         name = ?, 
@@ -40,20 +56,7 @@ export async function POST(request: Request) {
         status = ?,  
         message =?,
         created_at = NOW()`,
-      [
-        data.name,
-        data.gender,
-        data.phone,
-        data.birthday,
-        data.region,
-        data.university,
-        data.major,
-        data.student_id,
-        data.grade,
-        data.vision_camp_batch || "미수료",
-        data.status || "PENDING", // 기본값 설정
-        data.message,
-      ]
+      queryParams
     );
 
     connection.release();
@@ -67,7 +70,6 @@ export async function POST(request: Request) {
   }
 }
 
-//TODO: 권한별로 정보 보여주는거
 export async function GET(request: Request) {
   try {
     const connection = await pool.getConnection();
@@ -111,86 +113,94 @@ export async function PUT(request: Request) {
     const id = searchParams.get("id");
     const { status } = await request.json();
 
-    // 상태 값 검증 수정 (PROCESSING 상태 추가)
-    if (
-      !id ||
-      !["PENDING", "PROCESSING", "APPROVED", "REJECTED"].includes(status)
-    ) {
+    // 상태 값 검증 (Set 사용)
+    const validStatuses = new Set([
+      "PENDING",
+      "PROCESSING",
+      "APPROVED",
+      "REJECTED",
+    ]);
+    if (!id || !validStatuses.has(status)) {
       return NextResponse.json(
         { error: "유효하지 않은 요청입니다" },
         { status: 400 }
       );
     }
 
-    // 상태 업데이트 쿼리
-    await connection.query("UPDATE Applications SET status = ? WHERE id = ?", [
-      status,
-      id,
-    ]);
+    // 트랜잭션 시작
+    await connection.beginTransaction();
 
-    // APPROVED 상태일 때 User 테이블에 추가
-    if (status === "APPROVED") {
-      const [rows] = await connection.query(
-        "SELECT * FROM Applications WHERE id = ?",
-        [id]
+    try {
+      // 상태 업데이트 쿼리
+      await connection.query(
+        "UPDATE Applications SET status = ? WHERE id = ?",
+        [status, id]
       );
-      const application = (rows as mysql.RowDataPacket[])[0];
 
-      if (application) {
-        await connection.query(
-          `INSERT INTO users SET 
-            name = ?,
-            gender = ?,
-            phone = ?,
-            birthday = ?,
-            region = ?,
-            university = ?,
-            major = ?,
-            student_id = ?,
-            grade = ?,
-            vision_camp_batch = ?,
-            is_cherry_club_member =?`,
-          [
-            application.name,
-            application.gender,
-            application.phone,
-            application.birthday,
-            application.region,
-            application.university,
-            application.major,
-            application.student_id,
-            application.grade,
-            application.vision_camp_batch,
-            1,
-          ]
+      if (status === "APPROVED") {
+        const [rows] = await connection.query(
+          "SELECT * FROM Applications WHERE id = ?",
+          [id]
         );
-      }
-    }
-    // REJECTED 상태일 때 User 및 ClubUser에서 삭제
-    else if (status === "REJECTED") {
-      const [rows] = await connection.query(
-        "SELECT * FROM Applications WHERE id = ?",
-        [id]
-      );
-      const application = (rows as mysql.RowDataPacket[])[0];
+        const application = (rows as mysql.RowDataPacket[])[0];
 
-      if (application) {
-        // Users 테이블에서 phone로 사용자 조회
-        const [userRows] = await connection.query(
-          "SELECT id FROM users WHERE phone = ?",
-          [application.phone]
+        if (application) {
+          await connection.query(
+            `INSERT INTO users SET 
+              name = ?,
+              gender = ?,
+              phone = ?,
+              birthday = ?,
+              region = ?,
+              university = ?,
+              major = ?,
+              student_id = ?,
+              grade = ?,
+              vision_camp_batch = ?,
+              is_cherry_club_member =?`,
+            [
+              application.name,
+              application.gender,
+              application.phone,
+              application.birthday,
+              application.region,
+              application.university,
+              application.major,
+              application.student_id,
+              application.grade,
+              application.vision_camp_batch,
+              1,
+            ]
+          );
+        }
+      } else if (status === "REJECTED") {
+        const [rows] = await connection.query(
+          "SELECT * FROM Applications WHERE id = ?",
+          [id]
         );
-        const user = (userRows as mysql.RowDataPacket[])[0];
+        const application = (rows as mysql.RowDataPacket[])[0];
 
-        if (user) {
-          // Users 테이블에서 삭제
-          await connection.query("DELETE FROM users WHERE id = ?", [user.id]);
+        if (application) {
+          const [userRows] = await connection.query(
+            "SELECT id FROM users WHERE phone = ?",
+            [application.phone]
+          );
+          const user = (userRows as mysql.RowDataPacket[])[0];
+
+          if (user) {
+            await connection.query("DELETE FROM users WHERE id = ?", [user.id]);
+          }
         }
       }
-    }
 
-    connection.release();
-    return NextResponse.json({ success: true });
+      await connection.commit();
+      return NextResponse.json({ success: true });
+    } catch (error) {
+      await connection.rollback();
+      throw error;
+    } finally {
+      connection.release();
+    }
   } catch (error) {
     console.error("Database error:", error);
     return NextResponse.json(
