@@ -1,4 +1,4 @@
-import { forwardRef } from "react";
+import { forwardRef, useState } from "react";
 import { regionData } from "@/src/entities/campus";
 
 interface RegionModalProps {
@@ -9,6 +9,13 @@ interface RegionModalProps {
 export const RegionModal = forwardRef<HTMLDivElement, RegionModalProps>(
   ({ selectedRegion, onClose }, ref) => {
     if (!selectedRegion) return null;
+
+    const [searchTerm, setSearchTerm] = useState("");
+
+    const filteredCampuses = regionData[selectedRegion].campus.filter(
+      (campus: string) =>
+        campus.toLowerCase().includes(searchTerm.toLowerCase())
+    );
 
     return (
       <div
@@ -50,25 +57,34 @@ export const RegionModal = forwardRef<HTMLDivElement, RegionModalProps>(
               총 캠퍼스: {regionData[selectedRegion].total()}개
             </h2>
           </div>
+          <div className="mb-4">
+            <input
+              type="text"
+              placeholder="캠퍼스 검색"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full p-2 rounded-md bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
           <div>
             <h2 className="text-xl font-bold mb-2">캠퍼스 목록</h2>
             <ul className="list-disc pl-5">
-              {regionData[selectedRegion].campus.map(
-                (campus: string, index: number) => (
-                  <li
-                    key={index}
-                    className="cursor-pointer hover:text-blue-400 transition-colors"
-                  >
-                    {campus}
-                  </li>
-                )
-              )}
+              {filteredCampuses.map((campus: string, index: number) => (
+                <li
+                  key={index}
+                  className="cursor-pointer hover:text-blue-400 transition-colors"
+                >
+                  {campus}
+                </li>
+              ))}
             </ul>
           </div>
         </div>
-        <p className="text-gray-400 text-sm break-keep">
-          문의 : 신용선 간사 (010-5022-8934)
-        </p>
+        <div className="fixed bottom-0 left-0 right-0 bg-black/90 p-4">
+          <p className="text-gray-400  break-keep text-center">
+            문의 : 신용선 간사 (010-5022-8934)
+          </p>
+        </div>
       </div>
     );
   }

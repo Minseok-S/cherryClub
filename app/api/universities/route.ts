@@ -5,17 +5,22 @@ export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const query = searchParams.get("query") || "";
 
+  // 빈 쿼리 검사 추가
+  if (!query.trim()) {
+    return NextResponse.json([], { status: 200 });
+  }
+
   try {
     const connection = await pool.getConnection();
 
-    // SQL 인젝션 방지를 위해 파라미터화된 쿼리 사용
+    // 인덱스 활용을 위해 LIKE 검색 최적화
     const [rows] = await connection.query(
-      `SELECT name, location AS country, latitude, longitude 
+      `SELECT name, location AS country 
        FROM Universities 
-       WHERE name LIKE ? 
+       WHERE name LIKE CONCAT(?, '%')  -- 접두사 검색으로 인덱스 활용
        ORDER BY name ASC 
        LIMIT 20`,
-      [`%${query}%`]
+      [query]
     );
 
     connection.release();

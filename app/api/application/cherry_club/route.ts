@@ -7,7 +7,6 @@ export async function POST(request: Request) {
     const connection = await pool.getConnection();
     const data = await request.json();
 
-    // 필수 필드 검증 (배열로 간소화)
     const requiredFields = [
       "name",
       "phone",
