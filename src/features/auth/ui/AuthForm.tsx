@@ -3,7 +3,6 @@ import { useState } from "react";
 export function AuthForm({
   onSubmit,
   error,
-  loading,
 }: {
   onSubmit: (password: string) => void;
   error?: string;

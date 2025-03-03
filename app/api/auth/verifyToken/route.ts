@@ -23,9 +23,14 @@ export async function POST(request: Request) {
     try {
       const tokenObj = JSON.parse(requestBody.token);
       token = tokenObj.token;
-    } catch (parseError) {
+    } catch (err) {
+      console.error("토큰 파싱 에러:", err);
       return NextResponse.json(
-        { error: "토큰 파싱에 실패했습니다" },
+        {
+          error: `토큰 파싱에 실패했습니다: ${
+            err instanceof Error ? err.message : "알 수 없는 오류"
+          }`,
+        },
         { status: 400 }
       );
     }

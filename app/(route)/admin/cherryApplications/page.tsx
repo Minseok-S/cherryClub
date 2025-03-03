@@ -17,7 +17,7 @@ interface Application {
   created_at: string;
   message: string;
   status: string;
-  [key: string]: any;
+  [key: string]: string | number;
 }
 
 export default function CherryApplicationsPage() {
@@ -100,6 +100,10 @@ export default function CherryApplicationsPage() {
     return (
       <AuthForm onSubmit={handleAuthSubmit} error={error} loading={loading} />
     );
+  }
+
+  if (isLoading) {
+    return <div> 로딩중..</div>;
   }
 
   // 필터링된 데이터 계산
