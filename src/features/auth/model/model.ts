@@ -32,11 +32,20 @@ export const useAuth = () => {
     checkAuth();
   }, []);
 
-  const handleAuthSubmit = async (password: string) => {
+  const handleAuthSubmit = async (name: string, password: string) => {
     setLoading(true);
     setError("");
     try {
-      const result = await login(password);
+      const result = await login(name, password);
+
+      if (!result || !result.userName) {
+        throw new Error("사용자 정보가 일치하지 않습니다");
+      }
+
+      if (result.authority === 10) {
+        throw new Error("접근 권한이 없습니다");
+      }
+
       setIsAuthenticated(true);
       setUser({
         userName: result.userName,
@@ -52,7 +61,13 @@ export const useAuth = () => {
         })
       );
     } catch (err) {
-      setError("잘못된 인증 코드입니다");
+      if (err instanceof Error) {
+        setError(
+          err.message || "로그인에 실패했습니다. 정보를 다시 확인해주세요."
+        );
+      } else {
+        setError("알 수 없는 오류가 발생했습니다");
+      }
       console.error(err);
     } finally {
       setLoading(false);
