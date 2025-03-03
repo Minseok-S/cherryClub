@@ -1,5 +1,4 @@
 "use client";
-import { AuthForm } from "@/src/features/auth";
 import { useAuth } from "@/src/features/auth/model/model";
 import { useEffect, useState } from "react";
 
@@ -33,15 +32,11 @@ export default function CherryApplicationsPage() {
   const [selectedMessage, setSelectedMessage] = useState<Application | null>(
     null
   );
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const limit = 20; // 한 페이지당 표시할 항목 수
 
-  const {
-    isAuthenticated,
-    loading,
-    user,
-    error,
-    handleAuthSubmit,
-    handleLogout,
-  } = useAuth();
+  const { isAuthenticated, user, handleLogout } = useAuth();
 
   // 신청자 데이터 가져오기
   useEffect(() => {
@@ -50,14 +45,17 @@ export default function CherryApplicationsPage() {
         setIsLoading(true);
         try {
           const response = await fetch(
-            `/api/application/cherry_club?authority=${user.authority}&region=${user.region}&university=${user.university}`
+            `/api/application/cherry_club?authority=${user.authority}&region=${user.region}&university=${user.university}&page=${currentPage}&limit=${limit}`
           );
           const result = await response.json();
-          setData(result);
+          setData(result.data);
+          setTotalPages(result.pagination.totalPages);
 
           // 데이터에서 고유한 지역 추출 (타입 명시)
           const regions: string[] = [
-            ...new Set<string>(result.map((item: Application) => item.region)),
+            ...new Set<string>(
+              result.data.map((item: Application) => item.region)
+            ),
           ];
           setAvailableRegions(regions);
         } catch (error) {
@@ -68,7 +66,7 @@ export default function CherryApplicationsPage() {
       };
       fetchData();
     }
-  }, [isAuthenticated, user]);
+  }, [isAuthenticated, user, currentPage]); // currentPage가 변경될 때마다 데이터 다시 가져오기
 
   // 상태 변경 핸들러 추가
   const handleStatusChange = async (id: number, status: string) => {
@@ -139,6 +137,7 @@ export default function CherryApplicationsPage() {
 
   // 필터 변경 핸들러
   const handleFilterChange = (field: string, value: string) => {
+    setCurrentPage(1);
     setFilters((prev) => ({
       ...prev,
       [field]: value === "all" ? "" : value,
@@ -147,41 +146,75 @@ export default function CherryApplicationsPage() {
 
   // 날짜 범위 변경 핸들러
   const handleDateRangeChange = (type: "start" | "end", value: string) => {
+    setCurrentPage(1);
     setDateRange((prev) => ({
       ...prev,
       [type]: value,
     }));
   };
 
+  // 검색어 변경 핸들러
+  const handleSearchChange = (value: string) => {
+    setCurrentPage(1);
+    setSearchTerm(value);
+  };
+
+  // 모바일용 페이징 컨트롤 수정
+  const PaginationControls = () => (
+    <div className="fixed bottom-0 left-0 right-0 bg-black/90 backdrop-blur-sm py-2 z-40">
+      <div className="flex justify-center items-center gap-2">
+        <button
+          onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+          disabled={currentPage === 1}
+          className="px-3 py-1 bg-gray-800 text-white rounded hover:bg-gray-700 disabled:opacity-50 text-sm"
+        >
+          이전
+        </button>
+        <span className="px-3 py-1 bg-gray-800 text-white text-sm">
+          {currentPage} / {totalPages}
+        </span>
+        <button
+          onClick={() =>
+            setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+          }
+          disabled={currentPage === totalPages}
+          className="px-3 py-1 bg-gray-800 text-white rounded hover:bg-gray-700 disabled:opacity-50 text-sm"
+        >
+          다음
+        </button>
+      </div>
+    </div>
+  );
+
   return (
-    <div className="p-4 mx-24 bg-black text-white">
-      <div className="flex justify-between items-center mb-6">
+    <div className="p-2 sm:p-4 mx-2 sm:mx-24 bg-black text-white pb-20">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-2">
         <div>
-          <h1 className="text-2xl font-bold">신청자 관리</h1>
-          <p className="text-sm text-gray-400 mt-1">
+          <h1 className="text-xl sm:text-2xl font-bold">신청자 관리</h1>
+          <p className="text-xs sm:text-sm text-gray-400 mt-1">
             각 셀을 클릭시 상세한 정보 확인이 가능합니다.
           </p>
         </div>
-        <div className="flex items-center gap-4">
-          <button
-            onClick={handleLogout}
-            className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
-          >
-            로그아웃
-          </button>
-        </div>
+        <button
+          onClick={handleLogout}
+          className="bg-red-500 text-white px-3 py-1 sm:px-4 sm:py-2 rounded hover:bg-red-600 text-sm sm:text-base"
+        >
+          로그아웃
+        </button>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-7 gap-4 mb-6">
+
+      {/* 필터 섹션 수정 */}
+      <div className="grid grid-cols-3 sm:grid-cols-7 gap-2 mb-4">
         <div className="space-y-1 col-span-1">
-          <label className="block text-sm font-medium text-gray-300 mb-1">
+          <label className="block text-xs sm:text-sm font-medium text-gray-300 mb-1">
             성별
           </label>
           <div className="relative">
             <select
               onChange={(e) => handleFilterChange("gender", e.target.value)}
-              className="appearance-none bg-gray-800 border border-gray-600 rounded-lg px-3 py-2 text-white w-full focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all hover:bg-gray-700 cursor-pointer"
+              className="appearance-none bg-gray-800 border border-gray-600 rounded-lg px-2 py-1 sm:px-3 sm:py-2 text-white w-full focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all hover:bg-gray-700 cursor-pointer text-xs sm:text-sm"
             >
-              <option value="all">전체 보기</option>
+              <option value="all">전체</option>
               <option value="남">남성</option>
               <option value="여">여성</option>
             </select>
@@ -197,13 +230,13 @@ export default function CherryApplicationsPage() {
           </div>
         </div>
         <div className="space-y-1 col-span-1">
-          <label className="block text-sm font-medium text-gray-300 mb-1">
+          <label className="block text-xs sm:text-sm font-medium text-gray-300 mb-1">
             지역
           </label>
           <div className="relative">
             <select
               onChange={(e) => handleFilterChange("region", e.target.value)}
-              className="appearance-none bg-gray-800 border border-gray-600 rounded-lg px-3 py-2 text-white w-full focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all hover:bg-gray-700 cursor-pointer"
+              className="appearance-none bg-gray-800 border border-gray-600 rounded-lg px-2 py-1 sm:px-3 sm:py-2 text-white w-full focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all hover:bg-gray-700 cursor-pointer text-xs sm:text-sm"
             >
               <option value="all">전체 지역</option>
               {availableRegions.map((region) => (
@@ -224,13 +257,13 @@ export default function CherryApplicationsPage() {
           </div>
         </div>
         <div className="space-y-1 col-span-1">
-          <label className="block text-sm font-medium text-gray-300 mb-1">
+          <label className="block text-xs sm:text-sm font-medium text-gray-300 mb-1">
             상태
           </label>
           <div className="relative">
             <select
               onChange={(e) => handleFilterChange("status", e.target.value)}
-              className="appearance-none bg-gray-800 border border-gray-600 rounded-lg px-3 py-2 text-white w-full focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all hover:bg-gray-700 cursor-pointer"
+              className="appearance-none bg-gray-800 border border-gray-600 rounded-lg px-2 py-1 sm:px-3 sm:py-2 text-white w-full focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all hover:bg-gray-700 cursor-pointer text-xs sm:text-sm"
             >
               <option value="all">모든 상태</option>
               <option value="PENDING">신청 대기</option>
@@ -249,41 +282,43 @@ export default function CherryApplicationsPage() {
             </div>
           </div>
         </div>
-        <div className="space-y-1 col-span-2">
-          <label className="block text-sm font-medium text-gray-300 mb-1">
+        <div className="space-y-1 col-span-3 sm:col-span-2">
+          <label className="block text-xs sm:text-sm font-medium text-gray-300 mb-1">
             날짜 범위
           </label>
           <div className="flex gap-2">
             <div className="relative flex-1">
               <input
                 type="date"
-                className="bg-gray-800 border border-gray-600 rounded-lg px-3 py-2 text-white w-full focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all hover:bg-gray-700"
+                className="bg-gray-800 border border-gray-600 rounded-lg px-2 py-1 sm:px-3 sm:py-2 text-white w-full focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all hover:bg-gray-700 text-xs sm:text-sm"
                 value={dateRange.start}
                 onChange={(e) => handleDateRangeChange("start", e.target.value)}
               />
             </div>
-            <span className="text-gray-400 self-center">~</span>
+            <span className="text-gray-400 self-center text-xs sm:text-sm">
+              ~
+            </span>
             <div className="relative flex-1">
               <input
                 type="date"
-                className="bg-gray-800 border border-gray-600 rounded-lg px-3 py-2 text-white w-full focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all hover:bg-gray-700"
+                className="bg-gray-800 border border-gray-600 rounded-lg px-2 py-1 sm:px-3 sm:py-2 text-white w-full focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all hover:bg-gray-700 text-xs sm:text-sm"
                 value={dateRange.end}
                 onChange={(e) => handleDateRangeChange("end", e.target.value)}
               />
             </div>
           </div>
         </div>
-        <div className="space-y-1 col-span-2">
-          <label className="block text-sm font-medium text-gray-300 mb-1">
+        <div className="space-y-1 col-span-3 sm:col-span-2">
+          <label className="block text-xs sm:text-sm font-medium text-gray-300 mb-1">
             검색
           </label>
           <div className="relative">
             <input
               type="text"
               placeholder="이름, 전공, 학번 등으로 검색"
-              className="p-2 pl-10 rounded-lg bg-gray-800 border border-gray-600 text-white w-full focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all hover:bg-gray-700"
+              className="p-2 pl-10 rounded-lg bg-gray-800 border border-gray-600 text-white w-full focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all hover:bg-gray-700 text-xs sm:text-sm"
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              onChange={(e) => handleSearchChange(e.target.value)}
             />
             <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
               <svg
@@ -304,29 +339,60 @@ export default function CherryApplicationsPage() {
           </div>
         </div>
       </div>
+
+      {/* 테이블 스크롤 최적화 */}
       <div className="overflow-x-auto">
-        <table className="min-w-full bg-gray-900 border border-gray-700">
+        <table className="min-w-full bg-gray-900 border border-gray-700 text-xs sm:text-sm">
           <thead>
             <tr className="bg-gray-800">
-              <th className="px-6 py-3 text-center text-white">no.</th>
-              <th className="px-6 py-3 text-center text-white">이름</th>
-              <th className="px-6 py-3 text-center text-white">성별</th>
-              <th className="px-6 py-3 text-center text-white">연락처</th>
-              <th className="px-6 py-3 text-center text-white">생년월일</th>
-              <th className="px-6 py-3 text-center text-white">지역</th>
-              <th className="px-6 py-3 text-center text-white">대학교</th>
-              <th className="px-6 py-3 text-center text-white">전공</th>
-              <th className="px-6 py-3 text-center text-white">학번</th>
-              <th className="px-6 py-3 text-center text-white">학년</th>
-              <th className="px-6 py-3 text-center text-white">신청서</th>
-              <th className="px-6 py-3 text-center text-white">신청일시</th>
-              <th className="px-6 py-3 text-center text-white">상태</th>
+              <th className="px-2 py-1 sm:px-6 sm:py-3 text-center text-white">
+                no.
+              </th>
+              <th className="px-2 py-1 sm:px-6 sm:py-3 text-center text-white">
+                이름
+              </th>
+              <th className="px-2 py-1 sm:px-6 sm:py-3 text-center text-white">
+                성별
+              </th>
+              <th className="px-2 py-1 sm:px-6 sm:py-3 text-center text-white">
+                연락처
+              </th>
+              <th className="px-2 py-1 sm:px-6 sm:py-3 text-center text-white">
+                생년월일
+              </th>
+              <th className="px-2 py-1 sm:px-6 sm:py-3 text-center text-white">
+                지역
+              </th>
+              <th className="px-2 py-1 sm:px-6 sm:py-3 text-center text-white">
+                대학교
+              </th>
+              <th className="px-2 py-1 sm:px-6 sm:py-3 text-center text-white">
+                전공
+              </th>
+              <th className="px-2 py-1 sm:px-6 sm:py-3 text-center text-white">
+                학번
+              </th>
+              <th className="px-2 py-1 sm:px-6 sm:py-3 text-center text-white">
+                학년
+              </th>
+              <th className="px-2 py-1 sm:px-6 sm:py-3 text-center text-white">
+                신청서
+              </th>
+              <th className="px-2 py-1 sm:px-6 sm:py-3 text-center text-white">
+                신청일시
+              </th>
+              <th className="px-2 py-1 sm:px-6 sm:py-3 text-center text-white">
+                상태
+              </th>
             </tr>
           </thead>
           <tbody>
             {filteredData.length === 0 ? (
               <tr>
-                <td colSpan={12} className="text-center py-4">
+                <td
+                  colSpan={12}
+                  className="text-center py-2 text-xs sm:text-sm"
+                >
                   검색 결과가 없습니다
                 </td>
               </tr>
@@ -345,25 +411,45 @@ export default function CherryApplicationsPage() {
                   }`}
                   onClick={() => handleMessageClick(item)}
                 >
-                  <td className="px-6 py-4 text-center">{index + 1}</td>
-                  <td className="px-6 py-4 text-center">{item.name}</td>
-                  <td className="px-6 py-4 text-center">{item.gender}</td>
-                  <td className="px-6 py-4 text-center">{item.phone}</td>
-                  <td className="px-6 py-4 text-center">{item.birthday}</td>
-                  <td className="px-6 py-4 text-center">{item.region}</td>
-                  <td className="px-6 py-4 text-center">{item.university}</td>
-                  <td className="px-6 py-4 text-center">{item.major}</td>
-                  <td className="px-6 py-4 text-center">{item.student_id}</td>
-                  <td className="px-6 py-4 text-center">{item.grade}</td>
-                  <td className="px-6 py-4 text-center ">
+                  <td className="px-2 py-1 sm:px-6 sm:py-4 text-center">
+                    {index + 1}
+                  </td>
+                  <td className="px-2 py-1 sm:px-6 sm:py-4 text-center">
+                    {item.name}
+                  </td>
+                  <td className="px-2 py-1 sm:px-6 sm:py-4 text-center">
+                    {item.gender}
+                  </td>
+                  <td className="px-2 py-1 sm:px-6 sm:py-4 text-center">
+                    {item.phone}
+                  </td>
+                  <td className="px-2 py-1 sm:px-6 sm:py-4 text-center">
+                    {item.birthday}
+                  </td>
+                  <td className="px-2 py-1 sm:px-6 sm:py-4 text-center">
+                    {item.region}
+                  </td>
+                  <td className="px-2 py-1 sm:px-6 sm:py-4 text-center">
+                    {item.university}
+                  </td>
+                  <td className="px-2 py-1 sm:px-6 sm:py-4 text-center">
+                    {item.major}
+                  </td>
+                  <td className="px-2 py-1 sm:px-6 sm:py-4 text-center">
+                    {item.student_id}
+                  </td>
+                  <td className="px-2 py-1 sm:px-6 sm:py-4 text-center">
+                    {item.grade}
+                  </td>
+                  <td className="px-2 py-1 sm:px-6 sm:py-4 text-center ">
                     {item.message.length > 10
                       ? `${item.message.substring(0, 10)}...`
                       : item.message}
                   </td>
-                  <td className="px-6 py-4 text-center">
+                  <td className="px-2 py-1 sm:px-6 sm:py-4 text-center">
                     {new Date(item.created_at).toLocaleString()}
                   </td>
-                  <td className="px-6 py-4 text-center">
+                  <td className="px-2 py-1 sm:px-6 sm:py-4 text-center">
                     <select
                       value={item.status}
                       onChange={(e) =>
@@ -384,17 +470,13 @@ export default function CherryApplicationsPage() {
         </table>
       </div>
 
-      {/* 모달 수정 */}
+      {/* 모달 크기 조정 */}
       {selectedMessage && (
-        <div
-          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
-          onClick={() => setSelectedMessage(null)}
-        >
-          <div
-            className="bg-gray-800 rounded-lg p-6 max-w-2xl w-full max-h-[80vh] overflow-y-auto"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <h2 className="text-xl font-bold mb-4">신청자 상세 정보</h2>
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-2 sm:p-4 z-50">
+          <div className="bg-gray-800 rounded-lg p-4 sm:p-6 w-full max-w-sm sm:max-w-2xl max-h-[90vh] overflow-y-auto">
+            <h2 className="text-lg sm:text-xl font-bold mb-2 sm:mb-4">
+              신청자 상세 정보
+            </h2>
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <p className="text-gray-400">이름</p>
@@ -469,6 +551,8 @@ export default function CherryApplicationsPage() {
           </div>
         </div>
       )}
+
+      <PaginationControls />
     </div>
   );
 }

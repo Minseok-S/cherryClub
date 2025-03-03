@@ -75,6 +75,11 @@ export async function GET(request: Request) {
     const connection = await pool.getConnection();
     const { searchParams } = new URL(request.url);
 
+    // 페이징 파라미터
+    const page = parseInt(searchParams.get("page") || "1");
+    const limit = parseInt(searchParams.get("limit") || "20");
+    const offset = (page - 1) * limit;
+
     // URL 파라미터에서 권한 정보 추출
     const authority = searchParams.get("authority");
     const region = searchParams.get("region");
@@ -91,12 +96,35 @@ export async function GET(request: Request) {
       params.push(university, region);
     }
 
-    query += " ORDER BY created_at DESC";
+    // 페이징 추가
+    query += " ORDER BY created_at DESC LIMIT ? OFFSET ?";
+    params.push(limit, offset);
 
     const [rows] = await connection.query(query, params);
 
+    // 전체 개수 조회 (페이징을 위해)
+    let countQuery = "SELECT COUNT(*) as total FROM Applications";
+    if (authority === "3") {
+      countQuery += " WHERE region = ?";
+    } else if (authority === "4") {
+      countQuery += " WHERE university = ? AND region = ?";
+    }
+    const [countResult] = await connection.query(
+      countQuery,
+      params.slice(0, -2)
+    );
+    const total = (countResult as mysql.RowDataPacket[])[0].total;
+
     connection.release();
-    return NextResponse.json(rows);
+    return NextResponse.json({
+      data: rows,
+      pagination: {
+        page,
+        limit,
+        total,
+        totalPages: Math.ceil(total / limit),
+      },
+    });
   } catch (error) {
     console.error("Database error:", error);
     return NextResponse.json(
