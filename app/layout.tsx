@@ -21,6 +21,9 @@ export const metadata: Metadata = {
     icon: "/logo_black.png",
   },
   metadataBase: new URL("https://cherryclub.kr"),
+  verification: {
+    google: "AfbSCOA6OJyn397jAZTPzyYip29W3vZBJa-bNxqD5nI",
+  },
   openGraph: {
     title: "체리동아리",
     description: "NCMN 체리동아리",
@@ -66,6 +69,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <meta
+        name="google-site-verification"
+        content="AfbSCOA6OJyn397jAZTPzyYip29W3vZBJa-bNxqD5nI"
+      />
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-[#121212] text-white`}
       >
