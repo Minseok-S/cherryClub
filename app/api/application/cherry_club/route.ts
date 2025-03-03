@@ -116,15 +116,22 @@ export async function GET(request: Request) {
     const total = (countResult as mysql.RowDataPacket[])[0].total;
 
     connection.release();
-    return NextResponse.json({
-      data: rows,
-      pagination: {
-        page,
-        limit,
-        total,
-        totalPages: Math.ceil(total / limit),
+    return NextResponse.json(
+      {
+        data: rows,
+        pagination: {
+          page,
+          limit,
+          total,
+          totalPages: Math.ceil(total / limit),
+        },
       },
-    });
+      {
+        headers: {
+          "Cache-Control": "public, max-age=60",
+        },
+      }
+    );
   } catch (error) {
     console.error("Database error:", error);
     return NextResponse.json(
