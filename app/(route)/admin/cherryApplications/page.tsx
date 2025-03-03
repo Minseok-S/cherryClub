@@ -96,12 +96,6 @@ export default function CherryApplicationsPage() {
     setSelectedMessage(application);
   };
 
-  if (!isAuthenticated) {
-    return (
-      <AuthForm onSubmit={handleAuthSubmit} error={error} loading={loading} />
-    );
-  }
-
   if (isLoading) {
     return <div> 로딩중..</div>;
   }
