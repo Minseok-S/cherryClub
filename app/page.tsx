@@ -5,16 +5,16 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import "swiper/swiper-bundle.css";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
-import { Header } from "@/src/widgets/Header";
+import { Header } from "@/src/widgets/MainPage/Header";
 import { ScrollIndicator } from "@/src/features/scroll";
-import { Title } from "@/src/widgets/Title";
-import { MapSection } from "@/src/widgets/MapSection";
-import { TrainingSection } from "@/src/widgets/TrainingSection";
-import { CampusSection } from "@/src/widgets/CampusSection";
-import { MeetingSection } from "@/src/widgets/MeetingSection";
-import { ExternalSection } from "@/src/widgets/ExternalSection";
-import { Footer } from "@/src/widgets/Footer";
-import { VideoSection } from "@/src/widgets/VideoSection";
+import { Title } from "@/src/widgets/MainPage/Title";
+import { MapSection } from "@/src/widgets/MainPage/MapSection";
+import { TrainingSection } from "@/src/widgets/MainPage/TrainingSection";
+import { CampusSection } from "@/src/widgets/MainPage/CampusSection";
+import { MeetingSection } from "@/src/widgets/MainPage/MeetingSection";
+import { ExternalSection } from "@/src/widgets/MainPage/ExternalSection";
+import { Footer } from "@/src/widgets/MainPage/Footer";
+import { VideoSection } from "@/src/widgets/MainPage/VideoSection";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -23,7 +23,6 @@ export default function Home() {
 
   return (
     <div className="min-h-[200vh] relative">
-      {/* 스크롤 유도 - 조건부 렌더링 추가 */}
       <ScrollIndicator />
 
       {/* 헤더*/}
