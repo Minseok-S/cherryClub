@@ -1,3 +1,4 @@
+"use client";
 import { forwardRef, useState } from "react";
 import { regionData } from "@/src/entities/campus";
 
@@ -8,9 +9,9 @@ interface RegionModalProps {
 
 export const RegionModal = forwardRef<HTMLDivElement, RegionModalProps>(
   ({ selectedRegion, onClose }, ref) => {
-    if (!selectedRegion) return null;
-
     const [searchTerm, setSearchTerm] = useState("");
+    
+    if (!selectedRegion) return null;
 
     const filteredCampuses = regionData[selectedRegion].campus.filter(
       (campus: string) =>
