@@ -1,12 +1,11 @@
 import { NextResponse } from "next/server";
-import { pool } from "../db";
+import { pool } from "../../db";
 import jwt from "jsonwebtoken";
 
 // 사용자 타입 인터페이스 정의
 interface User {
   name: string;
   authority: number;
-  birthdate: string;
   university: string;
   region: string;
 }
@@ -15,11 +14,9 @@ export async function POST(request: Request) {
   let connection;
   try {
     const { code } = await request.json();
-    // MySQL 연결
     connection = await pool.getConnection();
-    // SQL 인젝션 방지를 위한 prepared statement
     const [rows] = await connection.execute<[]>(
-      "SELECT name, authority FROM users WHERE password = ?",
+      "SELECT name, authority, university, region FROM users WHERE password = ?",
       [code]
     );
 
@@ -37,6 +34,8 @@ export async function POST(request: Request) {
         success: true,
         userName: users[0].name,
         authority: users[0].authority,
+        university: users[0].university,
+        region: users[0].region,
         token: jwt.sign(
           {
             userName: users[0].name,

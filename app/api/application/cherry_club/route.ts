@@ -75,19 +75,18 @@ export async function GET(request: Request) {
 
     // URL 파라미터에서 권한 정보 추출
     const authority = searchParams.get("authority");
-    const userName = searchParams.get("name");
     const region = searchParams.get("region");
+    const university = searchParams.get("university");
 
     let query = "SELECT * FROM Applications";
     const params = [];
 
-    // 권한에 따른 필터 조건 추가
-    if (authority === "1") {
+    if (authority === "3") {
       query += " WHERE region = ?";
       params.push(region);
-    } else if (authority === "2") {
-      query += " WHERE university = ?";
-      params.push(userName);
+    } else if (authority === "4") {
+      query += " WHERE university = ? AND region = ?";
+      params.push(university, region);
     }
 
     query += " ORDER BY created_at DESC";

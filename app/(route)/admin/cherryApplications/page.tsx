@@ -1,4 +1,6 @@
 "use client";
+import { AuthForm } from "@/src/features/auth";
+import { useAuth } from "@/src/features/auth/model/model";
 import { useEffect, useState } from "react";
 
 interface Application {
@@ -17,100 +19,67 @@ interface Application {
   status: string;
 }
 
-export default function AdminPage() {
+export default function CherryApplicationsPage() {
   const [data, setData] = useState<Application[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [password, setPassword] = useState("");
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [userName, setUserName] = useState("");
-  const [authority, setAuthority] = useState(0);
-  const [region, setRegion] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleAuthSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    try {
-      const response = await fetch("/api/auth", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ code: password }),
-      });
+  const {
+    isAuthenticated,
+    loading,
+    user,
+    error,
+    handleAuthSubmit,
+    handleLogout,
+  } = useAuth();
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(
-          `관리자 인증 실패 (${response.status} ${response.statusText}): ${
-            errorData.message || "Unknown error"
-          }`
-        );
-      }
-
-      const result = await response.json();
-      setIsAuthenticated(true);
-      setUserName(result.userName);
-      setAuthority(result.authority || 10);
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setLoading(false);
+  // 신청자 데이터 가져오기
+  useEffect(() => {
+    if (isAuthenticated && user) {
+      const fetchData = async () => {
+        setIsLoading(true);
+        try {
+          const response = await fetch(
+            `/api/application/cherry_club?authority=${user.authority}&region=${user.region}&university=${user.university}`
+          );
+          const result = await response.json();
+          setData(result);
+        } catch (error) {
+          console.error("Error fetching applications:", error);
+        } finally {
+          setIsLoading(false);
+        }
+      };
+      fetchData();
     }
-  };
+  }, [isAuthenticated, user]);
 
-  const handleStatusChange = async (id: number, newStatus: string) => {
+  // 상태 변경 핸들러 추가
+  const handleStatusChange = async (id: number, status: string) => {
     try {
       const response = await fetch(`/api/application/cherry_club?id=${id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${password}`,
         },
-        body: JSON.stringify({ status: newStatus }),
+        body: JSON.stringify({ status }),
       });
 
-      if (!response.ok) throw new Error("상태 업데이트 실패");
-
-      // Update local data
-      setData(
-        data.map((item) =>
-          item.id === id ? { ...item, status: newStatus } : item
-        )
-      );
-    } catch (err) {
-      console.error(err);
+      if (response.ok) {
+        setData((prevData) =>
+          prevData.map((item) => (item.id === id ? { ...item, status } : item))
+        );
+      }
+    } catch (error) {
+      console.error("Error updating status:", error);
     }
   };
 
-  useEffect(() => {
-    if (!isAuthenticated) return;
-
-    const fetchData = async () => {
-      try {
-        const response = await fetch(
-          `/api/application/cherry_club?authority=${authority}&userName=${encodeURIComponent(
-            userName
-          )}&region=${encodeURIComponent(region)}`,
-          {
-            headers: {
-              Authorization: `Bearer ${password}`,
-            },
-          }
-        );
-
-        if (!response.ok) throw new Error("데이터 조회 실패");
-        const result = await response.json();
-        setData(result);
-      } catch (err) {
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, [isAuthenticated, password, authority, region, userName]);
+  if (!isAuthenticated) {
+    return (
+      <AuthForm onSubmit={handleAuthSubmit} error={error} loading={loading} />
+    );
+  }
 
   // 필터링된 데이터 계산
   const filteredData = data.filter((item) =>
@@ -118,31 +87,6 @@ export default function AdminPage() {
       String(value).toLowerCase().includes(searchTerm.toLowerCase())
     )
   );
-
-  //TODO: 보여줄 값 확인
-  if (!isAuthenticated) {
-    return (
-      <div className="p-4 max-w-md mx-auto mt-20">
-        <form onSubmit={handleAuthSubmit} className="space-y-4">
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="w-full p-2 rounded text-black"
-            placeholder="관리자 인증 코드 입력"
-          />
-          <button
-            type="submit"
-            className="w-full bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700"
-          >
-            인증
-          </button>
-        </form>
-      </div>
-    );
-  }
-
-  if (loading) return <div className="p-4 text-center">로딩 중...</div>;
 
   return (
     <div className="p-4 mx-24 bg-black text-white">
@@ -172,7 +116,12 @@ export default function AdminPage() {
               />
             </svg>
           </div>
-          <div className="text-gray-400">{userName}님 안녕하세요 👋</div>
+          <button
+            onClick={handleLogout}
+            className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+          >
+            로그아웃
+          </button>
         </div>
       </div>
       <div className="overflow-x-auto">
