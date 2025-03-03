@@ -41,9 +41,12 @@ export async function POST(request: Request) {
     }
 
     const user = users[0];
+
     const tokenPayload = {
       userName: user.name,
       authority: user.authority,
+      university: user.university,
+      region: user.region,
       exp: Math.floor(Date.now() / 1000) + 1800, // 30분 후 만료
     };
 

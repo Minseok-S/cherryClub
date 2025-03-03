@@ -16,6 +16,9 @@ export const useAuth = () => {
         try {
           const result = await verifyToken(token);
           setIsAuthenticated(true);
+
+          console.log("result", result);
+
           setUser({
             userName: result.userName,
             authority: result.authority,

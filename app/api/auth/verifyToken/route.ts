@@ -39,6 +39,8 @@ export async function POST(request: Request) {
     const decoded = jwt.verify(token, process.env.JWT_SECRET) as {
       userName: string;
       authority: number;
+      university: string;
+      region: string;
       exp: number;
     };
 
@@ -54,6 +56,8 @@ export async function POST(request: Request) {
     return NextResponse.json({
       userName: decoded.userName,
       authority: decoded.authority,
+      university: decoded.university,
+      region: decoded.region,
     });
   } catch (error) {
     console.error("토큰 검증 실패:", error);

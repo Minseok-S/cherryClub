@@ -1,7 +1,7 @@
 "use client";
 import { useAuth } from "@/src/features/auth/model/model";
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { AdminMenu } from "@/src/widgets/AdminMenu";
 
 interface Application {
   id: number;
@@ -38,7 +38,6 @@ export default function CherryApplicationsPage() {
   const limit = 20; // 한 페이지당 표시할 항목 수
 
   const { isAuthenticated, user, handleLogout } = useAuth();
-  const router = useRouter();
 
   const handleLogoutAndRedirect = () => {
     handleLogout();
@@ -195,37 +194,12 @@ export default function CherryApplicationsPage() {
 
   return (
     <div className="p-2 sm:p-4 mx-2 sm:mx-24 bg-black text-white pb-20">
-      {/* 상단 메뉴 추가 */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mb-4">
-        <div
-          className="p-2 border rounded-lg hover:bg-gray-800 cursor-pointer"
-          onClick={() => router.push("/admin/cherryApplications")}
-        >
-          <h2 className="text-sm font-semibold">체리동아리 신청 관리</h2>
-        </div>
-        <div className="p-2 border rounded-lg hover:bg-gray-800 cursor-not-allowed opacity-50 relative">
-          <h2 className="text-sm font-semibold">체리동아리 멤버 관리</h2>
-          <div className="absolute top-0 right-0 bg-yellow-500 text-white text-xs px-1 rounded-bl">
-            기능 개발중
-          </div>
-        </div>
-        <div className="p-2 border rounded-lg hover:bg-gray-800 cursor-not-allowed opacity-50 relative">
-          <h2 className="text-sm font-semibold">대학캠퍼스 멤버 관리</h2>
-          <div className="absolute top-0 right-0 bg-yellow-500 text-white text-xs px-1 rounded-bl">
-            기능 개발중
-          </div>
-        </div>
-        <div className="p-2 border rounded-lg hover:bg-gray-800 cursor-not-allowed opacity-50 relative">
-          <h2 className="text-sm font-semibold">모든 멤버 관리</h2>
-          <div className="absolute top-0 right-0 bg-yellow-500 text-white text-xs px-1 rounded-bl">
-            기능 개발중
-          </div>
-        </div>
-      </div>
-
+      <AdminMenu />
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-2">
         <div>
-          <h1 className="text-xl sm:text-2xl font-bold">신청자 관리</h1>
+          <h1 className="text-xl sm:text-2xl font-bold">
+            체리 동아리 신청자 관리
+          </h1>
           <p className="text-xs sm:text-sm text-gray-400 mt-1">
             각 셀을 클릭시 상세한 정보 확인이 가능합니다.
           </p>

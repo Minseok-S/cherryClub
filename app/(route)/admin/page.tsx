@@ -34,10 +34,13 @@ export default function AdminPage() {
           <h2 className="text-xl font-semibold mb-2">체리동아리 신청 관리</h2>
           <p className="text-gray-600">신규 신청자 및 승인 관리</p>
         </div>
-        <div className="p-6 border rounded-lg hover:bg-gray-800 cursor-not-allowed opacity-50">
+        <div
+          className="p-6 border rounded-lg hover:bg-gray-800 cursor-pointer"
+          onClick={() => router.push("/admin/club")}
+        >
+          {" "}
           <h2 className="text-xl font-semibold mb-2">체리동아리 멤버 관리</h2>
           <p className="text-gray-600">체리동아리 멤버 정보 관리</p>
-          <p className="text-yellow-500 mt-2">🚧 개발 중 🚧</p>
         </div>
         <div className="p-6 border rounded-lg hover:bg-gray-800 cursor-not-allowed opacity-50">
           <h2 className="text-xl font-semibold mb-2">대학캠퍼스 멤버 관리</h2>
