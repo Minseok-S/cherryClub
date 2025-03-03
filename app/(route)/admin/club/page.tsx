@@ -406,7 +406,7 @@ export default function CherryApplicationsPage() {
                   key={item.id}
                   className={`border-t border-gray-700 cursor-pointer ${
                     item.is_cherry_club_member === 1
-                      ? "bg-blue-900/50 hover:bg-blue-800/50"
+                      ? "bg-green-900/50 hover:bg-green-800/50"
                       : "bg-red-900/50 hover:bg-red-800/50"
                   }`}
                 >

@@ -15,10 +15,14 @@ export const useAuth = () => {
       if (token) {
         try {
           const result = await verifyToken(token);
+
+          // 토큰 만료 여부 확인
+          if (result.expired) {
+            handleLogout();
+            return;
+          }
+
           setIsAuthenticated(true);
-
-          console.log("result", result);
-
           setUser({
             userName: result.userName,
             authority: result.authority,
@@ -27,6 +31,7 @@ export const useAuth = () => {
           });
         } catch (err) {
           console.error(err);
+          handleLogout(); // 토큰 검증 실패 시 로그아웃 처리
         }
       }
       setLoading(false);

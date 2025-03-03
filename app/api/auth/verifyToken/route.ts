@@ -47,7 +47,10 @@ export async function POST(request: Request) {
     // 토큰 만료 시간 검증
     if (decoded.exp < Math.floor(Date.now() / 1000)) {
       return NextResponse.json(
-        { error: "토큰이 만료되었습니다" },
+        {
+          error: "토큰이 만료되었습니다",
+          expired: true, // 클라이언트에서 만료 상태를 식별할 수 있도록 추가
+        },
         { status: 401 }
       );
     }
