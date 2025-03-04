@@ -280,7 +280,21 @@ export default function ApplyPage() {
                   onChange={(e) => setUniversityQuery(e.target.value)}
                 />
                 {universities.length === 0 ? (
-                  <div className="p-3 text-gray-400">검색 결과가 없습니다</div>
+                  <div>
+                    <div className="p-3 text-gray-400">
+                      검색 결과가 없습니다. 하단의 직접 입력하기 버튼을
+                      눌러주세요.
+                    </div>
+                    <button
+                      onClick={() => {
+                        handleSelectUniversity(`(기타) ${universityQuery}`);
+                        setIsModalOpen(false);
+                      }}
+                      className="w-full p-3 text-white bg-blue-600 hover:bg-blue-700 rounded-md mt-2"
+                    >
+                      "{universityQuery}" 직접 입력하기
+                    </button>
+                  </div>
                 ) : (
                   universities.map((uni) => (
                     <div
