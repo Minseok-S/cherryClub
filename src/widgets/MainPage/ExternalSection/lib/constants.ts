@@ -1,13 +1,13 @@
 export const movements = [
   {
-    title: "1221 레드하트 - \n I have two, I share one",
+    title: "1221 레드하트 -  \n I have two, I share one",
     description:
       "12월 21일, 레드하트데이! \n 우리의 레드하트로 세상을 따뜻하게! \n Love Share Rejoice Spread",
     icon: "❤️",
     link: "",
   },
   {
-    title: "함께 걸어요 My5K - \n  사랑 동행 변화 기적",
+    title: "함께 걸어요 My5K - \n 사랑 동행 변화 기적",
     description:
       "사랑이 우리를 걷게합니다 \n 소외 이웃을 향한 즐거운 기부 걷기 축제 \n 6대륙 180여 개국에서 함께 걸었습니다!",
     icon: "🚶",

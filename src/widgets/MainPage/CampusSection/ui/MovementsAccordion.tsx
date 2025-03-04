@@ -47,7 +47,7 @@ export const MovementsAccordion = ({
           {movements.map((movement, index) => (
             <div
               key={index}
-              className={`bg-white/5 backdrop-blur-sm p-4 rounded-lg`}
+              className={`bg-white/5 backdrop-blur-sm p-4 rounded-lg min-h-[130px]`}
             >
               <h4 className="font-bold mb-2">{movement.title}</h4>
               <p

@@ -10,7 +10,7 @@ interface RegionModalProps {
 export const RegionModal = forwardRef<HTMLDivElement, RegionModalProps>(
   ({ selectedRegion, onClose }, ref) => {
     const [searchTerm, setSearchTerm] = useState("");
-    
+
     if (!selectedRegion) return null;
 
     const filteredCampuses = regionData[selectedRegion].campus.filter(
@@ -49,12 +49,12 @@ export const RegionModal = forwardRef<HTMLDivElement, RegionModalProps>(
             style={{ zIndex: -1 }}
           />
 
-          <h2 className="text-2xl font-bold mb-4 pr-8">
+          <h2 className="text-2xl font-bold mb-4 pr-8 break-keep">
             {regionData[selectedRegion].name}
           </h2>
 
           <div className="mb-4">
-            <h2 className="text-xl font-bold mb-2">
+            <h2 className="text-base md:text-xl font-bold mb-2">
               총 캠퍼스: {regionData[selectedRegion].total()}개
             </h2>
           </div>
@@ -69,11 +69,11 @@ export const RegionModal = forwardRef<HTMLDivElement, RegionModalProps>(
           </div>
           <div>
             <h2 className="text-xl font-bold mb-2">캠퍼스 목록</h2>
-            <ul className="list-disc pl-5">
+            <ul className="list-disc pl-5 ">
               {filteredCampuses.map((campus: string, index: number) => (
                 <li
                   key={index}
-                  className="cursor-pointer hover:text-blue-400 transition-colors"
+                  className="cursor-pointer hover:text-blue-400 transition-colors break-keep"
                 >
                   {campus}
                 </li>
@@ -81,8 +81,8 @@ export const RegionModal = forwardRef<HTMLDivElement, RegionModalProps>(
             </ul>
           </div>
         </div>
-        <div className="fixed bottom-0 left-0 right-0 bg-black/90 p-4">
-          <p className="text-gray-400  break-keep text-center">
+        <div className="fixedleft-0 right-0 bg-black/90 p-4">
+          <p className="text-gray-400 text-center text-sm md:text-lg">
             문의 : 신용선 간사 (010-5022-8934)
           </p>
         </div>

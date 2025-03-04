@@ -3,6 +3,7 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, Pagination, Navigation } from "swiper/modules";
 import Image from "next/image";
 import { trainingData } from "../lib/constants";
+import React, { useState } from "react";
 
 import "swiper/swiper-bundle.css";
 import "swiper/css/pagination";
@@ -10,6 +11,12 @@ import "swiper/css/navigation";
 import { TrainingCard } from "./TrainingCard";
 
 export const TrainingSection = () => {
+  const [flippedIndex, setFlippedIndex] = useState<number | null>(null);
+
+  const handleCardClick = (index: number) => {
+    setFlippedIndex(flippedIndex === index ? null : index);
+  };
+
   return (
     <div
       id="training"
@@ -20,7 +27,14 @@ export const TrainingSection = () => {
       <div className="max-w-4xl mx-auto mb-5 md:mb-7 text-center w-full px-4">
         <div className="grid grid-cols-2 gap-3 md:gap-4">
           {trainingData.map((card, index) => (
-            <TrainingCard key={index} {...card} />
+            <TrainingCard
+              key={index}
+              title={card.title}
+              front={card.front}
+              back={card.back}
+              isFlipped={flippedIndex === index}
+              onClick={() => handleCardClick(index)}
+            />
           ))}
         </div>
       </div>
