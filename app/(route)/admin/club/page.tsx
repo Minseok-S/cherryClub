@@ -82,7 +82,7 @@ export default function CherryApplicationsPage() {
       };
       fetchData();
     }
-  }, [isAuthenticated, user, currentPage, handleLogoutAndRedirect]);
+  }, [isAuthenticated, user, currentPage]);
 
   // 상태 변경 핸들러 수정
   const handleStatusChange = async (id: number, status: string) => {
