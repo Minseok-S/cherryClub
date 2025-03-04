@@ -28,7 +28,6 @@ export default function CherryApplicationsPage() {
     start: "",
     end: "",
   });
-  const [isLoading, setIsLoading] = useState(false);
   const [availableRegions, setAvailableRegions] = useState<string[]>([]);
   const [selectedMessage, setSelectedMessage] = useState<Application | null>(
     null
@@ -48,7 +47,6 @@ export default function CherryApplicationsPage() {
   useEffect(() => {
     if (isAuthenticated && user) {
       const fetchData = async () => {
-        setIsLoading(true);
         try {
           const response = await fetch(
             `/api/application/cherry_club?authority=${user.authority}&region=${user.region}&university=${user.university}&page=${currentPage}&limit=${limit}`
@@ -66,8 +64,6 @@ export default function CherryApplicationsPage() {
           setAvailableRegions(regions);
         } catch (error) {
           console.error("Error fetching applications:", error);
-        } finally {
-          setIsLoading(false);
         }
       };
       fetchData();
@@ -99,10 +95,6 @@ export default function CherryApplicationsPage() {
   const handleMessageClick = (application: Application) => {
     setSelectedMessage(application);
   };
-
-  if (isLoading) {
-    return <div> 로딩중..</div>;
-  }
 
   // 필터링된 데이터 계산
   const filteredData = data.filter((item) => {

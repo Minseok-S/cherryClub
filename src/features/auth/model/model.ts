@@ -42,11 +42,11 @@ export const useAuth = () => {
     checkAuth();
   }, []);
 
-  const handleAuthSubmit = async (name: string, password: string) => {
+  const handleAuthSubmit = async (phone: string, password: string) => {
     setLoading(true);
     setError("");
     try {
-      const result = await login(name, password);
+      const result = await login(phone, password);
 
       if (!result || !result.userName) {
         throw new Error("사용자 정보가 일치하지 않습니다");

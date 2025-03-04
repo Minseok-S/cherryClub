@@ -5,16 +5,16 @@ export function AuthForm({
   error,
   loading,
 }: {
-  onSubmit: (name: string, password: string) => void;
+  onSubmit: (phone: string, password: string) => void;
   error?: string;
   loading?: boolean;
 }) {
-  const [name, setName] = useState("");
+  const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit(name, password);
+    onSubmit(phone, password);
   };
 
   return (
@@ -22,11 +22,11 @@ export function AuthForm({
       <form onSubmit={handleSubmit} className="space-y-4">
         <h1 className="text-xl font-bold text-center">관리자 로그인</h1>
         <input
-          type="tel"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
+          type="text"
+          value={phone}
+          onChange={(e) => setPhone(e.target.value)}
           className="w-full p-2 rounded border border-gray-300 text-black"
-          placeholder="이름 (예: 송민석)"
+          placeholder="전화번호 (예: 000-0000-0000)"
           required
         />
         <input

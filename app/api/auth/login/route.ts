@@ -13,10 +13,10 @@ interface User {
 export async function POST(request: Request) {
   let connection;
   try {
-    const { name, password } = await request.json();
+    const { phone, password } = await request.json();
 
     // 입력값 유효성 검사 추가
-    if (!name || !password) {
+    if (!phone || !password) {
       return NextResponse.json(
         { error: "유효하지 않은 요청 형식입니다" },
         { status: 400 }
@@ -27,8 +27,8 @@ export async function POST(request: Request) {
 
     // 쿼리 수정: name과 password 모두 사용
     const [rows] = await connection.execute<[]>(
-      "SELECT name, authority, university, region FROM users WHERE name = ? AND password = ? LIMIT 1",
-      [name, password]
+      "SELECT name, authority, university, region FROM users WHERE phone = ? AND password = ? LIMIT 1",
+      [phone, password]
     );
 
     const users = rows as User[];
