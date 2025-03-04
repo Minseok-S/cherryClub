@@ -11,7 +11,7 @@ export const useAuth = () => {
 
   useEffect(() => {
     const checkAuth = async () => {
-      const token = localStorage.getItem("loginToken");
+      const token = localStorage.getItem("authToken");
       if (token) {
         try {
           const result = await verifyToken(token);
@@ -64,7 +64,7 @@ export const useAuth = () => {
         university: result.university,
       });
       localStorage.setItem(
-        "loginToken",
+        "authToken",
         JSON.stringify({
           token: result.token,
           expiresAt: new Date().getTime() + 30 * 60 * 1000,
@@ -85,7 +85,7 @@ export const useAuth = () => {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem("loginToken");
+    localStorage.removeItem("authToken");
     setIsAuthenticated(false);
     setUser(null);
   };

@@ -40,21 +40,36 @@ export default function CherryApplicationsPage() {
     window.location.href = "/admin";
   };
 
-  // 신청자 데이터 가져오기
   useEffect(() => {
     if (isAuthenticated && user) {
       const fetchData = async () => {
         try {
+          const token = localStorage.getItem("authToken");
+          if (!token) {
+            throw new Error("토큰이 없습니다");
+          }
+
           const response = await fetch(
-            `/api/club-users?authority=${user.authority}&region=${user.region}&university=${user.university}&page=${currentPage}&limit=${limit}`
+            `/api/club-users?authority=${user.authority}&region=${user.region}&university=${user.university}&page=${currentPage}&limit=${limit}`,
+            {
+              headers: {
+                Authorization: `Bearer ${JSON.parse(token).token}`,
+              },
+            }
           );
+
+          if (!response.ok) {
+            if (response.status === 401) {
+              handleLogoutAndRedirect();
+              return;
+            }
+            throw new Error("API 요청 실패");
+          }
+
           const result = await response.json();
           setData(result.data);
           setTotalPages(result.pagination.totalPages);
 
-          console.log("result", result);
-
-          // 데이터에서 고유한 지역 추출 (타입 명시)
           const regions: string[] = [
             ...new Set<string>(
               result.data.map((item: Application) => item.region)
@@ -67,21 +82,35 @@ export default function CherryApplicationsPage() {
       };
       fetchData();
     }
-  }, [isAuthenticated, user, currentPage]); // currentPage가 변경될 때마다 데이터 다시 가져오기
+  }, [isAuthenticated, user, currentPage, handleLogoutAndRedirect]);
 
-  // 상태 변경 핸들러 추가
+  // 상태 변경 핸들러 수정
   const handleStatusChange = async (id: number, status: string) => {
     try {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        throw new Error("토큰이 없습니다");
+      }
+
       const response = await fetch(
         `/api/club-users?id=${id}&status=${status}`,
         {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
+            Authorization: `Bearer ${JSON.parse(token).token}`,
           },
           body: JSON.stringify({ status }),
         }
       );
+
+      if (!response.ok) {
+        if (response.status === 401) {
+          handleLogoutAndRedirect();
+          return;
+        }
+        throw new Error("API 요청 실패");
+      }
 
       if (response.ok) {
         setData((prevData) =>

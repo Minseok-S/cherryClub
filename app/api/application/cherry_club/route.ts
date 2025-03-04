@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import mysql from "mysql2/promise";
 import { pool } from "../../db";
+import jwt from "jsonwebtoken";
 
 export async function POST(request: Request) {
   try {
@@ -109,6 +110,37 @@ export async function POST(request: Request) {
 
 export async function GET(request: Request) {
   try {
+    // Authorization 헤더 확인
+    const authHeader = request.headers.get("Authorization");
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      return NextResponse.json({ error: "인증이 필요합니다" }, { status: 401 });
+    }
+
+    const token = authHeader.split(" ")[1];
+
+    // JWT 검증
+    if (!process.env.JWT_SECRET) {
+      throw new Error("JWT_SECRET 환경 변수가 설정되지 않았습니다");
+    }
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET) as {
+      authority: number;
+      region: string;
+      university: string;
+    };
+
+    // 권한 검증 추가
+    if (
+      decoded.authority === undefined ||
+      decoded.authority === null ||
+      decoded.authority > 7
+    ) {
+      return NextResponse.json(
+        { error: "접근 권한이 없습니다" },
+        { status: 403 }
+      );
+    }
+
     const connection = await pool.getConnection();
     const { searchParams } = new URL(request.url);
 
@@ -171,6 +203,12 @@ export async function GET(request: Request) {
     );
   } catch (error) {
     console.error("Database error:", error);
+    if (error instanceof jwt.JsonWebTokenError) {
+      return NextResponse.json(
+        { error: "유효하지 않은 토큰입니다" },
+        { status: 401 }
+      );
+    }
     return NextResponse.json(
       { error: "서버 내부 오류가 발생했습니다" },
       { status: 500 }
