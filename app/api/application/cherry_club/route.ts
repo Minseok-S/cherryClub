@@ -16,6 +16,7 @@ export async function POST(request: Request) {
       "major",
       "student_id",
       "grade",
+      "semester",
     ];
     if (requiredFields.some((field) => !data[field])) {
       return NextResponse.json(
@@ -35,6 +36,7 @@ export async function POST(request: Request) {
       data.major,
       data.student_id,
       data.grade,
+      data.semester,
       data.vision_camp_batch || "미수료",
       data.status || "PENDING",
       data.message,
@@ -50,7 +52,8 @@ export async function POST(request: Request) {
         university = ?, 
         major = ?, 
         student_id = ?,
-        grade = ?,       
+        grade = ?,      
+        semester = ?, 
         vision_camp_batch = ?,
         status = ?,  
         message =?,
@@ -190,6 +193,7 @@ export async function PUT(request: Request) {
               major = ?,
               student_id = ?,
               grade = ?,
+              semester = ?,
               vision_camp_batch = ?,
               is_cherry_club_member =?`,
             [
@@ -202,6 +206,7 @@ export async function PUT(request: Request) {
               application.major,
               application.student_id,
               application.grade,
+              application.semester,
               application.vision_camp_batch,
               1,
             ]

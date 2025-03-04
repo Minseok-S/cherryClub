@@ -13,6 +13,7 @@ interface ApplicationForm {
   major: string;
   student_id: string;
   grade: string;
+  semester: string;
   message: string;
   agree: boolean;
 }
@@ -357,22 +358,41 @@ export default function ApplyPage() {
           )}
         </div>
 
-        {/* 학년 선택 수정 (학기 제거) */}
-        <div>
-          <label className="block text-sm font-medium text-white mb-2">
-            학년 <span className="text-white">*</span>
-          </label>
-          <select
-            {...register("grade", { required: true })}
-            className="w-full px-4 py-2 border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-gray-900 text-white"
-          >
-            <option value="">선택</option>
-            {[1, 2, 3, 4, 5, 6].map((year) => (
-              <option key={year} value={`${year}학년`}>
-                {year}학년
-              </option>
-            ))}
-          </select>
+        {/* 학년 학기 선택 */}
+        <div className="flex gap-4">
+          <div className="flex-1">
+            <label className="block text-sm font-medium text-white mb-2">
+              학년 <span className="text-white">*</span>
+            </label>
+            <select
+              {...register("grade", { required: true })}
+              className="w-full px-4 py-2 border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-gray-900 text-white"
+            >
+              <option value="">선택</option>
+              {[1, 2, 3, 4, 5, 6].map((year) => (
+                <option key={year} value={`${year}학년`}>
+                  {year}학년
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="flex-1">
+            <label className="block text-sm font-medium text-white mb-2">
+              학기 <span className="text-white">*</span>
+            </label>
+            <select
+              {...register("semester", { required: true })}
+              className="w-full px-4 py-2 border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-gray-900 text-white"
+            >
+              <option value="">선택</option>
+              {["1학기", "2학기", "여름학기", "겨울학기"].map((semester) => (
+                <option key={semester} value={`${semester}`}>
+                  {semester}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
 
         {/* 지역 선택 옵션 수정 */}
