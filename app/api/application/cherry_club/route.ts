@@ -25,6 +25,23 @@ export async function POST(request: Request) {
       );
     }
 
+    // 전화번호 중복 체크
+    const [existingUser] = (await connection.query(
+      "SELECT id FROM Applications WHERE phone = ?",
+      [data.phone]
+    )) as [mysql.RowDataPacket[], mysql.FieldPacket[]];
+
+    if ((existingUser as mysql.RowDataPacket[])[0]) {
+      return NextResponse.json(
+        {
+          error: "이미 등록된 전화번호입니다",
+          code: "ER_DUP_ENTRY",
+          message: `Duplicate entry '${data.phone}' for key 'applications.contact'`,
+        },
+        { status: 400 }
+      );
+    }
+
     // 쿼리 파라미터 배열 생성
     const queryParams = [
       data.name,
@@ -63,8 +80,26 @@ export async function POST(request: Request) {
 
     connection.release();
     return NextResponse.json({ success: true, id: result });
-  } catch (error) {
+  } catch (error: unknown) {
     console.error("Database error:", error);
+
+    // MySQL 에러 타입 가드
+    if (error && typeof error === "object" && "code" in error) {
+      const mysqlError = error as { code: string; message: string };
+
+      // MySQL 중복 키 에러 처리
+      if (mysqlError.code === "ER_DUP_ENTRY") {
+        return NextResponse.json(
+          {
+            error: "이미 등록된 전화번호입니다",
+            code: mysqlError.code,
+            message: mysqlError.message,
+          },
+          { status: 400 }
+        );
+      }
+    }
+
     return NextResponse.json(
       { error: "서버 내부 오류가 발생했습니다" },
       { status: 500 }

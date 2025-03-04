@@ -106,8 +106,18 @@ export default function ApplyPage() {
         }),
       });
 
+      const data = await response.json();
+
       if (!response.ok) {
-        throw new Error("서버 응답 오류");
+        if (
+          data.message?.includes("Duplicate entry") &&
+          data.message?.includes("contact")
+        ) {
+          alert("이미 신청되었습니다. 다시 확인해주세요");
+        } else {
+          alert("서버 응답 오류가 발생했습니다. 다시 시도해주세요.");
+        }
+        return;
       }
 
       alert("성공적으로 제출되었습니다!");
@@ -116,7 +126,7 @@ export default function ApplyPage() {
       router.push("/");
     } catch (error) {
       console.error("제출 실패:", error);
-      alert("제출에 실패했습니다. 다시 시도해주세요.");
+      alert("네트워크 오류가 발생했습니다. 다시 시도해주세요.");
     }
   };
 
