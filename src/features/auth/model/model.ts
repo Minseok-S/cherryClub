@@ -16,8 +16,10 @@ export const useAuth = () => {
         try {
           const result = await verifyToken(token);
 
+          console.log("result", result.error);
+
           // 토큰 만료 여부 확인
-          if (result.expired) {
+          if (result.error) {
             handleLogout();
             return;
           }
