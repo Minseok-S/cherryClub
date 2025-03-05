@@ -17,8 +17,17 @@ export async function POST(request: Request) {
   try {
     const { phone, password } = await request.json();
 
+    // phone 값 처리: -가 없으면 추가, 있으면 유지
+    let cleanedPhone = phone.replace(/-/g, "");
+    if (cleanedPhone.length === 11) {
+      cleanedPhone = `${cleanedPhone.slice(0, 3)}-${cleanedPhone.slice(
+        3,
+        7
+      )}-${cleanedPhone.slice(7)}`;
+    }
+
     // 입력값 유효성 검사 추가
-    if (!phone || !password) {
+    if (!cleanedPhone || !password) {
       return NextResponse.json(
         { error: "유효하지 않은 요청 형식입니다" },
         { status: 400 }
@@ -27,10 +36,10 @@ export async function POST(request: Request) {
 
     connection = await pool.getConnection();
 
-    // 쿼리 수정: password 필드 추가
+    // 쿼리 수정: cleanedPhone 사용
     const [rows] = await connection.execute<[]>(
       "SELECT name, authority, university, region, password FROM users WHERE phone = ? LIMIT 1",
-      [phone]
+      [cleanedPhone]
     );
 
     const users = rows as User[];
