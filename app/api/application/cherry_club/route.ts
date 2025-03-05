@@ -44,11 +44,6 @@ export async function POST(request: Request) {
       );
     }
 
-    // phone 뒷자리 4자리 추출 및 비밀번호 생성
-    const phoneLast4Digits = data.phone.slice(-4);
-    const rawPassword = `cherry${phoneLast4Digits}!`;
-    const password = await bcrypt.hash(rawPassword, 10); // 비밀번호 해싱
-
     // 쿼리 파라미터 배열 생성
     const queryParams = [
       data.name,
@@ -64,7 +59,6 @@ export async function POST(request: Request) {
       data.vision_camp_batch || "미수료",
       data.status || "PENDING",
       data.message,
-      password, // 해싱된 비밀번호 추가
     ];
 
     const [result] = await connection.query(
@@ -82,7 +76,6 @@ export async function POST(request: Request) {
         vision_camp_batch = ?,
         status = ?,  
         message = ?,
-        password = ?, 
         created_at = NOW()`,
       queryParams
     );
@@ -262,6 +255,11 @@ export async function PUT(request: Request) {
         );
         const application = (rows as mysql.RowDataPacket[])[0];
 
+        // phone 뒷자리 4자리 추출 및 비밀번호 생성
+        const phoneLast4Digits = application.phone.slice(-4);
+        const rawPassword = `cherry${phoneLast4Digits}!`;
+        const password = await bcrypt.hash(rawPassword, 10); // 비밀번호 해싱
+
         if (application) {
           await connection.query(
             `INSERT INTO users SET 
@@ -276,7 +274,8 @@ export async function PUT(request: Request) {
               grade = ?,
               semester = ?,
               vision_camp_batch = ?,
-              is_cherry_club_member =?`,
+              is_cherry_club_member = ?,
+              password = ?`,
             [
               application.name,
               application.gender,
@@ -290,6 +289,7 @@ export async function PUT(request: Request) {
               application.semester,
               application.vision_camp_batch,
               1,
+              password,
             ]
           );
         }
