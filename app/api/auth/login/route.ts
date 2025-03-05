@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { pool } from "../../db";
 import jwt from "jsonwebtoken";
+import bcrypt from "bcrypt";
 
 // 사용자 타입 인터페이스 정의
 interface User {
@@ -8,6 +9,7 @@ interface User {
   authority: number;
   university: string;
   region: string;
+  password: string;
 }
 
 export async function POST(request: Request) {
@@ -25,10 +27,10 @@ export async function POST(request: Request) {
 
     connection = await pool.getConnection();
 
-    // 쿼리 수정: name과 password 모두 사용
+    // 쿼리 수정: password 필드 추가
     const [rows] = await connection.execute<[]>(
-      "SELECT name, authority, university, region FROM users WHERE phone = ? AND password = ? LIMIT 1",
-      [phone, password]
+      "SELECT name, authority, university, region, password FROM users WHERE phone = ? LIMIT 1",
+      [phone]
     );
 
     const users = rows as User[];
@@ -41,6 +43,15 @@ export async function POST(request: Request) {
     }
 
     const user = users[0];
+
+    // 비밀번호 검증
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
+      return NextResponse.json(
+        { error: "잘못된 비밀번호입니다" },
+        { status: 401 }
+      );
+    }
 
     const tokenPayload = {
       userName: user.name,

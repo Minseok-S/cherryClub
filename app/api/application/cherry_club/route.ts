@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import mysql from "mysql2/promise";
 import { pool } from "../../db";
 import jwt from "jsonwebtoken";
+import bcrypt from "bcrypt";
 
 export async function POST(request: Request) {
   try {
@@ -43,6 +44,11 @@ export async function POST(request: Request) {
       );
     }
 
+    // phone 뒷자리 4자리 추출 및 비밀번호 생성
+    const phoneLast4Digits = data.phone.slice(-4);
+    const rawPassword = `cherry${phoneLast4Digits}!`;
+    const password = await bcrypt.hash(rawPassword, 10); // 비밀번호 해싱
+
     // 쿼리 파라미터 배열 생성
     const queryParams = [
       data.name,
@@ -58,6 +64,7 @@ export async function POST(request: Request) {
       data.vision_camp_batch || "미수료",
       data.status || "PENDING",
       data.message,
+      password, // 해싱된 비밀번호 추가
     ];
 
     const [result] = await connection.query(
@@ -74,7 +81,8 @@ export async function POST(request: Request) {
         semester = ?, 
         vision_camp_batch = ?,
         status = ?,  
-        message =?,
+        message = ?,
+        password = ?, 
         created_at = NOW()`,
       queryParams
     );
