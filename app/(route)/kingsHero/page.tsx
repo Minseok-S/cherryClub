@@ -466,6 +466,7 @@ export default function KingsHeroJoinPage() {
             <option value="영국">영국</option>
             <option value="미국">미국</option>
             <option value="군대">군대</option>
+            <option value="군대">졸업</option>
           </select>
           {errors.group_number && (
             <span className="text-red-500">필수 입력 항목입니다</span>
