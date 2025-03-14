@@ -46,8 +46,6 @@ export default function KingsHeroJoinPage() {
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const [formData, setFormData] = useState<ApplicationForm | null>(null);
 
-  const enrollmentStatus = watch("enrollment_status");
-
   useEffect(() => {
     const fetchUniversities = async () => {
       if (universityQuery.length < 2) return;
@@ -91,13 +89,6 @@ export default function KingsHeroJoinPage() {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
-
-  useEffect(() => {
-    if (enrollmentStatus === "졸업") {
-      setValue("region", "졸업");
-      setValue("group_number", "졸업");
-    }
-  }, [enrollmentStatus, setValue]);
 
   const onSubmit = async (data: ApplicationForm) => {
     setFormData(data);
@@ -438,7 +429,6 @@ export default function KingsHeroJoinPage() {
           <select
             {...register("region", { required: true })}
             className="w-full px-4 py-2 border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-gray-900 text-white"
-            disabled={enrollmentStatus === "졸업"}
           >
             <option value="">선택하세요</option>
             {[
