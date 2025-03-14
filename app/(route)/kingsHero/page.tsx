@@ -29,7 +29,6 @@ export default function KingsHeroJoinPage() {
     reset,
     formState: { errors },
     setValue,
-    watch,
   } = useForm<ApplicationForm>({
     shouldUnregister: true,
   });
