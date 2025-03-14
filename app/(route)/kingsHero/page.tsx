@@ -421,7 +421,7 @@ export default function KingsHeroJoinPage() {
               className="w-full px-4 py-2 border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-gray-900 text-white"
             >
               <option value="">선택</option>
-              {["1학기", "2학기", "여름학기", "겨울학기"].map((semester) => (
+              {["1학기", "2학기"].map((semester) => (
                 <option key={semester} value={`${semester}`}>
                   {semester}
                 </option>
@@ -433,7 +433,7 @@ export default function KingsHeroJoinPage() {
         {/* 지역 선택 옵션 수정 */}
         <div>
           <label className="block text-sm font-medium text-white mb-2">
-            지역(대학교 기준) <span className="text-white">*</span>
+            지역(대학캠퍼스 기준) <span className="text-white">*</span>
           </label>
           <select
             {...register("region", { required: true })}
@@ -450,7 +450,7 @@ export default function KingsHeroJoinPage() {
               "광주전라",
               "강원",
               "제주",
-              "졸업",
+              "해외",
             ].map((region) => (
               <option key={region} value={region}>
                 {region}
@@ -467,7 +467,6 @@ export default function KingsHeroJoinPage() {
           <select
             {...register("group_number", { required: true })}
             className="w-full px-4 py-2 border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-black text-white"
-            disabled={enrollmentStatus === "졸업"}
           >
             <option value="">선택하세요</option>
             {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((number) => (
@@ -475,7 +474,9 @@ export default function KingsHeroJoinPage() {
                 {number}조
               </option>
             ))}
-            <option value="졸업">졸업</option>
+            <option value="영국">영국</option>
+            <option value="미국">미국</option>
+            <option value="군대">군대</option>
           </select>
           {errors.group_number && (
             <span className="text-red-500">필수 입력 항목입니다</span>
@@ -487,11 +488,18 @@ export default function KingsHeroJoinPage() {
           <label className="block text-sm font-medium text-white mb-2">
             비캠 기수 <span className="text-white">*</span>
           </label>
-          <input
+          <select
             {...register("vision_camp_batch", { required: true })}
-            className="w-full px-4 py-2 border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-black text-white placeholder-gray-400"
-            placeholder="비캠 기수를 입력해주세요"
-          />
+            className="w-full px-4 py-2 border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-gray-900 text-white"
+          >
+            <option value="">선택하세요</option>
+            <option value="미수료">미수료</option>
+            {Array.from({ length: 8 }, (_, i) => (
+              <option key={i} value={`${i}기`}>
+                {i}기
+              </option>
+            ))}
+          </select>
           {errors.vision_camp_batch && (
             <span className="text-red-500">필수 입력 항목입니다</span>
           )}
