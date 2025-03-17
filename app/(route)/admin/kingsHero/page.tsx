@@ -29,14 +29,10 @@ export default function CherryApplicationsPage() {
   const [data, setData] = useState<KingsHeroData[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [filters, setFilters] = useState<Record<string, string>>({});
-  const [dateRange, setDateRange] = useState<{ start: string; end: string }>({
-    start: "",
-    end: "",
-  });
+
   const [availableRegions, setAvailableRegions] = useState<string[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const limit = 20; // 한 페이지당 표시할 항목 수
 
   const { isAuthenticated, user, handleLogout } = useAuth();
 
@@ -55,7 +51,7 @@ export default function CherryApplicationsPage() {
           }
 
           const response = await fetch(
-            `/api/kings_hero?authority=${user.authority}&region=${user.region}&university=${user.university}`,
+            `/api/kings_hero?authority=${user.authority}&region=${user.region}&university=${user.university}&page=${currentPage}`,
             {
               headers: {
                 Authorization: `Bearer ${JSON.parse(token).token}`,
@@ -129,17 +125,6 @@ export default function CherryApplicationsPage() {
 
   // 필터링된 데이터 계산
   const filteredData = data.filter((item) => {
-    // 날짜 범위 필터링
-    if (dateRange.start && dateRange.end) {
-      const itemDate = new Date(item.created_at);
-      const startDate = new Date(dateRange.start);
-      const endDate = new Date(dateRange.end);
-
-      if (itemDate < startDate || itemDate > endDate) {
-        return false;
-      }
-    }
-
     // 검색어가 있으면 모든 필드에서 검색
     if (searchTerm) {
       const searchableFields = Object.values(item)
@@ -170,15 +155,6 @@ export default function CherryApplicationsPage() {
     setFilters((prev) => ({
       ...prev,
       [field]: value === "all" ? "" : value,
-    }));
-  };
-
-  // 날짜 범위 변경 핸들러
-  const handleDateRangeChange = (type: "start" | "end", value: string) => {
-    setCurrentPage(1);
-    setDateRange((prev) => ({
-      ...prev,
-      [type]: value,
     }));
   };
 
@@ -411,7 +387,7 @@ export default function CherryApplicationsPage() {
                   <td className="px-2 py-1 sm:px-6 sm:py-4 text-center">
                     {item.group_number}
                   </td>
-                  <td className="px-2 py-1 sm:px-6 sm:py-4 text-center">
+                  <td className="px-2 py-1 sm:px-5 sm:py-4 text-center">
                     {item.university}
                   </td>
                   <td className="px-2 py-1 sm:px-6 sm:py-4 text-center">
