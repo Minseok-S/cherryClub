@@ -17,10 +17,9 @@ export function AdminMenu() {
       active: pathname === "/admin/club",
     },
     {
-      path: "#",
+      path: "/admin/kingsHero",
       label: "대학캠퍼스 멤버 관리",
-      active: false,
-      disabled: true,
+      active: pathname === "/admin/kingsHero",
     },
     {
       path: "#",

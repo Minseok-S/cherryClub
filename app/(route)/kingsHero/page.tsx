@@ -459,7 +459,7 @@ export default function KingsHeroJoinPage() {
           >
             <option value="">선택하세요</option>
             {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((number) => (
-              <option key={number} value={number}>
+              <option key={number} value={number + "조"}>
                 {number}조
               </option>
             ))}
