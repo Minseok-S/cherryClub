@@ -91,6 +91,8 @@ export default function KingsHeroJoinPage() {
 
   const onSubmit = async (data: ApplicationForm) => {
     setFormData(data);
+
+    console.log("data", data);
     setIsConfirmModalOpen(true);
   };
 
@@ -105,7 +107,8 @@ export default function KingsHeroJoinPage() {
         },
         body: JSON.stringify({
           ...formData,
-          student_id: formData.student_id,
+          ministry_status: Number(formData.ministry_status), // 숫자로 변환
+          is_cherry_club_member: Number(formData.is_cherry_club_member), // 숫자로 변환
         }),
       });
 
@@ -399,6 +402,7 @@ export default function KingsHeroJoinPage() {
                   {year}학년
                 </option>
               ))}
+              <option value="졸업">졸업</option>
             </select>
           </div>
 
@@ -411,11 +415,11 @@ export default function KingsHeroJoinPage() {
               className="w-full px-4 py-2 border border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-gray-900 text-white"
             >
               <option value="">선택</option>
-              {["1학기", "2학기"].map((semester) => (
+              {["1학기", "2학기", "졸업"].map((semester) => (
                 <option key={semester} value={`${semester}`}>
                   {semester}
                 </option>
-              ))}
+              ))}{" "}
             </select>
           </div>
         </div>
@@ -466,7 +470,7 @@ export default function KingsHeroJoinPage() {
             <option value="영국">영국</option>
             <option value="미국">미국</option>
             <option value="군대">군대</option>
-            <option value="군대">졸업</option>
+            <option value="졸업">졸업</option>
           </select>
           {errors.group_number && (
             <span className="text-red-500">필수 입력 항목입니다</span>
@@ -604,17 +608,17 @@ export default function KingsHeroJoinPage() {
               </p>
               <p>
                 <span className="font-medium">5K 사역 현황:</span>{" "}
-                {formData.ministry_status === -1
+                {formData.ministry_status == -1
                   ? "시작 예정"
-                  : formData.ministry_status === 1
+                  : formData.ministry_status == 1
                   ? "진행 중"
                   : "중단"}
               </p>
               <p>
                 <span className="font-medium">체리동아리 현황:</span>{" "}
-                {formData.is_cherry_club_member === -1
+                {formData.is_cherry_club_member == -1
                   ? "시작 예정"
-                  : formData.is_cherry_club_member === 1
+                  : formData.is_cherry_club_member == 1
                   ? "진행 중"
                   : "중단"}
               </p>
